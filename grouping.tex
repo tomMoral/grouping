@@ -1,0 +1,185 @@
+\documentclass{gretsi}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath, amssymb}
+\usepackage[english,francais]{babel}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+%\usepackage{enumitem}
+
+
+%Gummi|065|=)
+\title{Separation de sources automatique}
+\author{Thomas Moreau}
+\date{}
+
+\makeatletter
+\def\BState{\State\hskip-\ALG@thistlm}
+\makeatother
+\def\HH{\mathcal H}
+
+\resumefrancais{Cet article introduit différentes stratégies de groupement automatique pour les composantes issues d'une analyse du spectre singulier (SSA). Cette étape, cruciale à la séparation de composantes haut niveau, permet de séparer les différentes effets présents dans le signal. }
+\resumeanglais{This paper introduce automatic grouping strategies for Singular Spectrum Analysis (SSA) components. This step is crucial to get meaningful results}
+
+\begin{document}
+
+\maketitle
+
+
+\section{Introduction}
+
+L'analyse du spectre singulier est une technique très utile pour l'analyse de séries temporelles. Elle permet d'obtenir de manière simple une décomposition du signal entre composantes de tendance, composantes oscillantes et bruit. Cette décomposition est utilisée pour l'étude de signaux en finance ou en biologie car elle permet de mettre en avant des périodicités non évidentes dans la série de départ et de les séparer d'autre phénomènes pour pouvoir les étudier.\\
+
+
+Cependant, cette technique est encore peu utilisé du fait de son manque d'automatisation. En effet, la plupart des utilisations faites se basent sur la sélection manuelle de certains paramètres, notamment le regroupement de certaines composantes entre elles. Ce regroupement est critique car sans lui, un même phénomène peu se retrouver retrouver sur plusieurs des composantes fournies, ce qui complique l'analyse des résultats.\\
+
+Dans cet article, nous étudions différentes stratégies de regroupement présentées dans la littérature. Celles-ci sont comparées à nos propres techniques.
+
+\section{SSA}
+
+L'analyse du spectre singulier (SSA) est une technique introduite par Vautard et al \cite{vautard_ghil_89_SSA} pour l'analyse de la dynamique de séries temporelles. Cette technique, basée sur le théorème de Karhunen-Loève, permet de décomposer un signal en une somme de composante haut niveau rattachées à sa tendance et à sa saisonalité.
+
+\subsection{Matrices de trajectoires}
+
+On considère un signal fini échantillonné $f = (f_n)_{1 \le n\le T}$ et un entier $K \in \left \{ 1, \dots, T/2 \right \}$. La matrice de K-trajectoire $X^{(K)} \in \mathbb{R}^{K\times L}$ est défini par:
+$$ X^{(K)} = \begin{bmatrix}
+	f_1 & f_2 &\dots & f_K\\
+	f_2 & f_3 &\dots & f_{K+1}\\
+	\dots\\
+	f_{L} & f_{T-K+1} &\dots & f_T
+\end{bmatrix}$$
+Cette matrice contient toutes les sous fenêtres de longueur $K$ de $f$.\\
+
+Le signal peut être reconstruit naturellement à partir de cette matrice du fait de sa structure de Hankel. Si l'on considère une matrice $M$ n'ayant pas cette structure, le signal ayant la matrice de trajectoire la plus proche de $M$ peut être construit en moyennant le long des anti-diagonales. Cette opération permet de définir un mapping entre l'espace des matrices et celui des signaux. On notera par la suite $\HH$ l'opération de moyennage le long des diagonales.
+
+\subsection{Extraction de motifs}
+
+Une décomposition en valeur singulière (SVD) de la matrice de K-trajectoire $X^{(K)}$ de $f$ permet d'extraire les motifs de longueur $K$ les plus intéressant. En effet, la SVD donne: 
+$$
+X^{(K)} = U D V^T
+$$ avec $U, V$ deux matrices orthogonales et $D$ une matrice diagonale. $U$ peut alors être vu comme un dictionnaire de motifs de taille $K$ sur lequel est projeté le signal. Ces motifs permettent de capturer au mieux la variance du signal. En effet, les vecteurs singuliers de la SVD maximisent la covariance de $U_i$ et des $X_i$.
+
+\subsection{Reconstruction de composantes}
+
+L'étape d'extraction de motif permet d'obtenir une décomposition de la matrice de trajectoire sous la forme d'une somme de matrice de rang 1:$$
+X^{(K)} = \sum_{i=1}^K \lambda_i U_iV_i^T 
+$$A partir de cette décomposition, on considère les séries temporelles $f^{(i)} = \HH(\lambda_iU_iV_i^T)$ pour $i \in \left \{ 1,\dots, m \right \}$ résultantes de l'opération d'hankelisation des matrices de \mbox{rang 1}. Ces composantes ne sont pas toutes utiles car certaines sont du bruit. Une sélection des composantes peut être fait en se basant sur les valeurs singulières associées. De plus, ces composantes peuvent avérées redondantes, séparant un même effet. Une étape de regroupement est alors nécessaire pour obtenir une décomposition utile.\\
+
+Le regroupement consiste à trouver un ensemble $(I_k)_{1 \le k \le d}$ tel que $\forall k, j$, $I_k \cap I_j = \emptyset$ and $\displaystyle \cup_{k=1}^d I_k = I$. Les composantes ainsi créées sont alors $x$
+
+\section{Regroupement automatique}
+
+\subsection{Formulation générale}
+\label{sub:form}
+
+Les différentes stratégies de regroupement peuvent être résumé sous une même forme, présentée dans \mbox{l'Algorithme \ref{alg:gen}}. Il est alors nécessaire de choisir 3 paramètres. Le paramètre $\tau_l$ permet de filtrer les composantes de la SVD ayant une valeur singulières trop faible. Ceci permet d'éliminer les composantes de bruits.\\
+
+Le second paramètre,  permet de définir comment la stratégie considère les composantes. Une première solution est de considérer que toutes les composantes obtenues avec la SSA ont le même poid
+
+\begin{algorithm}
+\caption{Algorithme général}\label{alg:gen}
+\begin{algorithmic}[1]
+\BState \textbf{Paramètre}: $\tau_l, \text{similarité, possibilité}$ 
+\Procedure{MyProcedure}{}
+\State Calculer $m = \min \left \{ k | \lambda_k < \tau_l \lambda_1 \right \} $
+\For{ $(i, j) \in \left \{ 1, \dots m \right \}^2$}
+\State Calculer $g_{i, j} = \text{similarité}(i, j)$
+\EndFor
+\For{$i = 1 \dots m$} 
+\For{$j \in \text{possiblilité}[i]$} 
+\If {$g_{i, j} = 1$} 
+\State group[j] = group[i]
+\EndIf
+\EndFor
+\EndFor
+\BState \emph{top}:
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+% subsection form (end)
+
+\subsection{W-correlation}
+
+\paragraph{Abalov}
+\label{par:}
+La métrique de similarité développer par abalov repose sur deux points. Tout d'abord, les valeurs singulières associées aux signaux considérés doivent avoir un ratio proche de 1.
+
+% paragraph  (end)
+
+
+\subsection{Periodigramme}
+
+\paragraph{T. Alexandrov method}
+\label{par:alex}
+\cite{alexandrov_05_auto}
+
+Algorithme spécialement designé pour les harmoniques
+
+
+% paragraph  (end)
+\paragraph{Abalov method}
+\label{par:abalov}
+\cite{abalov_14_auto}
+On utilise
+% paragraph abalov (end)
+\paragraph{Alvarez}
+\label{par:alva}
+\cite{alvarez_2013_auto}
+% paragraph alva (end)
+\paragraph{Notre méthode}
+\label{par:tomtom}
+
+
+        
+% paragraph tomtom (end)
+
+\section{Méthode d'évaluation}
+\label{sec:eval}
+
+\subsection{Séparabilité}
+\label{sub:sep}
+    L'évaluation de la stratégie de regroupement doit prendre en compte la qualité des composantes obtenue lors de la décomposition du signal. En effet, si les composantes que l'on essaie d'analyser ne sont pas séparables par l'analyse de la matrice de $K$-trajectoire, les stratégies de groupement ne pourront pas améliorer cette séparation.\\
+    
+    Il est donc important de rappeler ici les propriétés des composantes séparables. Deux signaux $f_1$ et $f_2$ sont dit séparables s'il existe $I_1, I_2 \subset \left \{ 1,\dots, K \right \}$ tel que $I_1\cap I_2 = \emptyset$ et $f_i = \mathcal H(\sum_{j \in I_i} \lambda_j U_j V_j^T)$. Ceci implique notamment l'orthogonalité de toutes les sous séries de longueur $K$ et $L$ de $f_1$ et $f_2$. Différentes illustrations de ces propriétés peuvent être trouvées dans \cite{GNZ_10_SSA}.
+% subsection sep (end)
+
+
+\subsection{Artificial signals}
+\label{sub:}
+
+% subsection  (end)
+\subsection{Métriques}
+\label{sub:met}
+
+% subsection met (end)
+% section eval (end)
+
+\section{Résultats} 
+
+Comparaison avec la transformée en ondelettes empirique (EWT, \cite{gilles_13_EWT}).\\
+%Pour le benchmark, je pense:\\
+%\begin{itemize}
+% \item Générer aléatoirement des signaux avec tendance, partie pseudo harmonique et bruit\\
+% $$
+% f_t = \sum_i c_i + n_i
+% $$$$
+% c_0 = trend; \hspace{1cm} c_i = cos(2\pi*w_i*t + u) 
+% $$
+%\item Faire la décomposition EWT et SSA / comparer les résultats\\
+%\item Effectuer les grouping et comparé à la baseline du début\\
+
+%\end{itemize}
+%\vspace{1cm}
+%Pour les mesures, il faudrait en utiliser deux:\\
+%\begin{itemize}
+%\item Erreur de reconstruction: $E_r = \sum_t (f_t-\widehat f_t)^2$\\
+%où $\widehat f_t = \sum_{i \in I} f^{(i)}$ avec $I = \left \{ i \in [1..K] / \lambda_i > \mu \right \}$\\
+%\item Grouping erreur: $E_g= \sum_i \min_j \| c_j - f^{(i)}\|^2$
+%\end{itemize}
+
+%Ou alors utiliser des metriques de Separation de source. \cite{vincent_06_BSS}
+
+\bibliographystyle{plain} 
+\bibliography{bib_dl}{}
+\end{document}
