@@ -34,6 +34,8 @@ L'analyse du spectre singulier est une technique très utile pour l'analyse de s
 
 Cependant, cette technique est encore peu utilisé du fait de son manque d'automatisation. En effet, la plupart des utilisations faites se basent sur la sélection manuelle de certains paramètres, notamment le regroupement de certaines composantes entre elles. Ce regroupement est critique car sans lui, un même phénomène peu se retrouver retrouver sur plusieurs des composantes fournies, ce qui complique l'analyse des résultats.\\
 
+% TODO 
+
 Dans cet article, nous étudions différentes stratégies de regroupement présentées dans la littérature. Celles-ci sont comparées à nos propres techniques.
 
 \section{SSA}
@@ -73,9 +75,7 @@ Le regroupement consiste à trouver un ensemble $(I_k)_{1 \le k \le d}$ tel que 
 \subsection{Formulation générale}
 \label{sub:form}
 
-Les différentes stratégies de regroupement peuvent être résumé sous une même forme, présentée dans \mbox{l'Algorithme \ref{alg:gen}}. Il est alors nécessaire de choisir 3 paramètres. Le paramètre $\tau_l$ permet de filtrer les composantes de la SVD ayant une valeur singulières trop faible. Ceci permet d'éliminer les composantes de bruits.\\
-
-Le second paramètre,  permet de définir comment la stratégie considère les composantes. Une première solution est de considérer que toutes les composantes obtenues avec la SSA ont le même poid
+Les différentes stratégies de regroupement peuvent être résumé sous une même forme, présentée dans \mbox{l'Algorithme \ref{alg:gen}}. Il est alors nécessaire de choisir 3 paramètres: $\tau_l \in \left[0, 1\right]$, $\texttt{Sim}: \left \{ 1, \dots m \right \}^2 \to \left \{ 0,1 \right \}$ une fonction de similarité entre les composantes et $\texttt{Up}$ une fonction d'actualisation des groupes.\\
 
 \begin{algorithm}
 \caption{Algorithme général}\label{alg:gen}
@@ -99,26 +99,47 @@ Le second paramètre,  permet de définir comment la stratégie considère les c
 \end{algorithm}
 % subsection form (end)
 
-\subsection{W-correlation}
+Le paramètre $\tau_l$ permet de filtrer les composantes de la SVD ayant une valeur singulières trop faible. Ceci permet d'éliminer les composantes de bruits. La fonction \texttt{Up} permet de définir comment la stratégie considère les différentes composantes. Une première solution est de considérer que toutes les composantes obtenues avec la SSA ont le même poids. Ainsi, les composantes $i$ et $j$ seront grouper si $\texttt{Sim}(i, j) = 1$. Cette solution ne tient pas compte de l'importance relative des composantes, qui peut être mesurer par la valeur singulière associée. Un autre choix pour la fonction \texttt{Up} est de considérer qu'un groupe est lié à la composante avec la plus grande value singulière. Chaque groupe est alors formé de sorte que si $I_k = \left\{j | \texttt{Sim}(j, i) = 1\right\}$ où $i = \arg\max_{j\in I_k} \lambda_j$. Ce regroupement met en avant la prépondérance de la composantes de plus haute valeur singulière.\\
 
-\paragraph{Abalov}
+La fonction \texttt{Sim} est la fonction qui définie la stratégie de regroupement des composantes. Elle permet d'obtenir une matrice d'adjacence entre les composantes qui servira à décider de regrouper ou non deux séries.\\
+
+\subsection{Corrélation}
+
+\paragraph{Abalov (GG1)}
 \label{par:}
-La métrique de similarité développer par abalov repose sur deux points. Tout d'abord, les valeurs singulières associées aux signaux considérés doivent avoir un ratio proche de 1.
-
+La métrique de similarité proposée par les auteurs de \cite{abalov_14_aut} repose sur deux points. Tout d'abord, le ratio des valeurs singulières associées aux signaux considérés doit être proche 1. Ceci implique que l'on ne peut pas regrouper des composantes trop éloignées, pour éviter de grouper des phénomènes présents dans la séries 'ayant pas les même amplitudes. Cet effet est controlé par un seuil $\rho_1$. Ensuite, deux composantes sont regroupées si la corrélation entre elles est plus haute qu'une valeur seuil $\rho_c$:
+$$
+\texttt{Sim}(i, j) = \begin{cases}
+	1 &\text{ if } \displaystyle\frac{\min(\lambda_i, \lambda_j)}{\max(\lambda_i, \lambda_j)} \ge \rho_1 \text{ et } \text{corr}({(i)}, f^{[j)}) \ge \rho_c\\
+	0& \text{ sinon}
+\end{cases}
+$$
 % paragraph  (end)
+
+\paragraph{Nous (GG3)}
+\label{par:nn}
+
+Dans \cite{GNZ_10_SSA}, les auteurs introduisent le concept de w-corrélation pour deux séries $x, y$ de taille $N$ et pour une taille de fenêtre $K$:$$
+\text{w-corr}(x, y) = \frac{\langle x|y\rangle_w}{\|x\|_w\|y\|_w}
+$$avec $\langle x|y\rangle_w = \sum_{i=1}^n w_i x_i y_i$, $w_i = \min(i, N-i, K)$ et $\|x\|_w = \sqrt{\langle x|x\rangle_w}$. Deux séries sont séparables par la SSA si leur w-corrélation est nulle. Il est donc possible d'utiliser la valeur de la w-corrélation comme indicateur de similarité entre 2 composantes. On peut alors prendre une fonction de similarité identitque à celle de Abalov en remplaçant la corrélation par la w-corrélation. Ceci permet de filtrer les effets de bord qui peuvent apparaître dans la corrélation et ainsi d'obtenir un meilleur regroupement.
+% paragraph nn (end)
 
 
 \subsection{Periodigramme}
 
-\paragraph{T. Alexandrov method}
-\label{par:alex}
-\cite{alexandrov_05_auto}
+La fréquence des composantes obtenues peut aussi être utilisé comme un indicateur de similarité des séries. Dans \cite{GNZ_10_SSA}, les auteurs recommandent d'observer le périodigrame des composantes pour inférer le regroupement. Le périodigrame d'une série $f$ de longueur $N$ est définie comme:$$
+\Pi_f(k) = \frac{1}{Z}\left|\sum_{n=1}^N f_n e^{-2i\pi n \frac{k}{N}}\right|^2
+$$ où $Z$ est une constante de normalisation telle que le périodigramme est une norme unitaire.\\
 
-Algorithme spécialement designé pour les harmoniques
+\paragraph{Regroupement harmonique (HG)}\label{par:alex} Alexandrov \& al. proposent dans \cite{alexandrov_05_auto} une stratégie de regroupement spéciale pour extraire les harmoniques exponentiellement modulées. Ils proposent une fonction de similarité qui regroupe deux composantes successives $(j, j+1)$ si$$
+\frac{1}{2}\max_{0\le k \le L/2}\left(\Pi_{U_j}(k) + \Pi_{U_{j+1}}(k)\right) \ge \rho_0
+$$ pour $\rho_0\in \left[0, 1\right]$.\\
+
+Ceci rend compte du fait que les composantes successives partage un même pique dans leur périodigramme.
 
 
 % paragraph  (end)
-\paragraph{Abalov method}
+\paragraph{Abalov method (GG2)}
 \label{par:abalov}
 \cite{abalov_14_auto}
 On utilise
