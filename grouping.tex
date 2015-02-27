@@ -29,20 +29,18 @@
 
 \section{Introduction}
 
-L'analyse du spectre singulier est une technique très utile pour l'analyse de séries temporelles. Elle permet d'obtenir de manière simple une décomposition du signal entre composantes de tendance, composantes oscillantes et bruit. Cette décomposition est utilisée pour l'étude de signaux en finance ou en biologie car elle permet de mettre en avant des périodicités non évidentes dans la série de départ et de les séparer d'autre phénomènes pour pouvoir les étudier.\\
+L'analyse du spectre singulier est une technique très utile pour l'analyse de séries temporelles. Elle permet d'obtenir de manière simple une décomposition du signal en composantes de tendance, composantes oscillantes et bruit. Cette décomposition est utilisée pour l'étude de signaux en finance ou en biologie car elle permet de mettre en avant des périodicités non évidentes dans la série de départ et de les séparer d'autre phénomènes pour pouvoir les étudier.\\
 
 
 Cependant, cette technique est encore peu utilisé du fait de son manque d'automatisation. En effet, la plupart des utilisations faites se basent sur la sélection manuelle de certains paramètres, notamment le regroupement de certaines composantes entre elles. Ce regroupement est critique car sans lui, un même phénomène peu se retrouver retrouver sur plusieurs des composantes fournies, ce qui complique l'analyse des résultats.\\
 
-% TODO 
-
 Dans cet article, nous étudions différentes stratégies de regroupement présentées dans la littérature. Celles-ci sont comparées à nos propres techniques.
 
-\section{SSA}
+\subsection{SSA}
 
 L'analyse du spectre singulier (SSA) est une technique introduite par Vautard et al \cite{vautard_ghil_89_SSA} pour l'analyse de la dynamique de séries temporelles. Cette technique, basée sur le théorème de Karhunen-Loève, permet de décomposer un signal en une somme de composante haut niveau rattachées à sa tendance et à sa saisonalité.
 
-\subsection{Matrices de trajectoires}
+\paragraph{Matrices de trajectoires}
 
 On considère un signal fini échantillonné $f = (f_n)_{1 \le n\le T}$ et un entier $K \in \left \{ 1, \dots, T/2 \right \}$. La matrice de K-trajectoire $X^{(K)} \in \mathbb{R}^{K\times L}$ est défini par:
 $$ X^{(K)} = \begin{bmatrix}
@@ -55,14 +53,14 @@ Cette matrice contient toutes les sous fenêtres de longueur $K$ de $f$.\\
 
 Le signal peut être reconstruit naturellement à partir de cette matrice du fait de sa structure de Hankel. Si l'on considère une matrice $M$ n'ayant pas cette structure, le signal ayant la matrice de trajectoire la plus proche de $M$ peut être construit en moyennant le long des anti-diagonales. Cette opération permet de définir un mapping entre l'espace des matrices et celui des signaux. On notera par la suite $\HH$ l'opération de moyennage le long des diagonales.
 
-\subsection{Extraction de motifs}
+\paragraph{Extraction de motifs}
 
 Une décomposition en valeur singulière (SVD) de la matrice de K-trajectoire $X^{(K)}$ de $f$ permet d'extraire les motifs de longueur $K$ les plus intéressant. En effet, la SVD donne: 
 $$
 X^{(K)} = U D V^T
 $$ avec $U, V$ deux matrices orthogonales et $D$ une matrice diagonale. $U$ peut alors être vu comme un dictionnaire de motifs de taille $K$ sur lequel est projeté le signal. Ces motifs permettent de capturer au mieux la variance du signal. En effet, les vecteurs singuliers de la SVD maximisent la covariance de $U_i$ et des $X_i$.
 
-\subsection{Reconstruction de composantes}
+\paragraph{Reconstruction de composantes}
 
 L'étape d'extraction de motif permet d'obtenir une décomposition de la matrice de trajectoire sous la forme d'une somme de matrice de rang 1:$$
 X^{(K)} = \sum_{i=1}^K \lambda_i U_iV_i^T 
@@ -70,40 +68,44 @@ $$A partir de cette décomposition, on considère les séries temporelles $f^{(i
 
 Le regroupement consiste à trouver un ensemble $(I_k)_{1 \le k \le d}$ tel que $\forall k, j$, $I_k \cap I_j = \emptyset$ and $\displaystyle \cup_{k=1}^d I_k = I$. Les composantes ainsi créées sont alors $x$
 
+
+\subsection{Automatisation}
+\label{sub:}
+
+% subsection  (end)
+
 \section{Regroupement automatique}
 
 \subsection{Formulation générale}
 \label{sub:form}
 
-Les différentes stratégies de regroupement peuvent être résumé sous une même forme, présentée dans \mbox{l'Algorithme \ref{alg:gen}}. Il est alors nécessaire de choisir 3 paramètres: $\tau_l \in \left[0, 1\right]$, $\texttt{Sim}: \left \{ 1, \dots m \right \}^2 \to \left \{ 0,1 \right \}$ une fonction de similarité entre les composantes et $\texttt{Up}$ une fonction d'actualisation des groupes.\\
+Les stratégies de regroupement se définissent comme
+\begin{enumerate}
+	\item Séléctioner m composantes de la SSA
+	\item Calculer la similarité entre chacune d'elles
+	\item Regrouper les composantes qui sont similaires
+\end{enumerate}
+L'étape 1 consiste à filtrer les composantes de la SVD ayant une valeur singulières plus faible que $\tau_l*\lambda_1$. Ceci permet d'éliminer les composantes de bruits. La fonction \texttt{Up} permet de définir comment la stratégie considère les différentes composantes. On fixe pour toutes les expériences $\tau_l = 0.01$\\
 
-\begin{algorithm}
-\caption{Algorithme général}\label{alg:gen}
-\begin{algorithmic}[1]
-\BState \textbf{Paramètre}: $\tau_l, \text{similarité, possibilité}$ 
-\Procedure{MyProcedure}{}
-\State Calculer $m = \min \left \{ k | \lambda_k < \tau_l \lambda_1 \right \} $
-\For{ $(i, j) \in \left \{ 1, \dots m \right \}^2$}
-\State Calculer $g_{i, j} = \text{similarité}(i, j)$
-\EndFor
-\For{$i = 1 \dots m$} 
-\For{$j \in \text{possiblilité}[i]$} 
-\If {$g_{i, j} = 1$} 
-\State group[j] = group[i]
-\EndIf
-\EndFor
-\EndFor
-\BState \emph{top}:
-\EndProcedure
-\end{algorithmic}
-\end{algorithm}
+peuvent être résumé sous une même forme, présentée dans \mbox{l'Algorithme \ref{alg:gen}}. Il est alors nécessaire de choisir 3 paramètres: $\tau_l \in \left[0, 1\right]$, $\texttt{Sim}: \left \{ 1, \dots m \right \}^2 \to \left \{ 0,1 \right \}$ une fonction de similarité entre les composantes et $\texttt{Up}$ une fonction d'actualisation des groupes.\\
+
 % subsection form (end)
 
-Le paramètre $\tau_l$ permet de filtrer les composantes de la SVD ayant une valeur singulières trop faible. Ceci permet d'éliminer les composantes de bruits. La fonction \texttt{Up} permet de définir comment la stratégie considère les différentes composantes. Une première solution est de considérer que toutes les composantes obtenues avec la SSA ont le même poids. Ainsi, les composantes $i$ et $j$ seront grouper si $\texttt{Sim}(i, j) = 1$. Cette solution ne tient pas compte de l'importance relative des composantes, qui peut être mesurer par la valeur singulière associée. Un autre choix pour la fonction \texttt{Up} est de considérer qu'un groupe est lié à la composante avec la plus grande value singulière. Chaque groupe est alors formé de sorte que si $I_k = \left\{j | \texttt{Sim}(j, i) = 1\right\}$ où $i = \arg\max_{j\in I_k} \lambda_j$. Ce regroupement met en avant la prépondérance de la composantes de plus haute valeur singulière.\\
+Le paramètre $\tau_l$ Une première solution est de considérer que toutes les composantes obtenues avec la SSA ont le même poids. Ainsi, les composantes $i$ et $j$ seront grouper si $\texttt{Sim}(i, j) = 1$. Cette solution ne tient pas compte de l'importance relative des composantes, qui peut être mesurer par la valeur singulière associée. Un autre choix pour la fonction \texttt{Up} est de considérer qu'un groupe est lié à la composante avec la plus grande value singulière. Chaque groupe est alors formé de sorte que si $I_k = \left\{j | \texttt{Sim}(j, i) = 1\right\}$ où $i = \arg\max_{j\in I_k} \lambda_j$. Ce regroupement met en avant la prépondérance de la composantes de plus haute valeur singulière.\\
 
 La fonction \texttt{Sim} est la fonction qui définie la stratégie de regroupement des composantes. Elle permet d'obtenir une matrice d'adjacence entre les composantes qui servira à décider de regrouper ou non deux séries.\\
 
-\subsection{Corrélation}
+\subsection{Stratégie de clustering}
+\label{sub:}
+
+% subsection  (end)
+
+\subsection{Mesures de similarité}
+\label{sub:}
+
+% subsection  (end)
+
+\subsubsection{Corrélation}
 
 \paragraph{Abalov (GG1)}
 \label{par:}
@@ -125,7 +127,7 @@ $$avec $\langle x|y\rangle_w = \sum_{i=1}^n w_i x_i y_i$, $w_i = \min(i, N-i, K)
 % paragraph nn (end)
 
 
-\subsection{Periodigramme}
+\subsubsection{Periodigramme}
 
 La fréquence des composantes obtenues peut aussi être utilisé comme un indicateur de similarité des séries. Dans \cite{GNZ_10_SSA}, les auteurs recommandent d'observer le périodigrame des composantes pour inférer le regroupement. Le périodigrame d'une série $f$ de longueur $N$ est définie comme:$$
 \Pi_f(k) = \frac{1}{Z}\left|\sum_{n=1}^N f_n e^{-2i\pi n \frac{k}{N}}\right|^2
@@ -158,6 +160,16 @@ On utilise
 \section{Méthode d'évaluation}
 \label{sec:eval}
 
+\subsection{Métrique d'évaluation}
+\label{sub:}
+Dans \cite{abalov_14_aut}, les auteurs proposent d'utiliser le coéfficient de determination $R^2$ pour évaluter la qualité d'un groupement. Ce coefficient rend compte de l'erreur commise par rapport à la variance de la composante. Pour une serie $f$ de moyenne $\bar f$ et pour un estimateur $\hat f$, le coefficient de determination est calculer suivant$$
+R^2(f, \hat f) = 1 - \frac{\|f-\hat f\|^2}{\|f-\bar f\|^2}
+$$ La métrique d'évaluation du grouping est alors calculer  en moyennant les valeurs minimales de $R^2$ pour chaque composante $c_i$ du signal d'origine et pour $$
+\overline{ R^2} = \sum_{i=1}^n \min_k R^2(c_i, g_k)
+$$
+
+% subsection  (end)
+
 \subsection{Séparabilité}
 \label{sub:sep}
     L'évaluation de la stratégie de regroupement doit prendre en compte la qualité des composantes obtenue lors de la décomposition du signal. En effet, si les composantes que l'on essaie d'analyser ne sont pas séparables par l'analyse de la matrice de $K$-trajectoire, les stratégies de groupement ne pourront pas améliorer cette séparation.\\
@@ -170,10 +182,6 @@ On utilise
 \label{sub:}
 
 % subsection  (end)
-\subsection{Métriques}
-\label{sub:met}
-
-% subsection met (end)
 % section eval (end)
 
 \section{Résultats} 
