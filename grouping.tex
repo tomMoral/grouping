@@ -35,78 +35,133 @@
 
 \section{Introduction}
 
-L'analyse de la dynamique sous-jacente d'une série temporelle est très intéressante pour l'étude de phénomènes non stationnaires. En finance ou en météorologie, les séries étudiées sont souvent courtes et bruitées et il n'est pas facile de les analyser. L'extraction de phénomènes de saisonnalité et leur étude peut apporter beaucoup d'information notamment sur les mécanisme produisant ces séries et parfois même permettre de formuler un modèle de prédiction.\\
+L'analyse du spectre singulier (en anglais SSA : Singular Spectral Analysis) est une technique introduite par Vautard et al \cite{vautard_ghil_89_SSA} permettant d'obtenir de manière simple une décomposition du signal en composantes de tendance, de saisonnalité (harmoniques) et de bruit. Elle est principalement utilisée en finance ou en météorologie où les séries étudiées sont souvent courtes et bruitées. De nombreuses publications ont montré la pertinence de la SSA dans ces contextes, où cette décomposition permet d'apporter de l'information sur les mécanismes produisant ces séries mais aussi de formuler des modèles de prédiction.
 
-L'analyse du spectre singulier est une technique très utile pour l'analyse de séries temporelles. Elle permet d'obtenir de manière simple une décomposition du signal en composantes de tendance, de saisonnalité et de bruit. Cette décomposition est utilisée pour l'étude de signaux en finance ou en biologie car elle permet de séparer différents mécanismes présents dans la série de départ, facilitant leur étude.\\
 
-Cependant, cette technique est peu utilisé du fait de son manque d'automatisation. En effet, la plupart des utilisations faites se basent sur la sélection manuelle de certains paramètres, notamment le regroupement de certaines composantes entre elles. Ce regroupement est critique car sans lui, un même phénomène peu se retrouver retrouver sur plusieurs des composantes fournies, ce qui complique l'analyse.\\
+Néanmoins, cette technique a été rarement utilisée sur d'autres signaux, principalement à cause de son manque d'automatisation. La pertinence des décompositions obtenues dépend en effet énormément du regroupement des composantes extraites, et résoudre cette tâche de façon manuelle peut s'avérer laborieux. Cet article a pour but de présenter différentes stratégies de regroupement automatique (existantes et originales) ainsi qu'un cadre permettant leur évaluation et leur comparaison.
 
-Dans cet article, nous étudions différentes stratégies de regroupement présentées dans la littérature. Celles-ci sont comparées à nos propres techniques.
+%Cette technique, basée sur le théorème de Karhunen-Loève, permet de décomposer un signal en une somme de composante haut niveau rattachées à sa tendance et à sa saisonnalité.
+%L'analyse de la dynamique sous-jacente d'une série temporelle est très intéressante pour l'étude de phénomènes non stationnaires. .  DEJA DIT NON ?
 
-\subsection{SSA}
 
-L'analyse du spectre singulier (SSA) est une technique introduite par Vautard et al \cite{vautard_ghil_89_SSA} pour l'analyse de la dynamique de séries temporelles. Cette technique, basée sur le théorème de Karhunen-Loève, permet de décomposer un signal en une somme de composante haut niveau rattachées à sa tendance et à sa saisonnalité.
+%\paragraph{Matrices de trajectoires}
 
-\paragraph{Matrices de trajectoires}
 
+\subsection{Rappels sur la SSA}
 On considère un signal fini échantillonné $f = \val{f}{T}{,}$ et un entier $K \in \left \{ 1, \dots, T/2 \right \}$. La matrice de K-trajectoire $X^{(K)} \in \R^{K\times L}$ de la série $f$ est défini par:
 $$ X^{(K)} = \begin{bmatrix}
 	f_1 & f_2 &\dots & f_K\\
 	f_2 & f_3 &\dots & f_{K+1}\\
 	\dots\\
 	f_{L} & f_{L+1} &\dots & f_T
-\end{bmatrix}$$ avec $L = T-K$. Cette matrice contient toutes les sous séries de longueur $K$ de $f$.\\
+\end{bmatrix}$$ avec $L = T-K$. Cette matrice contient toutes les sous séries de longueur $K$ de $f$.
 
-Le signal peut être reconstruit naturellement à partir de cette matrice du fait de sa structure de Hankel, avec toutes les composantes sur les anti-diagonales égales. Si l'on considère une matrice $M$ n'ayant pas cette structure, le signal ayant la matrice de trajectoire la plus proche de $M$ peut être construit en moyennant le long des anti-diagonales. Cette opération permet de définir un mapping entre l'espace des matrices et celui des signaux. On notera par la suite $\HH: \R^{K\times L} \to \R^T$ l'opération d'hankelisation, qui effectue la moyenne le long des anti-diagonales. Cette opération est linéaire.
+Le signal peut être reconstruit naturellement à partir de cette matrice du fait de sa structure de Hankel, avec toutes les composantes sur les anti-diagonales égales. Si l'on considère une matrice $M$ n'ayant pas cette structure, le signal ayant la matrice de trajectoire la plus proche de $M$ peut être construit en moyennant le long des anti-diagonales. Cette opération permet de définir un mapping PAS D ANGLICISMES entre l'espace des matrices et celui des signaux. On notera par la suite $\HH: \R^{K\times L} \to \R^T$ l'opération d'hankelisation, qui effectue la moyenne le long des anti-diagonales. Cette opération est linéaire.
 
-\paragraph{Extraction de motifs}
 
-Une décomposition en valeur singulière (SVD) de la matrice de K-trajectoire $X^{(K)}$ de $f$ permet d'extraire les motifs de longueur $K$ les plus intéressants au sens de la variance. En effet, la SVD donne: 
-$$
-X^{(K)} = U \Lambda V^T
-$$ avec $U, V$ deux matrices orthogonales et $\Lambda$ une matrice diagonale ayant pour valeurs $\lambda_1\le \dots \lambda_K$. La matrice $U$ peut être vu comme un dictionnaire de motifs de taille $K$ sur lequel est projeté le signal. Ces motifs permettent de capturer au mieux la variance du signal. Les vecteurs singuliers de la SVD maximisent récursivement la covariance de $U_i$ et des sous séries de longueur $K$ de $f$.
 
-\paragraph{Reconstruction de composantes}
+Une décomposition en valeur singulière (en anglais SVD pour Singular Value Decomposition) de la matrice de K-trajectoire $X^{(K)}$ de $f$ permet d'extraire les motifs de longueur $K$ les plus intéressants au sens de la variance. En effet, la SVD donne: 
+$$X^{(K)} = U \Lambda V^T
+$$ avec $U, V$ deux matrices orthogonales et $\Lambda$ une matrice diagonale ayant pour valeurs $\lambda_1\le \dots \lambda_K$. La matrice $U$ peut être vue comme un dictionnaire de motifs de taille $K$ sur lequel est projeté le signal. Ces motifs permettent de capturer au mieux la variance du signal. Les vecteurs singuliers de la SVD maximisent récursivement la covariance de $U_i$ et des sous séries de longueur $K$ de $f$.
+
+%\paragraph{Reconstruction de composantes}
+
 
 L'étape d'extraction de motif permet d'obtenir une décomposition de la matrice de trajectoire sous la forme d'une somme de matrice de rang 1:$$
 X^{(K)} = \sum_{i=1}^K \lambda_i U_iV_i^T 
-$$où  $U_i$.Par linéarité de l'opération d'hankelisation, on obtient une décomposition de $f = \sum_{i=1}^K f^{(i)}$ avec $f^{(i)} = \HH(\lambda_iU_iV_i^T)$ la série associée à la matrice de rang 1 $\lambda_iU_iV_i^T$.\\
+$$où  $U_i$.Par linéarité de l'opération d'hankelisation, on obtient une décomposition de $f = \sum_{i=1}^K f^{(i)}$ avec $f^{(i)} = \HH(\lambda_iU_iV_i^T)$ la série associée à la matrice de rang 1 $\lambda_iU_iV_i^T$.
 
-Les oscillations harmoniques ou plus complexes, présentes dans la série initial sont généralement décomposées sur plusieurs de ces composantes. Le bruit est lui aussi projeté sur plusieurs composantes. Une étape d'identification et de regroupement est alors nécessaire pour produire une décomposition intéréssante. Une sélection des composantes peut être fait en se basant sur les valeurs singulières associées qui rendent compte de l'importance de la composante dans la série. Une étape de regroupement est ensuite nécessaire pour obtenir une décomposition plus simple à analyser.\\
 
-Un regroupement consiste à fournir un ensemble $(I_k)_{1 \le k \le d}$ tel que $\forall k, j$, $I_k \cap I_j = \emptyset$ and $\displaystyle \cup_{k=1}^d I_k = I$. Les composantes ainsi créées sont alors $f^{(I_k)} = \sum_{i \in I_k} f^{(i)}$. Le but de cette étape est de définir les sous espaces sur lesquels sont projetés les sous séries de longueur $K$ de $f$. Si ces sous espace sont bien choisis, les composantes oscillantes se retrouvent sur une unique composante $f^{(I_k)}$. Les auteurs de \cite{GNZ_10_SSA} proposent différents indicateurs pour aider au groupement mais ceux-ci requière une sélection manuelle des composantes à grouper.
+\subsection{Regroupement des composantes}
 
-\subsection{Automatisation du groupement}
-\label{sub:}
-Les travaux de Alexandrov et Golyandina \cite{alexandrov_05_auto} propose une première approche pour le regroupement automatique, principalement tourner à la récupération d'harmonique pure dans le signal. Dans \cite{alvarez_2013_auto}, Alvarez et al. propose une seconde méthode de regroupement automatique basé sur le clustering des périodigrammes des composantes reconstruites. Cette méthode vise un regroupement plus général des composantes. Dans des travaux récents, Abalov et Gubarev \cite{abalov_14_auto} présentent deux autres stratégies pour obtenir un regroupement automatique.
+Les oscillations harmoniques ou plus complexes, présentes dans la série initiale sont généralement décomposées sur plusieurs de ces composantes. Le bruit est lui aussi projeté sur plusieurs composantes. Une étape d'identification et de regroupement est alors nécessaire pour produire une décomposition intéréssante. Une sélection des composantes peut être faite en se basant sur les valeurs singulières associées qui rendent compte de l'importance de la composante dans la série. Une étape de regroupement est ensuite nécessaire pour obtenir une décomposition plus simple à analyser.
+
+
+Un regroupement consiste à fournir un ensemble $(I_k)_{1 \le k \le d}$ tel que $\forall k, j$, $I_k \cap I_j = \emptyset$ and $\displaystyle \cup_{k=1}^d I_k = I$. Les composantes ainsi créées sont alors $f^{(I_k)} = \sum_{i \in I_k} f^{(i)}$. Le but de cette étape est de définir les sous espaces sur lesquels sont projetés les sous séries de longueur $K$ de $f$. Si ces sous espace sont bien choisis, les composantes oscillantes se retrouvent sur une unique composante $f^{(I_k)}$. 
+
+
+
+AH NON C PAS JOLI LE PARAGRAPHE SUIVANT, DEVELOPPE ET EXPLIQUE MIEUX AVEC LES MAINS, SANS DONNER LES EQUATIONS MAIS EN DONNANT LE PRINCIPE OU LES HYPOTHESES SOUS JACENTES. ATTENTION AUX CITATIONS, IL NE FAUT PAS DONNER LES NOMS, UNIQUEMENT DECRIRE LE CONTENU
+Diverses approches ont été utilisées dans la littérature pour réaliser ce groupement. Si la plupart des travaux Les auteurs de \cite{GNZ_10_SSA} proposent différents indicateurs pour aider au groupement mais ceux-ci requière une sélection manuelle des composantes à grouper.
+Les travaux de Alexandrov et Golyandina \cite{alexandrov_05_auto} propose une première approche pour le regroupement automatique, principalement tourner à la récupération d'harmonique pure dans le signal. Dans \cite{alvarez_2013_auto}, Alvarez et al. propose une seconde méthode de regroupement automatique basé sur le clustering des périodigrammes des composantes reconstruites. Cette méthode vise un regroupement plus général des composantes. Dans des travaux récents, Abalov et Gubarev \cite{abalov_14_auto} présentent deux autres stratégies pour obtenir un regroupement automatique. 
 
 
 % subsection  (end)
 
-\section{Regroupement automatique}
+\section{Méthodes}
+Dans cette section, nous allons présenter plusieurs méthodes BLA BLA BLA.... avec une description unifiée, BLA BLA BLA
+
 
 \subsection{Formulation générale}
 \label{sub:form}
 
-Les stratégies de regroupement  peuvent être décrite en trois phases:
+Les stratégies de regroupement peuvent être décrites en trois phases:
 \begin{enumerate}
-	\item Sélectionner des composantes intéressante de la SSA
-	\item Calculer matrice d'adjacence entre ces composantes
-	\item Regrouper les composantes qui sont adjacentes
+	\item Sélectionner des composantes intéressantes de la SSA
+	\item Calculer une matrice d'adjacence entre ces composantes
+	\item Regrouper les composantes adjacentes
 \end{enumerate}
-L'étape 1 est effectuer en filtrant les composantes de la SVD ayant une valeur singulière $\lambda_k$ plus faible que $\tau_l*\lambda_1$. Ceci permet de filtrer les composantes de bruits en considérant qu'elles ont une part négligeable dans la variance de la série. On fixe pour toutes les expériences $\tau_l = 0.01$.\\
+La première étape est effectée en supprimant les composantes de la SVD ayant une valeur singulière $\lambda_k$ plus faible qu'un certain seuil (que l'on choisira ici adaptatif et de la forme  $\tau_l*\lambda_1$ avec $\tau_l = 0.01$). Ceci permet de filtrer les composantes de bruit en considérant qu'elles ont une part négligeable dans la variance de la série. 
 
-La seconde étape est définie par le choix d'une mesure de similarité entre les composantes. La matrice d'adjacence est calculer à partir de condition sur la similarité des composantes. La similarité choisie impact fortement les résultats du regroupement. Une similarité basée sur le périodigramme donnera de meilleur résultat pour le groupement de composantes purement harmonique que pour le groupement de composantes quasi-périodique. Les différents choix de fonction de similarité sont discutés dans la section \ref{sub:sim}.\\
+La seconde étape utilise une mesure de similarité entre les composantes afin d'obtenir une matrice d'adjacence. Intuitivement, le choix de cette mesure influence fortement les résultats du regroupement. Il est par exemple parfois pertinent de se  baser sur le contenu fréquentiel des composantes afin d'obtenir un bon regroupement des composantes harmoniques.
 
-Enfin, le choix de la stratégie de formation des groupes à partir de la matrice d'adjacence permet de considérer les composantes de manière différente au cours de l'étape 3. Il peut parfois être intéressant d'avoir un élément prévalent dans chaque groupe du fait de l'ordre induit par les valeurs singulières associées aux différentes composantes. La section \ref{sub:clust} discute des différents choix possibles.
+Enfin, la troisième étape concerne la stratégie de formation des groupes à partir de la matrice d'adjacence. CA INFLUENCE QUOI PRECISEMENT ?
 
 % subsection form (end)
+\subsection{Mesures de similarité}
+\label{sub:sim}
 
+\subsubsection{Corrélation}
+
+\paragraph{Abalov (GG1)}
+\label{par:}
+A RE ECRIRE
+Une première mesure de similarité est basée sur la corrélation  \cite{abalov_14_aut}. Tout d'abord, le ratio des valeurs singulières associées aux signaux considérés doit être proche 1. Ceci implique que l'on ne peut pas regrouper des composantes trop éloignées, pour éviter de grouper des phénomènes présents dans la séries 'ayant pas les même amplitudes. Cet effet est controlé par un seuil $\rho_1$. Ensuite, deux composantes sont regroupées si la corrélation entre elles est plus haute qu'une valeur seuil $\rho_c$:
+$$
+\texttt{Sim}(i, j) = \begin{cases}
+	1 &\text{ if } \displaystyle\frac{\min(\lambda_i, \lambda_j)}{\max(\lambda_i, \lambda_j)} \ge \rho_1 \text{ et } \text{corr}({(i)}, f^{[j)}) \ge \rho_c\\
+	0& \text{ sinon}
+\end{cases}
+$$
+% paragraph  (end)
+
+\paragraph{W-Corrélation (GG3)}
+\label{par:nn}
+IDEM : PAS LA BONNE FACON DE CITER
+Dans \cite{GNZ_10_SSA}, les auteurs introduisent le concept de w-corrélation pour deux séries $x, y$ de taille $N$ et pour une taille de fenêtre $K$:$$
+\text{w-corr}(x, y) = \frac{\langle x|y\rangle_w}{\|x\|_w\|y\|_w}
+$$avec $\langle x|y\rangle_w = \sum_{i=1}^n w_i x_i y_i$, $w_i = \min(i, N-i, K)$ et $\|x\|_w = \sqrt{\langle x|x\rangle_w}$. Deux séries sont séparables par la SSA si leur w-corrélation est nulle. Il est donc possible d'utiliser la valeur de la w-corrélation comme indicateur de similarité entre 2 composantes. On peut alors prendre une fonction de similarité identitque à celle de Abalov en remplaçant la corrélation par la w-corrélation. Ceci permet de filtrer les effets de bord qui peuvent apparaître dans la corrélation et ainsi d'obtenir un meilleur regroupement.
+% paragraph nn (end)
+
+
+\subsubsection{Periodigramme}
+IDEM
+La fréquence des composantes obtenues peut aussi être utilisé comme un indicateur de similarité des séries. Dans \cite{GNZ_10_SSA}, les auteurs recommandent d'observer le périodigrame des composantes pour inférer le regroupement. Le périodigrame d'une série $f$ de longueur $N$ est définie comme:$$
+\Pi_f(k) = \frac{1}{Z}\left|\sum_{n=1}^N f_n e^{-2i\pi n \frac{k}{N}}\right|^2
+$$ où $Z$ est une constante de normalisation telle que le périodigramme est une norme unitaire.\\
+
+\paragraph{Regroupement harmonique (HG)}\label{par:alex} IDEM Alexandrov \& al. proposent dans \cite{alexandrov_05_auto} une stratégie de regroupement spéciale pour extraire les harmoniques exponentiellement modulées. Ils proposent une fonction de similarité qui regroupe deux composantes successives $(j, j+1)$ si$$
+\frac{1}{2}\max_{0\le k \le L/2}\left(\Pi_{U_j}(k) + \Pi_{U_{j+1}}(k)\right) \ge \rho_0
+$$ pour $\rho_0\in \left[0, 1\right]$. Cette métrique rend compte du fait que les composantes successives partage un même pique dans leur périodigramme.
+
+
+% paragraph  (end)
+\paragraph{Abalov method (GG2)}
+\label{par:abalov}
+\cite{abalov_14_auto}
+On utilise
+% paragraph abalov (end)
+\paragraph{Alvarez}
+\label{par:alva}
+\cite{alvarez_2013_auto}
+% paragraph alva (end)
+\paragraph{Notre méthode}
+\label{par:tomtom}
 
 \subsection{Stratégie de clustering}
 \label{sub:clust}
 
-La stratégie de formation des groupes à partir de la matrice d'adjacence la plus simple est de considéré que toutes les composantes ont un interet uniforme. On peut alors considéré que deux composantes sont dans le même groupe dès lors qu'elles sont adjacentes. L'algorithme \ref{alg:unif} décrite la méthode de formation des groupes dans ce cas la.\\
+La stratégie de formation des groupes à partir de la matrice d'adjacence la plus simple est de considérer que toutes les composantes ont un interet uniforme. On peut alors considéré que deux composantes sont dans le même groupe dès lors qu'elles sont adjacentes. L'algorithme \ref{alg:unif} décrite la méthode de formation des groupes dans ce cas la.\\
 
 \begin{algorithm}
 \caption{Groupement uniforme}\label{alg:unif}
@@ -148,54 +203,7 @@ Given G
 
 % subsection clust (end)
 
-\subsection{Mesures de similarité}
-\label{sub:sim}
 
-\subsubsection{Corrélation}
-
-\paragraph{Abalov (GG1)}
-\label{par:}
-La métrique de similarité proposée par les auteurs de \cite{abalov_14_aut} repose sur deux points. Tout d'abord, le ratio des valeurs singulières associées aux signaux considérés doit être proche 1. Ceci implique que l'on ne peut pas regrouper des composantes trop éloignées, pour éviter de grouper des phénomènes présents dans la séries 'ayant pas les même amplitudes. Cet effet est controlé par un seuil $\rho_1$. Ensuite, deux composantes sont regroupées si la corrélation entre elles est plus haute qu'une valeur seuil $\rho_c$:
-$$
-\texttt{Sim}(i, j) = \begin{cases}
-	1 &\text{ if } \displaystyle\frac{\min(\lambda_i, \lambda_j)}{\max(\lambda_i, \lambda_j)} \ge \rho_1 \text{ et } \text{corr}({(i)}, f^{[j)}) \ge \rho_c\\
-	0& \text{ sinon}
-\end{cases}
-$$
-% paragraph  (end)
-
-\paragraph{W-Corrélation (GG3)}
-\label{par:nn}
-
-Dans \cite{GNZ_10_SSA}, les auteurs introduisent le concept de w-corrélation pour deux séries $x, y$ de taille $N$ et pour une taille de fenêtre $K$:$$
-\text{w-corr}(x, y) = \frac{\langle x|y\rangle_w}{\|x\|_w\|y\|_w}
-$$avec $\langle x|y\rangle_w = \sum_{i=1}^n w_i x_i y_i$, $w_i = \min(i, N-i, K)$ et $\|x\|_w = \sqrt{\langle x|x\rangle_w}$. Deux séries sont séparables par la SSA si leur w-corrélation est nulle. Il est donc possible d'utiliser la valeur de la w-corrélation comme indicateur de similarité entre 2 composantes. On peut alors prendre une fonction de similarité identitque à celle de Abalov en remplaçant la corrélation par la w-corrélation. Ceci permet de filtrer les effets de bord qui peuvent apparaître dans la corrélation et ainsi d'obtenir un meilleur regroupement.
-% paragraph nn (end)
-
-
-\subsubsection{Periodigramme}
-
-La fréquence des composantes obtenues peut aussi être utilisé comme un indicateur de similarité des séries. Dans \cite{GNZ_10_SSA}, les auteurs recommandent d'observer le périodigrame des composantes pour inférer le regroupement. Le périodigrame d'une série $f$ de longueur $N$ est définie comme:$$
-\Pi_f(k) = \frac{1}{Z}\left|\sum_{n=1}^N f_n e^{-2i\pi n \frac{k}{N}}\right|^2
-$$ où $Z$ est une constante de normalisation telle que le périodigramme est une norme unitaire.\\
-
-\paragraph{Regroupement harmonique (HG)}\label{par:alex} Alexandrov \& al. proposent dans \cite{alexandrov_05_auto} une stratégie de regroupement spéciale pour extraire les harmoniques exponentiellement modulées. Ils proposent une fonction de similarité qui regroupe deux composantes successives $(j, j+1)$ si$$
-\frac{1}{2}\max_{0\le k \le L/2}\left(\Pi_{U_j}(k) + \Pi_{U_{j+1}}(k)\right) \ge \rho_0
-$$ pour $\rho_0\in \left[0, 1\right]$. Cette métrique rend compte du fait que les composantes successives partage un même pique dans leur périodigramme.
-
-
-% paragraph  (end)
-\paragraph{Abalov method (GG2)}
-\label{par:abalov}
-\cite{abalov_14_auto}
-On utilise
-% paragraph abalov (end)
-\paragraph{Alvarez}
-\label{par:alva}
-\cite{alvarez_2013_auto}
-% paragraph alva (end)
-\paragraph{Notre méthode}
-\label{par:tomtom}
 
 
         
