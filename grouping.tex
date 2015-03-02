@@ -22,6 +22,12 @@
 \resumefrancais{Cet article introduit différentes stratégies de groupement automatique pour les composantes issues d'une analyse du spectre singulier (SSA). Cette étape, cruciale à la séparation de composantes haut niveau, permet de séparer les différentes effets présents dans le signal. }
 \resumeanglais{This paper introduce automatic grouping strategies for Singular Spectrum Analysis (SSA) components. This step is crucial to get meaningful results}
 
+
+\newcommand{\R}{\mathbb R}
+\newcommand{\serie}[1]{(#1_i)_{1 \le i\le T}}
+\newcommand{\val}[3]{(#1_1 #3 \dots #3 #1_#2)}
+\newcommand{\set}[1]{\left \{ 1, \dots, #1 \right \}}
+
 \begin{document}
 
 \maketitle
@@ -29,48 +35,51 @@
 
 \section{Introduction}
 
-L'analyse du spectre singulier est une technique très utile pour l'analyse de séries temporelles. Elle permet d'obtenir de manière simple une décomposition du signal en composantes de tendance, composantes oscillantes et bruit. Cette décomposition est utilisée pour l'étude de signaux en finance ou en biologie car elle permet de mettre en avant des périodicités non évidentes dans la série de départ et de les séparer d'autre phénomènes pour pouvoir les étudier.\\
+L'analyse de la dynamique sous-jacente d'une série temporelle est très intéressante pour l'étude de phénomènes non stationnaires. En finance ou en météorologie, les séries étudiées sont souvent courtes et bruitées et il n'est pas facile de les analyser. L'extraction de phénomènes de saisonnalité et leur étude peut apporter beaucoup d'information notamment sur les mécanisme produisant ces séries et parfois même permettre de formuler un modèle de prédiction.\\
 
+L'analyse du spectre singulier est une technique très utile pour l'analyse de séries temporelles. Elle permet d'obtenir de manière simple une décomposition du signal en composantes de tendance, de saisonnalité et de bruit. Cette décomposition est utilisée pour l'étude de signaux en finance ou en biologie car elle permet de séparer différents mécanismes présents dans la série de départ, facilitant leur étude.\\
 
-Cependant, cette technique est encore peu utilisé du fait de son manque d'automatisation. En effet, la plupart des utilisations faites se basent sur la sélection manuelle de certains paramètres, notamment le regroupement de certaines composantes entre elles. Ce regroupement est critique car sans lui, un même phénomène peu se retrouver retrouver sur plusieurs des composantes fournies, ce qui complique l'analyse des résultats.\\
+Cependant, cette technique est peu utilisé du fait de son manque d'automatisation. En effet, la plupart des utilisations faites se basent sur la sélection manuelle de certains paramètres, notamment le regroupement de certaines composantes entre elles. Ce regroupement est critique car sans lui, un même phénomène peu se retrouver retrouver sur plusieurs des composantes fournies, ce qui complique l'analyse.\\
 
 Dans cet article, nous étudions différentes stratégies de regroupement présentées dans la littérature. Celles-ci sont comparées à nos propres techniques.
 
 \subsection{SSA}
 
-L'analyse du spectre singulier (SSA) est une technique introduite par Vautard et al \cite{vautard_ghil_89_SSA} pour l'analyse de la dynamique de séries temporelles. Cette technique, basée sur le théorème de Karhunen-Loève, permet de décomposer un signal en une somme de composante haut niveau rattachées à sa tendance et à sa saisonalité.
+L'analyse du spectre singulier (SSA) est une technique introduite par Vautard et al \cite{vautard_ghil_89_SSA} pour l'analyse de la dynamique de séries temporelles. Cette technique, basée sur le théorème de Karhunen-Loève, permet de décomposer un signal en une somme de composante haut niveau rattachées à sa tendance et à sa saisonnalité.
 
 \paragraph{Matrices de trajectoires}
 
-On considère un signal fini échantillonné $f = (f_n)_{1 \le n\le T}$ et un entier $K \in \left \{ 1, \dots, T/2 \right \}$. La matrice de K-trajectoire $X^{(K)} \in \mathbb{R}^{K\times L}$ est défini par:
+On considère un signal fini échantillonné $f = \val{f}{T}{,}$ et un entier $K \in \left \{ 1, \dots, T/2 \right \}$. La matrice de K-trajectoire $X^{(K)} \in \R^{K\times L}$ de la série $f$ est défini par:
 $$ X^{(K)} = \begin{bmatrix}
 	f_1 & f_2 &\dots & f_K\\
 	f_2 & f_3 &\dots & f_{K+1}\\
 	\dots\\
-	f_{L} & f_{T-K+1} &\dots & f_T
-\end{bmatrix}$$
-Cette matrice contient toutes les sous fenêtres de longueur $K$ de $f$.\\
+	f_{L} & f_{L+1} &\dots & f_T
+\end{bmatrix}$$ avec $L = T-K$. Cette matrice contient toutes les sous séries de longueur $K$ de $f$.\\
 
-Le signal peut être reconstruit naturellement à partir de cette matrice du fait de sa structure de Hankel. Si l'on considère une matrice $M$ n'ayant pas cette structure, le signal ayant la matrice de trajectoire la plus proche de $M$ peut être construit en moyennant le long des anti-diagonales. Cette opération permet de définir un mapping entre l'espace des matrices et celui des signaux. On notera par la suite $\HH$ l'opération de moyennage le long des diagonales.
+Le signal peut être reconstruit naturellement à partir de cette matrice du fait de sa structure de Hankel, avec toutes les composantes sur les anti-diagonales égales. Si l'on considère une matrice $M$ n'ayant pas cette structure, le signal ayant la matrice de trajectoire la plus proche de $M$ peut être construit en moyennant le long des anti-diagonales. Cette opération permet de définir un mapping entre l'espace des matrices et celui des signaux. On notera par la suite $\HH: \R^{K\times L} \to \R^T$ l'opération d'hankelisation, qui effectue la moyenne le long des anti-diagonales. Cette opération est linéaire.
 
 \paragraph{Extraction de motifs}
 
-Une décomposition en valeur singulière (SVD) de la matrice de K-trajectoire $X^{(K)}$ de $f$ permet d'extraire les motifs de longueur $K$ les plus intéressant. En effet, la SVD donne: 
+Une décomposition en valeur singulière (SVD) de la matrice de K-trajectoire $X^{(K)}$ de $f$ permet d'extraire les motifs de longueur $K$ les plus intéressants au sens de la variance. En effet, la SVD donne: 
 $$
-X^{(K)} = U D V^T
-$$ avec $U, V$ deux matrices orthogonales et $D$ une matrice diagonale. $U$ peut alors être vu comme un dictionnaire de motifs de taille $K$ sur lequel est projeté le signal. Ces motifs permettent de capturer au mieux la variance du signal. En effet, les vecteurs singuliers de la SVD maximisent la covariance de $U_i$ et des $X_i$.
+X^{(K)} = U \Lambda V^T
+$$ avec $U, V$ deux matrices orthogonales et $\Lambda$ une matrice diagonale ayant pour valeurs $\lambda_1\le \dots \lambda_K$. La matrice $U$ peut être vu comme un dictionnaire de motifs de taille $K$ sur lequel est projeté le signal. Ces motifs permettent de capturer au mieux la variance du signal. Les vecteurs singuliers de la SVD maximisent récursivement la covariance de $U_i$ et des sous séries de longueur $K$ de $f$.
 
 \paragraph{Reconstruction de composantes}
 
 L'étape d'extraction de motif permet d'obtenir une décomposition de la matrice de trajectoire sous la forme d'une somme de matrice de rang 1:$$
 X^{(K)} = \sum_{i=1}^K \lambda_i U_iV_i^T 
-$$A partir de cette décomposition, on considère les séries temporelles $f^{(i)} = \HH(\lambda_iU_iV_i^T)$ pour $i \in \left \{ 1,\dots, m \right \}$ résultantes de l'opération d'hankelisation des matrices de \mbox{rang 1}. Ces composantes ne sont pas toutes utiles car certaines sont du bruit. Une sélection des composantes peut être fait en se basant sur les valeurs singulières associées. De plus, ces composantes peuvent avérées redondantes, séparant un même effet. Une étape de regroupement est alors nécessaire pour obtenir une décomposition utile.\\
+$$où  $U_i$.Par linéarité de l'opération d'hankelisation, on obtient une décomposition de $f = \sum_{i=1}^K f^{(i)}$ avec $f^{(i)} = \HH(\lambda_iU_iV_i^T)$ la série associée à la matrice de rang 1 $\lambda_iU_iV_i^T$.\\
 
-Le regroupement consiste à trouver un ensemble $(I_k)_{1 \le k \le d}$ tel que $\forall k, j$, $I_k \cap I_j = \emptyset$ and $\displaystyle \cup_{k=1}^d I_k = I$. Les composantes ainsi créées sont alors $x$
+Les oscillations harmoniques ou plus complexes, présentes dans la série initial sont généralement décomposées sur plusieurs de ces composantes. Le bruit est lui aussi projeté sur plusieurs composantes. Une étape d'identification et de regroupement est alors nécessaire pour produire une décomposition intéréssante. Une sélection des composantes peut être fait en se basant sur les valeurs singulières associées qui rendent compte de l'importance de la composante dans la série. Une étape de regroupement est ensuite nécessaire pour obtenir une décomposition plus simple à analyser.\\
 
+Un regroupement consiste à fournir un ensemble $(I_k)_{1 \le k \le d}$ tel que $\forall k, j$, $I_k \cap I_j = \emptyset$ and $\displaystyle \cup_{k=1}^d I_k = I$. Les composantes ainsi créées sont alors $f^{(I_k)} = \sum_{i \in I_k} f^{(i)}$. Le but de cette étape est de définir les sous espaces sur lesquels sont projetés les sous séries de longueur $K$ de $f$. Si ces sous espace sont bien choisis, les composantes oscillantes se retrouvent sur une unique composante $f^{(I_k)}$. Les auteurs de \cite{GNZ_10_SSA} proposent différents indicateurs pour aider au groupement mais ceux-ci requière une sélection manuelle des composantes à grouper.
 
-\subsection{Automatisation}
+\subsection{Automatisation du groupement}
 \label{sub:}
+Les travaux de Alexandrov et Golyandina \cite{alexandrov_05_auto} propose une première approche pour le regroupement automatique, principalement tourner à la récupération d'harmonique pure dans le signal. Dans \cite{alvarez_2013_auto}, Alvarez et al. propose une seconde méthode de regroupement automatique basé sur le clustering des périodigrammes des composantes reconstruites. Cette méthode vise un regroupement plus général des composantes. Dans des travaux récents, Abalov et Gubarev \cite{abalov_14_aut} présentent deux autres stratégies pour obtenir un regroupement automatique.
+
 
 % subsection  (end)
 
@@ -79,29 +88,29 @@ Le regroupement consiste à trouver un ensemble $(I_k)_{1 \le k \le d}$ tel que 
 \subsection{Formulation générale}
 \label{sub:form}
 
-Les stratégies de regroupement se définissent comme
+Les stratégies de regroupement  peuvent être décrite en trois phases:
 \begin{enumerate}
-	\item Séléctioner m composantes de la SSA
-	\item Calculer la similarité entre chacune d'elles
-	\item Regrouper les composantes qui sont similaires
+	\item Sélectionner des composantes intéressante de la SSA
+	\item Calculer matrice d'adjacence entre ces composantes
+	\item Regrouper les composantes qui sont adjacentes
 \end{enumerate}
-L'étape 1 consiste à filtrer les composantes de la SVD ayant une valeur singulières plus faible que $\tau_l*\lambda_1$. Ceci permet d'éliminer les composantes de bruits. La fonction \texttt{Up} permet de définir comment la stratégie considère les différentes composantes. On fixe pour toutes les expériences $\tau_l = 0.01$\\
+L'étape 1 est effectuer en filtrant les composantes de la SVD ayant une valeur singulière $\lambda_k$ plus faible que $\tau_l*\lambda_1$. Ceci permet de filtrer les composantes de bruits en considérant qu'elles ont une part négligeable dans la variance de la série. On fixe pour toutes les expériences $\tau_l = 0.01$.\\
 
-peuvent être résumé sous une même forme, présentée dans \mbox{l'Algorithme \ref{alg:gen}}. Il est alors nécessaire de choisir 3 paramètres: $\tau_l \in \left[0, 1\right]$, $\texttt{Sim}: \left \{ 1, \dots m \right \}^2 \to \left \{ 0,1 \right \}$ une fonction de similarité entre les composantes et $\texttt{Up}$ une fonction d'actualisation des groupes.\\
+La seconde étape est définie par le choix d'une mesure de similarité entre les composantes. La matrice d'adjacence est calculer à partir de condition sur la similarité des composantes. La similarité choisie impact fortement les résultats du regroupement. Une similarité basée sur le périodigramme donnera de meilleur résultat pour le groupement de composantes purement harmonique que pour le groupement de composantes quasi-périodique. Les différents choix de fonction de similarité sont discutés dans la section \ref{sub:sim}.\\
+
+
+Enfin, le choix de la stratégie de formation des groupes à partir de la matrice d'adjacence permet de considérer les composantes de manière différente. Il peut parfois être intéressant d'avoir un élément prévalent dans 
 
 % subsection form (end)
 
-Le paramètre $\tau_l$ Une première solution est de considérer que toutes les composantes obtenues avec la SSA ont le même poids. Ainsi, les composantes $i$ et $j$ seront grouper si $\texttt{Sim}(i, j) = 1$. Cette solution ne tient pas compte de l'importance relative des composantes, qui peut être mesurer par la valeur singulière associée. Un autre choix pour la fonction \texttt{Up} est de considérer qu'un groupe est lié à la composante avec la plus grande value singulière. Chaque groupe est alors formé de sorte que si $I_k = \left\{j | \texttt{Sim}(j, i) = 1\right\}$ où $i = \arg\max_{j\in I_k} \lambda_j$. Ce regroupement met en avant la prépondérance de la composantes de plus haute valeur singulière.\\
-
-La fonction \texttt{Sim} est la fonction qui définie la stratégie de regroupement des composantes. Elle permet d'obtenir une matrice d'adjacence entre les composantes qui servira à décider de regrouper ou non deux séries.\\
 
 \subsection{Stratégie de clustering}
-\label{sub:}
+\label{sub:clust}
 
 % subsection  (end)
 
 \subsection{Mesures de similarité}
-\label{sub:}
+\label{sub:sim}
 
 % subsection  (end)
 
@@ -166,7 +175,7 @@ Dans \cite{abalov_14_aut}, les auteurs proposent d'utiliser le coéfficient de d
 R^2(f, \hat f) = 1 - \frac{\|f-\hat f\|^2}{\|f-\bar f\|^2}
 $$ La métrique d'évaluation du grouping est alors calculer  en moyennant les valeurs minimales de $R^2$ pour chaque composante $c_i$ du signal d'origine et pour $$
 \overline{ R^2} = \sum_{i=1}^n \min_k R^2(c_i, g_k)
-$$
+$$Cette métrique présente cependant des inconvénients car elle ne rend compte que du rappel de la méthode et non de la précision. En effet, le but de la phase de groupement est d'obtenir des composantes haut niveau. Une des taches essentielles est donc de réussir à filtrer les composantes non utiles. Ainsi, il faut évaluer
 
 % subsection  (end)
 
