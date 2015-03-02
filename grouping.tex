@@ -78,7 +78,7 @@ Un regroupement consiste à fournir un ensemble $(I_k)_{1 \le k \le d}$ tel que 
 
 \subsection{Automatisation du groupement}
 \label{sub:}
-Les travaux de Alexandrov et Golyandina \cite{alexandrov_05_auto} propose une première approche pour le regroupement automatique, principalement tourner à la récupération d'harmonique pure dans le signal. Dans \cite{alvarez_2013_auto}, Alvarez et al. propose une seconde méthode de regroupement automatique basé sur le clustering des périodigrammes des composantes reconstruites. Cette méthode vise un regroupement plus général des composantes. Dans des travaux récents, Abalov et Gubarev \cite{abalov_14_aut} présentent deux autres stratégies pour obtenir un regroupement automatique.
+Les travaux de Alexandrov et Golyandina \cite{alexandrov_05_auto} propose une première approche pour le regroupement automatique, principalement tourner à la récupération d'harmonique pure dans le signal. Dans \cite{alvarez_2013_auto}, Alvarez et al. propose une seconde méthode de regroupement automatique basé sur le clustering des périodigrammes des composantes reconstruites. Cette méthode vise un regroupement plus général des composantes. Dans des travaux récents, Abalov et Gubarev \cite{abalov_14_auto} présentent deux autres stratégies pour obtenir un regroupement automatique.
 
 
 % subsection  (end)
@@ -98,8 +98,7 @@ L'étape 1 est effectuer en filtrant les composantes de la SVD ayant une valeur 
 
 La seconde étape est définie par le choix d'une mesure de similarité entre les composantes. La matrice d'adjacence est calculer à partir de condition sur la similarité des composantes. La similarité choisie impact fortement les résultats du regroupement. Une similarité basée sur le périodigramme donnera de meilleur résultat pour le groupement de composantes purement harmonique que pour le groupement de composantes quasi-périodique. Les différents choix de fonction de similarité sont discutés dans la section \ref{sub:sim}.\\
 
-
-Enfin, le choix de la stratégie de formation des groupes à partir de la matrice d'adjacence permet de considérer les composantes de manière différente. Il peut parfois être intéressant d'avoir un élément prévalent dans 
+Enfin, le choix de la stratégie de formation des groupes à partir de la matrice d'adjacence permet de considérer les composantes de manière différente au cours de l'étape 3. Il peut parfois être intéressant d'avoir un élément prévalent dans chaque groupe du fait de l'ordre induit par les valeurs singulières associées aux différentes composantes. La section \ref{sub:clust} discute des différents choix possibles.
 
 % subsection form (end)
 
@@ -107,12 +106,50 @@ Enfin, le choix de la stratégie de formation des groupes à partir de la matric
 \subsection{Stratégie de clustering}
 \label{sub:clust}
 
-% subsection  (end)
+La stratégie de formation des groupes à partir de la matrice d'adjacence la plus simple est de considéré que toutes les composantes ont un interet uniforme. On peut alors considéré que deux composantes sont dans le même groupe dès lors qu'elles sont adjacentes. L'algorithme \ref{alg:unif} décrite la méthode de formation des groupes dans ce cas la.\\
+
+\begin{algorithm}
+\caption{Groupement uniforme}\label{alg:unif}
+Given G
+\begin{algorithmic}[1]
+\For{ i = 1 \dots K}
+\State group[i] = i
+\EndFor
+\For{ i = 1 \dots K}
+\For{ j = i+1 \dots K}
+\If{$G_{i,j} = 1$} group[j] = group[i]
+\EndIf
+\EndFor
+\EndFor
+\State \Return group
+\end{algorithmic}
+\end{algorithm}
+
+Une autre possibilité est de considéré que les composantes ont une importance différente. L'importance de chaque composante peut être mesurée par la part de variance $\frac{\lambda_i}{\sum_{j=1}^n \lambda_j}$ expliqué par cette composante. On peut donc considéré qu'il est préférable de rajouter une composante $j$ dans un groupe $I_k$ que si $G_{i, j} = 1$ pour $i = \arg\max_{l \in I_k} \lambda_l$. Ici, la composante est ajouté dans un groupe uniquement lorsqu'elle est similaire à la composante la plus importante du groupe.
+
+\begin{algorithm}
+\caption{Groupement ordonée}\label{alg:ord}
+Given G
+\begin{algorithmic}[1]
+\State GI $= \left \{  \right \}, I = \set{m}$
+\For{$i \in I$}
+\State remove i from $I$, $I_i = \left \{ i \right \}$
+\For{$j \in I$}
+\If{$G_{i,j} = 1$} 
+\State remove j from $I$, $I_i = I_i \cup \left \{ j \right \}$
+\EndIf
+\EndFor
+\State GI = GI$ \cup I_i$
+\EndFor
+\State \Return GI
+\end{algorithmic}
+\end{algorithm}
+
+
+% subsection clust (end)
 
 \subsection{Mesures de similarité}
 \label{sub:sim}
-
-% subsection  (end)
 
 \subsubsection{Corrélation}
 
@@ -127,7 +164,7 @@ $$
 $$
 % paragraph  (end)
 
-\paragraph{Nous (GG3)}
+\paragraph{W-Corrélation (GG3)}
 \label{par:nn}
 
 Dans \cite{GNZ_10_SSA}, les auteurs introduisent le concept de w-corrélation pour deux séries $x, y$ de taille $N$ et pour une taille de fenêtre $K$:$$
@@ -144,9 +181,7 @@ $$ où $Z$ est une constante de normalisation telle que le périodigramme est un
 
 \paragraph{Regroupement harmonique (HG)}\label{par:alex} Alexandrov \& al. proposent dans \cite{alexandrov_05_auto} une stratégie de regroupement spéciale pour extraire les harmoniques exponentiellement modulées. Ils proposent une fonction de similarité qui regroupe deux composantes successives $(j, j+1)$ si$$
 \frac{1}{2}\max_{0\le k \le L/2}\left(\Pi_{U_j}(k) + \Pi_{U_{j+1}}(k)\right) \ge \rho_0
-$$ pour $\rho_0\in \left[0, 1\right]$.\\
-
-Ceci rend compte du fait que les composantes successives partage un même pique dans leur périodigramme.
+$$ pour $\rho_0\in \left[0, 1\right]$. Cette métrique rend compte du fait que les composantes successives partage un même pique dans leur périodigramme.
 
 
 % paragraph  (end)
@@ -165,6 +200,8 @@ On utilise
 
         
 % paragraph tomtom (end)
+
+% subsection sim (end)
 
 \section{Méthode d'évaluation}
 \label{sec:eval}
