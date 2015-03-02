@@ -6,6 +6,7 @@
 \usepackage[english,francais]{babel}
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
+\usepackage{color}
 %\usepackage{enumitem}
 
 
@@ -26,6 +27,7 @@
 \newcommand{\R}{\mathbb R}
 \newcommand{\serie}[1]{(#1_i)_{1 \le i\le T}}
 \newcommand{\val}[3]{(#1_1 #3 \dots #3 #1_#2)}
+\newcommand{\vect}[3]{(#1_1 #3 \dots #3 #1_#2)}
 \newcommand{\set}[1]{\left \{ 1, \dots, #1 \right \}}
 
 \begin{document}
@@ -56,7 +58,7 @@ $$ X^{(K)} = \begin{bmatrix}
 	f_{L} & f_{L+1} &\dots & f_T
 \end{bmatrix}$$ avec $L = T-K$. Cette matrice contient toutes les sous séries de longueur $K$ de $f$.
 
-Le signal peut être reconstruit naturellement à partir de cette matrice du fait de sa structure de Hankel, avec toutes les composantes sur les anti-diagonales égales. Si l'on considère une matrice $M$ n'ayant pas cette structure, le signal ayant la matrice de trajectoire la plus proche de $M$ peut être construit en moyennant le long des anti-diagonales. Cette opération permet de définir un mapping PAS D ANGLICISMES entre l'espace des matrices et celui des signaux. On notera par la suite $\HH: \R^{K\times L} \to \R^T$ l'opération d'hankelisation, qui effectue la moyenne le long des anti-diagonales. Cette opération est linéaire.
+Le signal peut être reconstruit naturellement à partir de cette matrice du fait de sa structure de Hankel, avec toutes les composantes sur les anti-diagonales égales. Si l'on considère une matrice $M$ n'ayant pas cette structure, le signal ayant la matrice de trajectoire la plus proche de $M$ peut être construit en moyennant le long des anti-diagonales. Cette opération permet de  passer de l'espace des matrices à celui des signaux. On notera par la suite $\HH: \R^{K\times L} \to \R^T$ l'opération d'hankelisation, qui effectue la moyenne le long des anti-diagonales. Cette opération est linéaire.
 
 
 
@@ -74,21 +76,21 @@ $$où  $U_i$.Par linéarité de l'opération d'hankelisation, on obtient une dé
 
 \subsection{Regroupement des composantes}
 
-Les oscillations harmoniques ou plus complexes, présentes dans la série initiale sont généralement décomposées sur plusieurs de ces composantes. Le bruit est lui aussi projeté sur plusieurs composantes. Une étape d'identification et de regroupement est alors nécessaire pour produire une décomposition intéréssante. Une sélection des composantes peut être faite en se basant sur les valeurs singulières associées qui rendent compte de l'importance de la composante dans la série. Une étape de regroupement est ensuite nécessaire pour obtenir une décomposition plus simple à analyser.
-
-
-Un regroupement consiste à fournir un ensemble $(I_k)_{1 \le k \le d}$ tel que $\forall k, j$, $I_k \cap I_j = \emptyset$ and $\displaystyle \cup_{k=1}^d I_k = I$. Les composantes ainsi créées sont alors $f^{(I_k)} = \sum_{i \in I_k} f^{(i)}$. Le but de cette étape est de définir les sous espaces sur lesquels sont projetés les sous séries de longueur $K$ de $f$. Si ces sous espace sont bien choisis, les composantes oscillantes se retrouvent sur une unique composante $f^{(I_k)}$. 
+Les oscillations harmoniques ou plus complexes, présentes dans la série initiale sont généralement décomposées sur plusieurs de ces composantes. Le bruit est lui aussi projeté sur plusieurs composantes. Une étape d'identification et de regroupement est alors nécessaire pour produire une décomposition intéressante. Une sélection des composantes peut être faite en se basant sur les valeurs singulières associées qui rendent compte de l'importance de la composante dans la série. Une étape de regroupement est ensuite nécessaire pour obtenir une décomposition plus simple à analyser.
 
 
 
-AH NON C PAS JOLI LE PARAGRAPHE SUIVANT, DEVELOPPE ET EXPLIQUE MIEUX AVEC LES MAINS, SANS DONNER LES EQUATIONS MAIS EN DONNANT LE PRINCIPE OU LES HYPOTHESES SOUS JACENTES. ATTENTION AUX CITATIONS, IL NE FAUT PAS DONNER LES NOMS, UNIQUEMENT DECRIRE LE CONTENU
-Diverses approches ont été utilisées dans la littérature pour réaliser ce groupement. Si la plupart des travaux Les auteurs de \cite{GNZ_10_SSA} proposent différents indicateurs pour aider au groupement mais ceux-ci requière une sélection manuelle des composantes à grouper.
-Les travaux de Alexandrov et Golyandina \cite{alexandrov_05_auto} propose une première approche pour le regroupement automatique, principalement tourner à la récupération d'harmonique pure dans le signal. Dans \cite{alvarez_2013_auto}, Alvarez et al. propose une seconde méthode de regroupement automatique basé sur le clustering des périodigrammes des composantes reconstruites. Cette méthode vise un regroupement plus général des composantes. Dans des travaux récents, Abalov et Gubarev \cite{abalov_14_auto} présentent deux autres stratégies pour obtenir un regroupement automatique. 
+
+{\color{red} \textbf{TODO} - Check explication groupement + citation} 
+Diverses approches ont été utilisées dans la littérature pour réaliser ce groupement. La plupart des travaux utilisant la SSA réalise cette étape de manière manuelle. Certains indicateurs basés sur la corrélation et le spectre de fréquence des composantes ont été développés pour aidé au choix des groupes \cite{GNZ_10_SSA}.
+
+Des approches automatisées ont aussi été proposé à partir de ces indicateurs. Les travaux de Alexandrov et Golyandina \cite{alexandrov_05_auto} propose une première approche pour le regroupement automatique, principalement tourner à la récupération d'harmonique pure dans le signal. Dans \cite{alvarez_2013_auto}, Alvarez et al. propose une seconde méthode de regroupement automatique basé sur le clustering des périodigrammes des composantes reconstruites. Cette méthode vise un regroupement plus général des composantes. Dans des travaux récents, Abalov et Gubarev \cite{abalov_14_auto} présentent deux autres stratégies pour obtenir un regroupement automatique. 
 
 
 % subsection  (end)
 
 \section{Méthodes}
+{\color{red} \textbf{TODO} - \$ d'explication} 
 Dans cette section, nous allons présenter plusieurs méthodes BLA BLA BLA.... avec une description unifiée, BLA BLA BLA
 
 
@@ -105,7 +107,7 @@ La première étape est effectée en supprimant les composantes de la SVD ayant 
 
 La seconde étape utilise une mesure de similarité entre les composantes afin d'obtenir une matrice d'adjacence. Intuitivement, le choix de cette mesure influence fortement les résultats du regroupement. Il est par exemple parfois pertinent de se  baser sur le contenu fréquentiel des composantes afin d'obtenir un bon regroupement des composantes harmoniques.
 
-Enfin, la troisième étape concerne la stratégie de formation des groupes à partir de la matrice d'adjacence. CA INFLUENCE QUOI PRECISEMENT ?
+Enfin, la troisième étape concerne la stratégie de formation des groupes à partir de la matrice d'adjacence.  {\color{red} \textbf{TODO} - End \$} 
 
 % subsection form (end)
 \subsection{Mesures de similarité}
@@ -155,14 +157,14 @@ $$ où $Z$ est une constante de normalisation telle que le périodigramme est un
     $$Ici
 % paragraph abalov (end)
 \paragraph{K-means spéctral (KM)}\label{par:KM}
-DAns \cite{alvarez_2013_auto}, Alvarez \& al. proposent d'utiliser une méthode de clustering afin
-% paragraph alva (end)
+Une autre idée pour utiliser le périodigramme de manière automatique est de réaliser un clustering des composantes en prenant pour déscripteurs les périodigrammes des composantes reconstruites \cite{alvarez_2013_auto}. On utilise pour cela un algorithme K-means sur les vecteurs $\Pi_j = (\Pi_{U_j}(1), \dots, \Pi_{U_j}(N/2))$ pour $1 \le i \le K$. Le choix du nombre de cluster C est un choix critique ici. Une estimation du nombre de cluster peut être faite en considérant le rang de la matrice $\Pi = \begin{bmatrix}
+	\Pi_1&\dots&\Pi_K
+\end{bmatrix}^T$ par une SVD.
+% paragraph KM (end)
 
 
 \paragraph{Regroupement harmonique stabilisé (HGS)}\label{par:HGS}
 
-
-        
 % paragraph HGS (end)
 
 \subsection{Stratégie de clustering}
@@ -224,17 +226,17 @@ Given G
     
      La méthode d'évaluation calcul la moyenne des métriques mentionées ci-dessous pour chaque stratégie de groupement sur 2000 tirages de fonctions selon le modèle (\ref{eq:artsig}).
 
-% subsection  (end)
+% subsection artsig  (end)
 
 \subsection{Métrique d'évaluation}
-\label{sub:}
-Dans \cite{abalov_14_aut}, les auteurs proposent d'utiliser le coéfficient de determination $R^2$ pour évaluter la qualité d'un groupement. Ce coefficient rend compte de l'erreur commise par rapport à la variance de la composante. Pour une serie $f$ de moyenne $\bar f$ et pour un estimateur $\hat f$, le coefficient de determination est calculer suivant$$
+\label{sub:met}
+L'une métrique utilisée pour évaluer la qualité d'un groupement est le coefficient de détermination $R^2$ \cite{abalov_14_auto}. Ce coefficient rend compte de l'erreur commise par rapport à la variance de la composante. Pour une série $f$ de moyenne $\bar f$ et pour un estimateur $\hat f$, le coefficient de détermination est calculer suivant$$
 R^2(f, \hat f) = 1 - \frac{\|f-\hat f\|^2}{\|f-\bar f\|^2}
 $$ La métrique d'évaluation du grouping est alors calculer  en moyennant les valeurs minimales de $R^2$ pour chaque composante $c_i$ du signal d'origine et pour $$
 \overline{ R^2} = \sum_{i=1}^n \min_k R^2(c_i, g_k)
-$$Cette métrique présente cependant des inconvénients car elle ne rend compte que du rappel de la méthode et non de la précision. En effet, le but de la phase de groupement est d'obtenir des composantes haut niveau. Une des taches essentielles est donc de réussir à filtrer les composantes non utiles \cite{abalov_14_aut}
+$$Cette métrique présente cependant des inconvénients car elle ne rend compte que du rappel de la méthode et non de la précision. En effet, le but de la phase de groupement est d'obtenir des composantes haut niveau. Une des taches essentielles est donc de réussir à filtrer les composantes non utiles
 
-% subsection  (end)
+% subsection met (end)
 
 \subsection{Séparabilité}
 \label{sub:sep}
