@@ -113,50 +113,57 @@ Enfin, la troisième étape concerne la stratégie de formation des groupes à p
 
 \subsubsection{Corrélation}
 
-\paragraph{Abalov (GG1)}
-\label{par:}
-A RE ECRIRE
-Une première mesure de similarité est basée sur la corrélation  \cite{abalov_14_aut}. Tout d'abord, le ratio des valeurs singulières associées aux signaux considérés doit être proche 1. Ceci implique que l'on ne peut pas regrouper des composantes trop éloignées, pour éviter de grouper des phénomènes présents dans la séries 'ayant pas les même amplitudes. Cet effet est controlé par un seuil $\rho_1$. Ensuite, deux composantes sont regroupées si la corrélation entre elles est plus haute qu'une valeur seuil $\rho_c$:
-$$
-\texttt{Sim}(i, j) = \begin{cases}
-	1 &\text{ if } \displaystyle\frac{\min(\lambda_i, \lambda_j)}{\max(\lambda_i, \lambda_j)} \ge \rho_1 \text{ et } \text{corr}({(i)}, f^{[j)}) \ge \rho_c\\
-	0& \text{ sinon}
-\end{cases}
-$$
+\paragraph{Corrélation (GG1)}\label{par:GG1}
+    Une première mesure de similarité est basée sur la corrélation \cite{abalov_14_auto}. Deux composantes sont regroupées si la corrélation entre elles est plus haute qu'une valeur seuil $\rho_c$. Pour éviter de grouper des composantes d'importance trop éloignée, on ajoute une condition sur le ratio des valeurs singulières associées aux signaux considérés qui doit être proche 1. Cela évite de grouper des phénomènes d'amplitude différentes. On définit la matrice d'adjacence $G = (g_{i, j})_{0 \le i,j\le K}$ par:
+    $$
+    g_{i, j} = \begin{cases}
+	    1 &\text{ si } \displaystyle\frac{\min(\lambda_i, \lambda_j)}{\max(\lambda_i, \lambda_j)} \ge \rho_1 \text{ et } \text{corr}(f^{(i)}, f^{[j)}) \ge \rho_c\\
+	    0& \text{ sinon}
+    \end{cases}
+    $$
 % paragraph  (end)
 
-\paragraph{W-Corrélation (GG3)}
-\label{par:nn}
-IDEM : PAS LA BONNE FACON DE CITER
-Dans \cite{GNZ_10_SSA}, les auteurs introduisent le concept de w-corrélation pour deux séries $x, y$ de taille $N$ et pour une taille de fenêtre $K$:$$
-\text{w-corr}(x, y) = \frac{\langle x|y\rangle_w}{\|x\|_w\|y\|_w}
-$$avec $\langle x|y\rangle_w = \sum_{i=1}^n w_i x_i y_i$, $w_i = \min(i, N-i, K)$ et $\|x\|_w = \sqrt{\langle x|x\rangle_w}$. Deux séries sont séparables par la SSA si leur w-corrélation est nulle. Il est donc possible d'utiliser la valeur de la w-corrélation comme indicateur de similarité entre 2 composantes. On peut alors prendre une fonction de similarité identitque à celle de Abalov en remplaçant la corrélation par la w-corrélation. Ceci permet de filtrer les effets de bord qui peuvent apparaître dans la corrélation et ainsi d'obtenir un meilleur regroupement.
+\paragraph{W-Corrélation (GG3)}\label{par:GG3} 
+    La w-corrélation pour deux séries $x, y$ de taille $N$ et pour une taille de fenêtre $K$:
+    $$
+    \text{w-corr}(x, y) = \frac{\langle x|y\rangle_w}{\|x\|_w\|y\|_w}
+    $$avec $\langle x|y\rangle_w = \sum_{i=1}^n w_i x_i y_i$, $w_i = \min(i, N-i, K)$ et $\|x\|_w = \sqrt{\langle x|x\rangle_w}$. Deux séries sont séparables par la SSA si leur w-corrélation est nulle \cite{GNZ_10_SSA}. Il est donc possible d'utiliser la valeur de la w-corrélation comme indicateur de similarité entre 2 composantes. On peut alors prendre une fonction de similarité identique à celle de Abalov en remplaçant la corrélation par la w-corrélation. Ceci permet de filtrer les effets de bord qui peuvent apparaître dans la corrélation et ainsi d'obtenir un meilleur regroupement.
 % paragraph nn (end)
 
 
 \subsubsection{Periodigramme}
-IDEM
-La fréquence des composantes obtenues peut aussi être utilisé comme un indicateur de similarité des séries. Dans \cite{GNZ_10_SSA}, les auteurs recommandent d'observer le périodigrame des composantes pour inférer le regroupement. Le périodigrame d'une série $f$ de longueur $N$ est définie comme:$$
+
+La fréquence des composantes obtenues peut aussi être utilisé comme un indicateur de similarité des séries. Le périodigrame d'une série $f$ de longueur $N$ est définie comme:$$
 \Pi_f(k) = \frac{1}{Z}\left|\sum_{n=1}^N f_n e^{-2i\pi n \frac{k}{N}}\right|^2
-$$ où $Z$ est une constante de normalisation telle que le périodigramme est une norme unitaire.\\
+$$ où $Z$ est une constante de normalisation telle que le périodigramme est une norme unitaire. Celui-ci peut être utiliser pour choisir un regroupement \cite{GNZ_10_SSA}.
 
-\paragraph{Regroupement harmonique (HG)}\label{par:alex} IDEM Alexandrov \& al. proposent dans \cite{alexandrov_05_auto} une stratégie de regroupement spéciale pour extraire les harmoniques exponentiellement modulées. Ils proposent une fonction de similarité qui regroupe deux composantes successives $(j, j+1)$ si$$
-\frac{1}{2}\max_{0\le k \le L/2}\left(\Pi_{U_j}(k) + \Pi_{U_{j+1}}(k)\right) \ge \rho_0
-$$ pour $\rho_0\in \left[0, 1\right]$. Cette métrique rend compte du fait que les composantes successives partage un même pique dans leur périodigramme.
+\paragraph{Regroupement harmonique (HG)}\label{par:HG}
+    Une stratégie de regroupement efficace pour extraire les harmoniques exponentiellement modulées \cite{alexandrov_05_auto} utilise une fonction de similarité qui regroupe deux composantes successives $(j, j+1)$ si 
+    $$
+    \frac{1}{2}\max_{0\le k \le L/2}\left(\Pi_{U_j}(k) + \Pi_{U_{j+1}}(k)\right) \ge \rho_0 
+    $$pour $\rho_0\in \left[0, 1\right]$. Cette métrique rend compte du fait que les composantes successives partage un même pique dans leur périodigramme.
+% paragraph HG (end)
 
 
-% paragraph  (end)
-\paragraph{Abalov method (GG2)}
-\label{par:abalov}
-\cite{abalov_14_auto}
-On utilise
+\paragraph{Similarité des piques (GG2)}\label{par:GG2}
+    Une autre métrique de similarité basé sur les périodigramme est:
+    $$
+    g_{i, j} = \begin{cases}
+	    1 & \text{ if } \displaystyle\frac{\min(\lambda_i, \lambda_j)}{\max(\lambda_i, \lambda_j)} \ge \rho_1 \text{ et } \text{RF}(f^{(i)}, f^{[j)}) \ge \rho_c\\
+	    0 & \text{ sinon}
+    \end{cases}
+    $$Ici
 % paragraph abalov (end)
-\paragraph{Alvarez}
-\label{par:alva}
-\cite{alvarez_2013_auto}
+\paragraph{K-means spéctral (KM)}\label{par:KM}
+DAns \cite{alvarez_2013_auto}, Alvarez \& al. proposent d'utiliser une méthode de clustering afin
 % paragraph alva (end)
-\paragraph{Notre méthode}
-\label{par:tomtom}
+
+
+\paragraph{Regroupement harmonique stabilisé (HGS)}\label{par:HGS}
+
+
+        
+% paragraph HGS (end)
 
 \subsection{Stratégie de clustering}
 \label{sub:clust}
@@ -203,16 +210,21 @@ Given G
 
 % subsection clust (end)
 
-
-
-
-        
-% paragraph tomtom (end)
-
-% subsection sim (end)
-
 \section{Méthode d'évaluation}
 \label{sec:eval}
+
+
+
+\subsection{Signaux artificiels}
+\label{sub:artsig}
+    Les stratégie de grouping testées ont été évaluées sur des signaux artificiels générés aléatoirement. L'objectif du regroupement est de séparere les différentes composantes périodiques de la tendance et du bruit. Les signaux de teste ont été générés pour une fréquence d'échatillonage de $100Hz$ selon le modèle:
+    \begin{equation}\label{eq:artsig}
+    f(t) = a_0 t^p + \sum_{i=1}^K a_i e^{-\alpha_i t} \sin\left(f_i t + \phi_i\right)
+    \end{equation} avec $a_i \sim \mathcal U(0, 1)$, $p \sim \mathcal U(0, 5)$, $\displaystyle \phi_i \sim \mathcal U\left(\frac{-\pi}{2}, \frac{\pi}{2}\right)$, $\alpha_i \sim \mathcal U\left(0, \frac{1}{2}\right)$ et $f_i \sim \mathcal U(0, 50Hz)$ et $\epsilon_t \sim \mathcal N(0, s*std(f))$, $s \sim \mathcal U(3, 30dB)$. Chaque tirage\\
+    
+     La méthode d'évaluation calcul la moyenne des métriques mentionées ci-dessous pour chaque stratégie de groupement sur 2000 tirages de fonctions selon le modèle (\ref{eq:artsig}).
+
+% subsection  (end)
 
 \subsection{Métrique d'évaluation}
 \label{sub:}
@@ -220,7 +232,7 @@ Dans \cite{abalov_14_aut}, les auteurs proposent d'utiliser le coéfficient de d
 R^2(f, \hat f) = 1 - \frac{\|f-\hat f\|^2}{\|f-\bar f\|^2}
 $$ La métrique d'évaluation du grouping est alors calculer  en moyennant les valeurs minimales de $R^2$ pour chaque composante $c_i$ du signal d'origine et pour $$
 \overline{ R^2} = \sum_{i=1}^n \min_k R^2(c_i, g_k)
-$$Cette métrique présente cependant des inconvénients car elle ne rend compte que du rappel de la méthode et non de la précision. En effet, le but de la phase de groupement est d'obtenir des composantes haut niveau. Une des taches essentielles est donc de réussir à filtrer les composantes non utiles. Ainsi, il faut évaluer
+$$Cette métrique présente cependant des inconvénients car elle ne rend compte que du rappel de la méthode et non de la précision. En effet, le but de la phase de groupement est d'obtenir des composantes haut niveau. Une des taches essentielles est donc de réussir à filtrer les composantes non utiles \cite{abalov_14_aut}
 
 % subsection  (end)
 
@@ -228,40 +240,14 @@ $$Cette métrique présente cependant des inconvénients car elle ne rend compte
 \label{sub:sep}
     L'évaluation de la stratégie de regroupement doit prendre en compte la qualité des composantes obtenue lors de la décomposition du signal. En effet, si les composantes que l'on essaie d'analyser ne sont pas séparables par l'analyse de la matrice de $K$-trajectoire, les stratégies de groupement ne pourront pas améliorer cette séparation.\\
     
-    Il est donc important de rappeler ici les propriétés des composantes séparables. Deux signaux $f_1$ et $f_2$ sont dit séparables s'il existe $I_1, I_2 \subset \left \{ 1,\dots, K \right \}$ tel que $I_1\cap I_2 = \emptyset$ et $f_i = \mathcal H(\sum_{j \in I_i} \lambda_j U_j V_j^T)$. Ceci implique notamment l'orthogonalité de toutes les sous séries de longueur $K$ et $L$ de $f_1$ et $f_2$. Différentes illustrations de ces propriétés peuvent être trouvées dans \cite{GNZ_10_SSA}.
+    Il est donc important de rappeler ici les propriétés des composantes séparables. Deux signaux $f_1$ et $f_2$ sont dit séparables s'il existe $I_1, I_2 \subset \left \{ 1,\dots, K \right \}$ tel que $I_1\cap I_2 = \emptyset$ et $f_i = \mathcal H(\sum_{j \in I_i} \lambda_j U_j V_j^T)$. Ceci implique notamment l'orthogonalité de toutes les sous séries de longueur $K$ et $L$ de $f_1$ et $f_2$. Différentes illustrations de ces propriétés peuvent être trouvées dans \cite{GNZ_10_SSA}.\\
+    
+   L'évaluation de la qualité du groupement doit donc prendre en compte la qualité des composantes de départ. Pour cela, il est possible de ne considérer que l'amélioration d'un métrique par rapport à cette même métrique calculer pour un grouping trivial tel que $I_k = \left \{ k \right \}$ pour $k \in \set{m}$.
 % subsection sep (end)
 
-
-\subsection{Artificial signals}
-\label{sub:}
-
-% subsection  (end)
 % section eval (end)
 
-\section{Résultats} 
-
-Comparaison avec la transformée en ondelettes empirique (EWT, \cite{gilles_13_EWT}).\\
-%Pour le benchmark, je pense:\\
-%\begin{itemize}
-% \item Générer aléatoirement des signaux avec tendance, partie pseudo harmonique et bruit\\
-% $$
-% f_t = \sum_i c_i + n_i
-% $$$$
-% c_0 = trend; \hspace{1cm} c_i = cos(2\pi*w_i*t + u) 
-% $$
-%\item Faire la décomposition EWT et SSA / comparer les résultats\\
-%\item Effectuer les grouping et comparé à la baseline du début\\
-
-%\end{itemize}
-%\vspace{1cm}
-%Pour les mesures, il faudrait en utiliser deux:\\
-%\begin{itemize}
-%\item Erreur de reconstruction: $E_r = \sum_t (f_t-\widehat f_t)^2$\\
-%où $\widehat f_t = \sum_{i \in I} f^{(i)}$ avec $I = \left \{ i \in [1..K] / \lambda_i > \mu \right \}$\\
-%\item Grouping erreur: $E_g= \sum_i \min_j \| c_j - f^{(i)}\|^2$
-%\end{itemize}
-
-%Ou alors utiliser des metriques de Separation de source. \cite{vincent_06_BSS}
+\section{Résultats}
 
 \bibliographystyle{plain} 
 \bibliography{bib_dl}{}
