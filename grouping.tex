@@ -78,21 +78,18 @@ $$où  $U_i$.Par linéarité de l'opération d'hankelisation, on obtient une dé
 
 Les oscillations harmoniques ou plus complexes, présentes dans la série initiale sont généralement décomposées sur plusieurs de ces composantes. Le bruit est lui aussi projeté sur plusieurs composantes. Une étape d'identification et de regroupement est alors nécessaire pour produire une décomposition intéressante. Une sélection des composantes peut être faite en se basant sur les valeurs singulières associées qui rendent compte de l'importance de la composante dans la série. Une étape de regroupement est ensuite nécessaire pour obtenir une décomposition plus simple à analyser.
 
-
-
-
-{\color{red} \textbf{TODO} - Check explication groupement + citation} 
 Diverses approches ont été utilisées dans la littérature pour réaliser ce groupement. La plupart des travaux utilisant la SSA réalise cette étape de manière manuelle. Certains indicateurs basés sur la corrélation et le spectre de fréquence des composantes ont été développés pour aidé au choix des groupes \cite{GNZ_10_SSA}.
 
-Des approches automatisées ont aussi été proposé à partir de ces indicateurs. Les travaux de Alexandrov et Golyandina \cite{alexandrov_05_auto} propose une première approche pour le regroupement automatique, principalement tourner à la récupération d'harmonique pure dans le signal. Dans \cite{alvarez_2013_auto}, Alvarez et al. propose une seconde méthode de regroupement automatique basé sur le clustering des périodigrammes des composantes reconstruites. Cette méthode vise un regroupement plus général des composantes. Dans des travaux récents, Abalov et Gubarev \cite{abalov_14_auto} présentent deux autres stratégies pour obtenir un regroupement automatique. 
+Ces indicateurs ont ouvert la voie au developpement de méthode de groupement automatisée. Dans les cas des harmonique exponentiellement modulées, une méthode basée sur l'analyse des automatique des périodigrammes a été proposée \cite{alexandrov_05_auto}. Une méthode plus générale se base sur le clustering et l'estimation du nombre de composante avec le périodigramme \cite{alvarez_2013_auto}. Une stratégie de groupement automatique à partir de la corrélation inter-composante a aussi été développée.
+
+%Les travaux de Alexandrov et Golyandina \cite{alexandrov_05_auto} propose une première approche pour le regroupement automatique, principalement tourner à la récupération d'harmonique pure dans le signal. Dans \cite{alvarez_2013_auto}, Alvarez et al. propose une seconde méthode de regroupement automatique basé sur le clustering des périodigrammes des composantes reconstruites. Cette méthode vise un regroupement plus général des composantes. Dans des travaux récents, Abalov et Gubarev \cite{abalov_14_auto} présentent deux autres stratégies pour obtenir un regroupement automatique. 
 
 
 % subsection  (end)
 
 \section{Méthodes}
-{\color{red} \textbf{TODO} - \$ d'explication} 
-Dans cette section, nous allons présenter plusieurs méthodes BLA BLA BLA.... avec une description unifiée, BLA BLA BLA
 
+Dans cette section, nous allons présenter plusieurs méthodes de groupement automatique pour la SSA. Une description unifiée de celles-ci permet de les comparer dans un cadre simple, comme paramètre d'une stratégie globale.
 
 \subsection{Formulation générale}
 \label{sub:form}
@@ -103,13 +100,14 @@ Les stratégies de regroupement peuvent être décrites en trois phases:
 	\item Calculer une matrice d'adjacence entre ces composantes
 	\item Regrouper les composantes adjacentes
 \end{enumerate}
-La première étape est effectée en supprimant les composantes de la SVD ayant une valeur singulière $\lambda_k$ plus faible qu'un certain seuil (que l'on choisira ici adaptatif et de la forme  $\tau_l*\lambda_1$ avec $\tau_l = 0.01$). Ceci permet de filtrer les composantes de bruit en considérant qu'elles ont une part négligeable dans la variance de la série. 
+La première étape est effectuée en supprimant les composantes de la SVD ayant une valeur singulière $\lambda_k$ plus faible qu'un certain seuil (que l'on choisira ici adaptatif et de la forme  $\tau_l*\lambda_1$ avec $\tau_l = 0.01$). Ceci permet de filtrer les composantes de bruit en considérant qu'elles ont une part négligeable dans la variance de la série. 
 
 La seconde étape utilise une mesure de similarité entre les composantes afin d'obtenir une matrice d'adjacence. Intuitivement, le choix de cette mesure influence fortement les résultats du regroupement. Il est par exemple parfois pertinent de se  baser sur le contenu fréquentiel des composantes afin d'obtenir un bon regroupement des composantes harmoniques.
 
-Enfin, la troisième étape concerne la stratégie de formation des groupes à partir de la matrice d'adjacence.  {\color{red} \textbf{TODO} - End \$} 
+Enfin, la troisième étape concerne la stratégie de formation des groupes à partir de la matrice d'adjacence. Cette stratégie permet de gérer la prévalence des composantes entre elles. Il est souvent intéressant de donner plus d'importance à la composante associée de plus forte valeur singulière car elle a un poids important dans la variance de la série initiale.
 
 % subsection form (end)
+
 \subsection{Mesures de similarité}
 \label{sub:sim}
 
