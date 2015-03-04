@@ -165,7 +165,9 @@ $$où $Z$ est une constante de normalisation telle que le périodigramme est une
 
 
 \paragraph{Regroupement support harmonique (HGS)}\label{par:HGS}
-    L'un des problème de la métrique (HG) est son manque de robustesse au bruit. En effet, 
+    L'une des faiblesses de la similarité (HG) est qu'elle se concentre sur des composantes harmoniques. En effet, deux composantes sont groupées si leur périodigramme sont piqués au même endroit. Ainsi, si les composantes extraites par la SSA ont une plage de fréquence plus large, cela peut nuire au groupement car la normalisation du spectre fera passer la métrique de similarité sous le seuil de regroupement.
+    
+    Une idée pour palier à ce problème est de considérer le support fréquentiel des composantes et de définir le pique de fréquence comme le centre de ce support. On note le support fréquentiel de $f$ comme l'ensemble $\mathcal S_f = \left \{ k | \Pi_f(k) > \rho_1 \kappa_f \right \}$ avec $\kappa_f = \max_k \Pi_f(k)$. On note alors $\omega_f = \frac{\max \mathcal S_f + \min \mathcal S_f }{2 T}$ et $s_f = \frac{\max \mathcal S_f - \min \mathcal S_f }{2}$. On groupe alors les composantes  alors qu'une 
 
 % paragraph HGS (end)
 % subsubsection per (end)
@@ -226,25 +228,25 @@ Given G
 
     Les stratégie de regroupement ont été évaluées sur des signaux artificiels générés aléatoirement. L'objectif du regroupement est de séparer les différentes composantes périodiques de la tendance et du bruit. Les signaux tests sont échantillonnés à $100Hz$ selon le modèle:
     \begin{equation}\label{eq:artsig}
-    f(t) = a_0 t^p + \sum_{i=1}^K a_i e^{-\alpha_i t} \sin\left(f_i t + \phi_i\right)
+    f(t) = \underbrace{a_0 t^p}_{c_0} + \sum_{i=1}^K \underbrace{a_i e^{-\alpha_i t} \sin\left(f_i t + \phi_i\right)}_{c_i}
     \end{equation} avec des valeurs aléatoires tirées sous les lois $a_i \sim \mathcal U(0, 1)$, $p \sim \mathcal U(0, 5)$, $\displaystyle \phi_i \sim \mathcal U\left(\frac{-\pi}{2}, \frac{\pi}{2}\right)$, $\alpha_i \sim \mathcal U\left(0, \frac{1}{2}\right)$ et $f_i \sim \mathcal U(0, 50Hz)$.
     
     On ajoute à ce signal une composante de bruit blanc $\epsilon_t$ de variance $\sigma = s*\sigma_f$, avec $s \sim \mathcal U(0, 30dB)$ le SNR de notre signal.
-    
-     La méthode d'évaluation calcul la moyenne des métriques mentionnées ci-dessous pour chaque stratégie de groupement sur 2000 tirages de fonctions selon le modèle (\ref{eq:artsig}).
 
 % subsection artsig  (end)
 
-\subsection{Métrique d'évaluation}
+\subsection{Métriques d'évaluation}
 \label{sub:met}
 
-    L'une métrique utilisée pour évaluer la qualité d'un groupement est le coefficient de détermination $R^2$ \cite{abalov_14_auto}. Ce coefficient rend compte de l'erreur commise par rapport à la variance de la composante. Pour une série $f$ de moyenne $\bar f$ et pour un estimateur $\hat f$, le coefficient de détermination est calculer suivant
+    L'une métrique utilisée pour évaluer la qualité d'un groupement est le coefficient de détermination $R^2$ \cite{abalov_14_auto}. Ce coefficient rend compte de l'erreur commise par rapport à la variance de la composante. Pour une série $f$ de moyenne $\overline f$ et pour un estimateur $\widehat f$, le coefficient de détermination est calculer suivant
     $$
-        R^2(f, \hat f) = 1 - \frac{\|f-\hat f\|^2}{\|f-\bar f\|^2}
-    $$La métrique d'évaluation du regroupement est alors calculer  en moyennant les valeurs minimales de $R^2$ pour chaque composante $c_i$ du signal d'origine et pour 
+        R^2(f, \widehat f) = 1 - \frac{\|f-\widehat f\|^2}{\|f-\overline f\|^2}
+    $$Cette quantité rend compte du rapport entre l'erreur d'estimation et la variance d'un signal. La métrique d'évaluation du regroupement est alors calculé en moyennant les valeurs minimales de $R^2$ pour chaque composante $c_i$ du signal d'origine et pour 
     $$
         \overline{ R^2} = \sum_{i=1}^n \min_k R^2(c_i, g_k)
-    $$Cette métrique présente cependant des inconvénients car elle ne rend compte que du rappel de la méthode et non de la précision. En effet, le but de la phase de groupement est d'obtenir des composantes haut niveau. Une des taches essentielles est donc de réussir à filtrer les composantes non utiles
+    $$où les $g_k$ sont les différentes composantes obtenue lors du groupement.
+    
+    Cette métrique ne rend compte que du rappel de la méthode et non de la précision. Le but de la phase de groupement est d'obtenir des composantes haut niveau et de filtrer les composantes de bruit. Il est important de prendre en compte l'efficacité de la stratégie de groupement pour dicerner les composantes utiles.
 
 % subsection met (end)
 
@@ -260,6 +262,9 @@ Given G
 
 \section{Résultats}
 \label{sec:res}
+Le Tableau \ref{tab:1} présente la moyenne des différentes métriques pour chaque stratégie de groupement sur 2000 tirages de fonctions selon le modèle (\ref{eq:artsig}).
+
+K fixé à T/2!! :)
 
 \bibliographystyle{plain} 
 \bibliography{bib_dl}{}
