@@ -111,14 +111,10 @@ Enfin, la troisième étape concerne la stratégie de formation des groupes à p
 
 \subsection{Mesures de similarité}
 \label{sub:sim}
-%TODO
-{\color{red} \textbf{TODO} - Citer les param dans le text explicatif} 
 
 \subsubsection{Corrélation}\label{ssub:cor}
 \paragraph{Corrélation (GG1)}\label{par:GG1}
-    Une première mesure de similarité est basée sur la corrélation \cite{abalov_14_auto}. Deux composantes sont regroupées si la corrélation entre elles est plus haute qu'une valeur seuil $\rho_c$. Pour éviter de grouper des composantes d'importance trop éloignée, on ajoute une condition sur le ratio des valeurs singulières associées aux signaux considérés qui doit être  le plus proche possible de 1.
-    %TODO
-{\color{red} \textbf{TODO} - parlé seuil $\rho_1$}  Cela évite de grouper des phénomènes d'amplitude différentes. On définit la matrice d'adjacence $G = (g_{i, j})_{0 \le i,j\le K}$ par:
+    Une première mesure de similarité est basée sur la corrélation \cite{abalov_14_auto}. Deux composantes sont regroupées si la corrélation entre elles est plus haute qu'une valeur seuil $\rho_c$. Pour éviter de grouper des composantes d'importance trop éloignée, deux composantes sont groupés si le ratio de leurs valeurs singulières associées $\frac{\min(\lambda_i, \lambda_j)}{\max(\lambda_i, \lambda_j)}$ est supérieur à un seuil $\rho_1 \in \inter$. Cela évite de grouper des phénomènes d'amplitude différentes. On définit donc la matrice d'adjacence $G = (g_{i, j})_{0 \le i,j\le K}$ par:
     $$
     g_{i, j} = \begin{cases}
 	    1 &\text{ si } \displaystyle\frac{\min(\lambda_i, \lambda_j)}{\max(\lambda_i, \lambda_j)} \ge \rho_1 \text{ et } \text{corr}(f^{(i)}, f^{[j)}) \ge \rho_c\\
@@ -137,17 +133,21 @@ Enfin, la troisième étape concerne la stratégie de formation des groupes à p
 % subsubsection cor (end)
 
 \subsubsection{Périodogramme}\label{ssub:per}
+%TODO
+{\color{red} \textbf{TODO} - Citer les param dans le text explicatif} 
 
 La fréquence des composantes obtenues peut aussi être utilisée comme un indicateur de similarité des séries. Le périodogramme d'une série $f$ de longueur $N$ est défini comme:
 $$
 \Pi_f(k) = \frac{1}{Z}\left|\sum_{n=1}^N f_n e^{-2i\pi n \frac{k}{N}}\right|^2
-$$où $Z$ est une constante de normalisation telle que le périodogramme ait une norme unitaire. Cette estimation de la densité spectrale de puissance peut être utilisée  comme indicateur pour choisir un regroupement \cite{GNZ_10_SSA}. REDONDANT, NON ? DONNER UN ARGUMENT
+$$où $Z$ est une constante de normalisation telle que le périodogramme ait une norme unitaire. Cette estimation de la densité spectrale de puissance peut être utilisée  comme indicateur pour choisir un regroupement \cite{GNZ_10_SSA}. %TODO
+{\color{red} \textbf{TODO} - REDONDANT, NON ? DONNER UN ARGUMENT}   
 
 \paragraph{Regroupement harmonique (HG)}\label{par:HG}
     Une stratégie de regroupement efficace pour extraire les harmoniques exponentiellement modulées \cite{alexandrov_05_auto} utilise une fonction de similarité qui regroupe deux composantes successives $(j, j+1)$ si 
     $$
     \frac{1}{2}\max_{0\le k \le L/2}\left(\Pi_{U_j}(k) + \Pi_{U_{j+1}}(k)\right) \ge \rho_0 
-    $$pour $\rho_0\in \left[0, 1\right]$. Cette métrique rend compte du fait que les composantes successives ont des valeurs élevées aux même fréquences dans leur périodogramme. Cette méthode ne requiert qu'un seul paramètre $\rho_0$ que l'on fixe à 0.8 pour les expérimentations. UN PETIT COMMENTAIRE POUR LA ROUTE ?
+    $$pour $\rho_0\in \left[0, 1\right]$. Cette métrique rend compte du fait que les composantes successives ont des valeurs élevées aux même fréquences dans leur périodogramme. Cette méthode ne requiert qu'un seul paramètre $\rho_0$ que l'on fixe à 0.8 pour les expérimentations. %TODO
+{\color{red} \textbf{TODO} - UN PETIT COMMENTAIRE POUR LA ROUTE ? }  
 % paragraph HG (end)
 
 \paragraph{Similarité des piques (GG2)}\label{par:GG2}
@@ -159,8 +159,10 @@ $$où $Z$ est une constante de normalisation telle que le périodogramme ait une
 	    0 & \text{ sinon}
     \end{cases}
     $$ où $m = \min\left(\left|F_{f^{(i)}}\right|, \left|F_{f^{(i)}}\right|\right)$.
+    %TODO
+{\color{red} \textbf{TODO} - UN PETIT COMMENTAIRE POUR LA ROUTE ?
+} 
 % paragraph GG2 (end)
-UN PETIT COMMENTAIRE POUR LA ROUTE ?
 
 \paragraph{K-means spectral (KM)}\label{par:KM}
     La distance entre les périodogrammes peut être utilisée avec l'algorithme des K-moyennes pour former le groupement \cite{alvarez_13_auto}. Ceci est intéressant car le choix des seuils sur les distances entre les composantes d'un groupe est adapté par les K-moyennes. Le choix du nombre de groupes $C$ est un choix critique ici. Une estimation du nombre de groupe peut être faite en estimant le rang de la matrice $\Pi = \begin{bmatrix}\Pi_{U_1}&\dots&\Pi_{U_K}\end{bmatrix}^T$. On calcul les valeurs singulières $\val{\sigma}{K}{\ge}$ de $\Pi$ et on considère $C = \arg\max_k \sigma_k \ge \rho_f \sigma_1$ avec $\rho_f \in \inter$. La similarité vaut alors 1 lorsque les composantes appartiennent au même groupe formé par l'algorithme des K-moyennes.
@@ -239,8 +241,8 @@ Une autre possibilité est de considérer que les composantes ont une importance
     \end{equation} avec des valeurs aléatoires tirées sous les lois $a_i \sim \mathcal U(0, 1)$, $p \sim \mathcal U(0, 5)$, $\displaystyle \phi_i \sim \mathcal U\left(\frac{-\pi}{2}, \frac{\pi}{2}\right)$, $\alpha_i \sim \mathcal U\left(0, \frac{1}{2}\right)$ et $f_i \sim \mathcal U(0, 50Hz)$.
     
     On ajoute à ce signal une composante de bruit blanc $\epsilon_t$ de variance $\sigma = s*\sigma_f$, avec $s \sim \mathcal U(0, 30dB)$ le SNR de notre signal.
-A MODIFIER
-
+%TODO
+{\color{red} \textbf{TODO} - A Modifier }
 % subsection artsig  (end)
 
 \subsection{Métriques d'évaluation}
@@ -260,7 +262,7 @@ A MODIFIER
 
 \subsection{Séparabilité}
 \label{sub:sep}
-    L'évaluation de la stratégie de regroupement doit prendre en compte la qualité des composantes obtenues lors de la décomposition initale du signal. En effet, si les composantes que l'on essaie d'analyser ne sont pas séparables par l'analyse de la matrice de $K$-trajectoire, les stratégies de groupement ne pourront pas améliorer cette séparation.
+    L'évaluation de la stratégie de regroupement doit prendre en compte la qualité des composantes obtenues lors de la décomposition initiale du signal. En effet, si les composantes que l'on essaie d'analyser ne sont pas séparables par l'analyse de la matrice de $K$-trajectoire, les stratégies de groupement ne pourront pas améliorer cette séparation.
     
     %Il est donc important de rappeler ici les propriétés des composantes séparables. Deux signaux $f_1$ et $f_2$ sont dit séparables s'il existe $I_1, I_2 \subset \left \{ 1,\dots, K \right \}$ tel que $I_1\cap I_2 = \emptyset$ et $f_i = \mathcal H(\sum_{j \in I_i} \lambda_j U_j V_j^T)$. Ceci implique notamment l'orthogonalité de toutes les sous séries de longueur $K$ et $L$ de $f_1$ et $f_2$. Différentes illustrations de ces propriétés peuvent être trouvées dans \cite{GNZ_10_SSA}. 
        
