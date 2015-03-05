@@ -111,16 +111,20 @@ Enfin, la troisième étape concerne la stratégie de formation des groupes à p
 
 \subsection{Mesures de similarité}
 \label{sub:sim}
+%TODO
+{\color{red} \textbf{TODO} - Citer les param dans le text explicatif} 
 
 \subsubsection{Corrélation}\label{ssub:cor}
 \paragraph{Corrélation (GG1)}\label{par:GG1}
-    Une première mesure de similarité est basée sur la corrélation \cite{abalov_14_auto}. Deux composantes sont regroupées si la corrélation entre elles est plus haute qu'une valeur seuil $\rho_c$. Pour éviter de grouper des composantes d'importance trop éloignée, on ajoute une condition sur le ratio des valeurs singulières associées aux signaux considérés qui doit être  le plus proche possible de 1. Cela évite de grouper des phénomènes d'amplitude différentes. On définit la matrice d'adjacence $G = (g_{i, j})_{0 \le i,j\le K}$ par:
+    Une première mesure de similarité est basée sur la corrélation \cite{abalov_14_auto}. Deux composantes sont regroupées si la corrélation entre elles est plus haute qu'une valeur seuil $\rho_c$. Pour éviter de grouper des composantes d'importance trop éloignée, on ajoute une condition sur le ratio des valeurs singulières associées aux signaux considérés qui doit être  le plus proche possible de 1.
+    %TODO
+{\color{red} \textbf{TODO} - parlé seuil $\rho_1$}  Cela évite de grouper des phénomènes d'amplitude différentes. On définit la matrice d'adjacence $G = (g_{i, j})_{0 \le i,j\le K}$ par:
     $$
     g_{i, j} = \begin{cases}
 	    1 &\text{ si } \displaystyle\frac{\min(\lambda_i, \lambda_j)}{\max(\lambda_i, \lambda_j)} \ge \rho_1 \text{ et } \text{corr}(f^{(i)}, f^{[j)}) \ge \rho_c\\
 	    0& \text{ sinon}
     \end{cases}
-    $$Cette mesure de similarité est contrôlé par deux paramètres, $\rho_1$ et $\rho_c$. On les fixes pour toutes les expériementations à $\rho_1=\rho_c=0.8$.
+    $$
 % paragraph GG1 (end)
 
 \paragraph{W-Corrélation (GG3)}\label{par:GG3} 
@@ -166,7 +170,7 @@ UN PETIT COMMENTAIRE POUR LA ROUTE ?
 \paragraph{Regroupement support harmonique (HGS)}\label{par:HGS}
     L'une des faiblesses de la similarité (HG) est qu'elle se concentre sur des composantes harmoniques. En effet, deux composantes sont groupées si leur périodogramme ont des pics aux mêmes endroits. Ainsi, si les composantes extraites par la SSA ont une plage de fréquence plus large, cela peut nuire au groupement car la normalisation du spectre fera passer la métrique de similarité sous le seuil de regroupement.
     
-    Une idée pour palier à ce problème est de considérer le support fréquentiel des composantes et de définir le pic de fréquence comme le centre de ce support. On note le support fréquentiel de $f$ comme l'ensemble $\mathcal S_f = \left \{ k | \Pi_f(k) > \rho_1 \kappa_f \right \}$ avec $\kappa_f = \max_k \Pi_f(k)$. On note alors $\omega_f = \frac{\max \mathcal S_f + \min \mathcal S_f }{2 T}$ et $s_f = \frac{\max \mathcal S_f - \min \mathcal S_f }{2}$. On groupe alors les composantes  alors qu'une 
+    Une idée pour palier à ce problème est de considérer le support fréquentiel des composantes et de définir le pic de fréquence comme le centre de ce support. On note le support fréquentiel de $f$ comme l'ensemble $\mathcal S_f = \left \{ k | \Pi_f(k) > \rho_1 \kappa_f \right \}$ avec $\kappa_f = \max_k \Pi_f(k)$. On note alors $\omega_f = \frac{\max \mathcal S_f + \min \mathcal S_f }{2 T}$ et $s_f = \frac{\max \mathcal S_f - \min \mathcal S_f }{2}$. On groupe alors les composantes ayant un support restreint \emph{i.e.} $s_f \le 3*\log(T)$
 
 % paragraph HGS (end)
 % subsubsection per (end)
@@ -178,47 +182,47 @@ UN PETIT COMMENTAIRE POUR LA ROUTE ?
 
 
 \paragraph{Méthode basique}
-La stratégie de formation des groupes à partir de la matrice d'adjacence la plus simple est de considérer que toutes les composantes ont le même interet. On peut alors considérer que deux composantes sont dans le même groupe dès lors qu'elles sont adjacentes. L'algorithme \ref{alg:unif} décrit la méthode de formation des groupes dans ce cas.\\
+La stratégie de formation des groupes à partir de la matrice d'adjacence la plus simple est de considérer que toutes les composantes ont le même intérêt. On peut alors considérer que deux composantes sont dans le même groupe dès lors qu'elles sont adjacentes. C'est la méthode qui est utilisé dans tous les algorithmes qui ont été proposés jusque là.\\
 
-\begin{algorithm}
-\caption{Groupement uniforme}\label{alg:unif}
-Given G
-\begin{algorithmic}[1]
-\For{ i = 1 \dots K}
-\State group[i] = i
-\EndFor
-\For{ i = 1 \dots K}
-\For{ j = i+1 \dots K}
-\If{$G_{i,j} = 1$} group[j] = group[i]
-\EndIf
-\EndFor
-\EndFor
-\State \Return group
-\end{algorithmic}
-\end{algorithm}
+%\begin{algorithm}
+%\caption{Groupement uniforme}\label{alg:unif}
+%Given G
+%\begin{algorithmic}[1]
+%\For{ i = 1 \dots K}
+%\State group[i] = i
+%\EndFor
+%\For{ i = 1 \dots K}
+%\For{ j = i+1 \dots K}
+%\If{$G_{i,j} = 1$} group[j] = group[i]
+%\EndIf
+%\EndFor
+%\EndFor
+%\State \Return group
+%\end{algorithmic}
+%\end{algorithm}
 
 
-\paragraph{Méthode hierarchique}
-Une autre possibilité est de considérer que les composantes ont une importance relative. L'importance de chaque composante peut être mesurée par la part de variance $\frac{\lambda_i}{\sum_{j=1}^n \lambda_j}$ expliquée par cette composante. On peut donc considérer qu'on ne rajoute une composante $j$ dans un groupe $I_k$ que si elle est similaire à la composante dominante du groupe \emph{ i.e. } $G_{i, j} = 1$ pour $i = \arg\max_{l \in I_k} \lambda_l$. Une telle procédure est décrite dans l'algorithme \ref{alg:ord}.
+\paragraph{Méthode hiérarchique}
+Une autre possibilité est de considérer que les composantes ont une importance relative. L'importance de chaque composante peut être mesurée par la part de variance $\frac{\lambda_i}{\sum_{j=1}^n \lambda_j}$ expliquée par cette composante. On peut donc considérer qu'on ne rajoute une composante $j$ dans un groupe $I_k$ que si elle est similaire à la composante dominante du groupe \emph{ i.e. } $G_{i, j} = 1$ pour $i = \arg\max_{l \in I_k} \lambda_l$. Cela permet de donner un poid plus important lors du groupement à la composante qui contient le plus de variance du signal.
 
 % IL FAUT PEUT ETRE ENLEVER LES 2 ALGOS?? Je SUIS PAS CERTAIN DE CE QUE CELA APPORTE AU FINAL....
-\begin{algorithm}
-\caption{Groupement ordonée}\label{alg:ord}
-Given G
-\begin{algorithmic}[1]
-\State GI $= \left \{  \right \}, I = \set{m}$
-\For{$i \in I$}
-\State remove i from $I$, $I_i = \left \{ i \right \}$
-\For{$j \in I$}
-\If{$G_{i,j} = 1$} 
-\State remove j from $I$, $I_i = I_i \cup \left \{ j \right \}$
-\EndIf
-\EndFor
-\State GI = GI$ \cup I_i$
-\EndFor
-\State \Return GI
-\end{algorithmic}
-\end{algorithm}
+%\begin{algorithm}
+%\caption{Groupement ordonée}\label{alg:ord}
+%Given G
+%\begin{algorithmic}[1]
+%\State GI $= \left \{  \right \}, I = \set{m}$
+%\For{$i \in I$}
+%\State remove i from $I$, $I_i = \left \{ i \right \}$
+%\For{$j \in I$}
+%\If{$G_{i,j} = 1$} 
+%\State remove j from $I$, $I_i = I_i \cup \left \{ j \right \}$
+%\EndIf
+%\EndFor
+%\State GI = GI$ \cup I_i$
+%\EndFor
+%\State \Return GI
+%\end{algorithmic}
+%\end{algorithm}
 
 % subsection clust (end)
 % section met (end)
@@ -229,9 +233,9 @@ Given G
 \subsection{Signaux}
 \label{sub:artsig}
 
-    Les stratégie de regroupement ont été évaluées sur des signaux artificiels générés aléatoirement. L'objectif du regroupement est de séparer les différentes composantes périodiques de la tendance et du bruit. Les signaux tests sont échantillonnés à $100 Hz$ selon le modèle:
+    Les stratégie de regroupement ont été évaluées sur des signaux artificiels générés aléatoirement. L'objectif du regroupement est de séparer la tendance des différentes composantes périodiques et du bruit. Les signaux tests sont échantillonnés à $100Hz$ selon le modèle:
     \begin{equation}\label{eq:artsig}
-    f(t) = \underbrace{a_0 t^p}_{c_0} + \sum_{i=1}^K \underbrace{a_i e^{-\alpha_i t} \sin\left(f_i t + \phi_i\right)}_{c_i}
+    f(t) = \underbrace{a_0 t^p}_{c_0} + \sum_{i=1}^K \underbrace{a_i e^{-\alpha_i t} \sin\left(f_i t + \phi_i\right)}_{c_i} + \epsilon_t
     \end{equation} avec des valeurs aléatoires tirées sous les lois $a_i \sim \mathcal U(0, 1)$, $p \sim \mathcal U(0, 5)$, $\displaystyle \phi_i \sim \mathcal U\left(\frac{-\pi}{2}, \frac{\pi}{2}\right)$, $\alpha_i \sim \mathcal U\left(0, \frac{1}{2}\right)$ et $f_i \sim \mathcal U(0, 50Hz)$.
     
     On ajoute à ce signal une composante de bruit blanc $\epsilon_t$ de variance $\sigma = s*\sigma_f$, avec $s \sim \mathcal U(0, 30dB)$ le SNR de notre signal.
@@ -250,7 +254,7 @@ A MODIFIER
         \overline{ R^2} = \sum_{i=1}^n \min_k R^2(c_i, g_k)
     $$où les $g_k$ sont les différentes composantes obtenue lors du groupement.
     
-    Cette métrique ne rend compte que du rappel de la méthode et non de la précision. Le but de la phase de groupement est d'obtenir des composantes haut niveau et de filtrer les composantes de bruit. Il est important de prendre en compte l'efficacité de la stratégie de groupement pour dicerner les composantes utiles.
+    Cette métrique ne rend compte que du rappel de la méthode et non de la précision. Le but de la phase de groupement est d'obtenir des composantes haut niveau et de filtrer les composantes de bruit. Il est important de prendre en compte l'efficacité de la stratégie de groupement pour discerner les composantes utiles.
 
 % subsection met (end)
 
