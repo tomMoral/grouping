@@ -80,11 +80,9 @@ $$où  $U_i$.Par linéarité de l'opération d'hankelisation, on obtient une dé
 
 Les oscillations harmoniques ou plus complexes, présentes dans la série initiale sont généralement décomposées sur plusieurs de ces composantes. Le bruit est lui aussi projeté sur plusieurs composantes. Une étape d'identification et de regroupement est alors nécessaire pour produire une décomposition intéressante. Une sélection des composantes peut être faite en se basant sur les valeurs singulières associées qui rendent compte de l'importance de la composante dans la série. Une étape de regroupement est ensuite nécessaire pour obtenir une décomposition plus simple à analyser.
 
-Diverses approches ont été utilisées dans la littérature pour réaliser ce groupement. La plupart des travaux utilisant la SSA réalise cette étape de manière manuelle. Certains indicateurs basés sur la corrélation et le spectre de fréquence des composantes ont été développés pour aidé au choix des groupes \cite{GNZ_10_SSA}.
+Diverses approches ont été utilisées dans la littérature pour réaliser ce groupement, même si la plupart des travaux utilisant la SSA réalisent cette étape de façon empirique. En particulier, certaines heuristiques basées sur la corrélation et le spectre de fréquence des composantes ont été développées pour aider au choix des groupes \cite{GNZ_10_SSA}. Ces indicateurs, d'abord utilisés pour le regroupement manuel, ont ouvert la voie au developpement de méthodes de groupement automatisé. Nous verrons dans la section \ref{sec:met} une description des principales méthodes existantes ainsi que de nouvelles stratégies, ainsi qu'un cadre unifié pour l'évaluation de ces méthodes dans la section \label{sec:eval}. PUIS RESULTATS
 
-Ces indicateurs ont ouvert la voie au developpement de méthode de groupement automatisée. Dans les cas des harmonique exponentiellement modulées, une méthode basée sur l'analyse des automatique des périodigrammes a été proposée \cite{alexandrov_05_auto}. Une méthode plus générale se base sur le clustering et l'estimation du nombre de composante avec le périodigramme \cite{alvarez_13_auto}. Une stratégie de groupement automatique à partir de la corrélation inter-composante a aussi été développée.
-
-%Les travaux de Alexandrov et Golyandina \cite{alexandrov_05_auto} propose une première approche pour le regroupement automatique, principalement tourner à la récupération d'harmonique pure dans le signal. Dans \cite{alvarez_13_auto}, Alvarez et al. propose une seconde méthode de regroupement automatique basé sur le clustering des périodigrammes des composantes reconstruites. Cette méthode vise un regroupement plus général des composantes. Dans des travaux récents, Abalov et Gubarev \cite{abalov_14_auto} présentent deux autres stratégies pour obtenir un regroupement automatique. 
+%Les travaux de Alexandrov et Golyandina \cite{alexandrov_05_auto} propose une première approche pour le regroupement automatique, principalement tourner à la récupération d'harmonique pure dans le signal. Dans \cite{alvarez_13_auto}, Alvarez et al. propose une seconde méthode de regroupement automatique basé sur le clustering des périodogrammes des composantes reconstruites. Cette méthode vise un regroupement plus général des composantes. Dans des travaux récents, Abalov et Gubarev \cite{abalov_14_auto} présentent deux autres stratégies pour obtenir un regroupement automatique. 
 
 % subsection grp (end)
 % section intro (end)
@@ -92,7 +90,7 @@ Ces indicateurs ont ouvert la voie au developpement de méthode de groupement au
 \section{Méthodes}
 \label{sec:met}
 
-Dans cette section, nous allons présenter plusieurs méthodes de groupement automatique pour la SSA. Une description unifiée de celles-ci permet de les comparer dans un cadre simple, comme paramètre d'une stratégie globale.
+Dans cette section, nous allons présenter plusieurs méthodes de groupement automatique pour la SSA. Une description unifiée de celles-ci permet de les comparer dans un cadre simple, comme paramètres d'une stratégie globale.
 
 \subsection{Formulation générale}
 \label{sub:form}
@@ -116,7 +114,7 @@ Enfin, la troisième étape concerne la stratégie de formation des groupes à p
 
 \subsubsection{Corrélation}\label{ssub:cor}
 \paragraph{Corrélation (GG1)}\label{par:GG1}
-    Une première mesure de similarité est basée sur la corrélation \cite{abalov_14_auto}. Deux composantes sont regroupées si la corrélation entre elles est plus haute qu'une valeur seuil $\rho_c$. Pour éviter de grouper des composantes d'importance trop éloignée, on ajoute une condition sur le ratio des valeurs singulières associées aux signaux considérés qui doit être proche 1. Cela évite de grouper des phénomènes d'amplitude différentes. On définit la matrice d'adjacence $G = (g_{i, j})_{0 \le i,j\le K}$ par:
+    Une première mesure de similarité est basée sur la corrélation \cite{abalov_14_auto}. Deux composantes sont regroupées si la corrélation entre elles est plus haute qu'une valeur seuil $\rho_c$. Pour éviter de grouper des composantes d'importance trop éloignée, on ajoute une condition sur le ratio des valeurs singulières associées aux signaux considérés qui doit être  le plus proche possible de 1. Cela évite de grouper des phénomènes d'amplitude différentes. On définit la matrice d'adjacence $G = (g_{i, j})_{0 \le i,j\le K}$ par:
     $$
     g_{i, j} = \begin{cases}
 	    1 &\text{ si } \displaystyle\frac{\min(\lambda_i, \lambda_j)}{\max(\lambda_i, \lambda_j)} \ge \rho_1 \text{ et } \text{corr}(f^{(i)}, f^{[j)}) \ge \rho_c\\
@@ -126,30 +124,30 @@ Enfin, la troisième étape concerne la stratégie de formation des groupes à p
 % paragraph GG1 (end)
 
 \paragraph{W-Corrélation (GG3)}\label{par:GG3} 
-    La w-corrélation pour deux séries $x, y$ de taille $N$ et pour une taille de fenêtre $K$:
+    La w-corrélation pour deux séries $x, y$ de taille $N$ et pour une taille de fenêtre $K$ est définie par:
     $$
     \text{w-corr}(x, y) = \frac{\langle x|y\rangle_w}{\|x\|_w\|y\|_w}
-    $$avec $\langle x|y\rangle_w = \sum_{i=1}^n w_i x_i y_i$, $w_i = \min(i, N-i, K)$ et $\|x\|_w = \sqrt{\langle x|x\rangle_w}$. Deux séries sont séparables par la SSA si leur w-corrélation est nulle \cite{GNZ_10_SSA}. Il est donc possible d'utiliser la valeur de la w-corrélation comme indicateur de similarité entre 2 composantes. On peut alors prendre une fonction de similarité identique à celle de Abalov en remplaçant la corrélation par la w-corrélation. Ceci permet de filtrer les effets de bord qui peuvent apparaître dans la corrélation et ainsi d'obtenir un meilleur regroupement. Les paramètres dirigeant cette mesure de similarité sont les même que ceux de (GG1) et ont les fixes donc aux mêmes valeurs.
+    $$avec $\langle x|y\rangle_w = \sum_{i=1}^n w_i x_i y_i$, $w_i = \min(i, N-i, K)$ et $\|x\|_w = \sqrt{\langle x|x\rangle_w}$. Deux séries sont séparables par la SSA si leur w-corrélation est nulle \cite{GNZ_10_SSA}. Il est donc possible d'utiliser la valeur de la w-corrélation comme indicateur de similarité entre 2 composantes. On peut alors prendre une fonction de similarité identique à celle de Abalov en remplaçant la corrélation par la w-corrélation. Ceci permet de filtrer les effets de bord qui peuvent apparaître dans la corrélation et ainsi d'obtenir un meilleur regroupement. Les paramètres dirigeant cette mesure de similarité sont les mêmes que ceux de (GG1) et on les fixe donc aux mêmes valeurs.
 % paragraph GG3 (end)
 
 % subsubsection cor (end)
 
-\subsubsection{Periodigramme}\label{ssub:per}
+\subsubsection{Périodogramme}\label{ssub:per}
 
-La fréquence des composantes obtenues peut aussi être utilisé comme un indicateur de similarité des séries. Le périodigrame d'une série $f$ de longueur $N$ est définie comme:
+La fréquence des composantes obtenues peut aussi être utilisée comme un indicateur de similarité des séries. Le périodogramme d'une série $f$ de longueur $N$ est défini comme:
 $$
 \Pi_f(k) = \frac{1}{Z}\left|\sum_{n=1}^N f_n e^{-2i\pi n \frac{k}{N}}\right|^2
-$$où $Z$ est une constante de normalisation telle que le périodigramme est une norme unitaire. Celui-ci peut être utiliser comme indicateur pour choisir un regroupement \cite{GNZ_10_SSA}.
+$$où $Z$ est une constante de normalisation telle que le périodogramme ait une norme unitaire. Cette estimation de la densité spectrale de puissance peut être utilisée  comme indicateur pour choisir un regroupement \cite{GNZ_10_SSA}. REDONDANT, NON ? DONNER UN ARGUMENT
 
 \paragraph{Regroupement harmonique (HG)}\label{par:HG}
     Une stratégie de regroupement efficace pour extraire les harmoniques exponentiellement modulées \cite{alexandrov_05_auto} utilise une fonction de similarité qui regroupe deux composantes successives $(j, j+1)$ si 
     $$
     \frac{1}{2}\max_{0\le k \le L/2}\left(\Pi_{U_j}(k) + \Pi_{U_{j+1}}(k)\right) \ge \rho_0 
-    $$pour $\rho_0\in \left[0, 1\right]$. Cette métrique rend compte du fait que les composantes successives ont un pique aux même endroit dans leur périodigramme. Cette méthode ne requiert qu'un seul paramètre $\rho_0$ que l'on fixe à 0.8 pour les expérimentations.
+    $$pour $\rho_0\in \left[0, 1\right]$. Cette métrique rend compte du fait que les composantes successives ont des valeurs élevées aux même fréquences dans leur périodogramme. Cette méthode ne requiert qu'un seul paramètre $\rho_0$ que l'on fixe à 0.8 pour les expérimentations. UN PETIT COMMENTAIRE POUR LA ROUTE ?
 % paragraph HG (end)
 
 \paragraph{Similarité des piques (GG2)}\label{par:GG2}
-    Une autre métrique de similarité basé sur les périodigramme est définie en prenant en compte la distance $\ell-\infty$ entre les fréquences non négligeables du périodigramme \cite{abalov_14_auto}. On définit l'ensemble ordonné $F_{f^{(i)}} = \left \{ k | \Pi_{f^{(i)}}(k) \ge \rho_p \|\Pi_{f^{(i)}}\|_\infty \right \}$ et on notera $F_{f^{(i)}}(h)$ la h-eme valeur de cette ensemble. On définit alors la matrice d'adjacence:
+    Une autre métrique de similarité basée sur les périodogramme est définie en prenant en compte la distance $\ell-\infty$ entre les fréquences non négligeables du périodogramme \cite{abalov_14_auto}. On définit l'ensemble ordonné $F_{f^{(i)}} = \left \{ k | \Pi_{f^{(i)}}(k) \ge \rho_p \|\Pi_{f^{(i)}}\|_\infty \right \}$ et on notera $F_{f^{(i)}}(h)$ la h-eme valeur de cette ensemble. On définit alors la matrice d'adjacence:
     $$
     g_{i, j} = \begin{cases}
 	    1 & \text{ if } \displaystyle\frac{\min(\lambda_i, \lambda_j)}{\max(\lambda_i, \lambda_j)} \ge \rho_1\\
@@ -158,26 +156,29 @@ $$où $Z$ est une constante de normalisation telle que le périodigramme est une
     \end{cases}
     $$ où $m = \min\left(\left|F_{f^{(i)}}\right|, \left|F_{f^{(i)}}\right|\right)$.
 % paragraph GG2 (end)
+UN PETIT COMMENTAIRE POUR LA ROUTE ?
 
 \paragraph{K-means spéctral (KM)}\label{par:KM}
-    Le périodigramme peut aussi être utilisé comme descripteur des composantes. La distance entre ces périodigrammes est utilisé avec l'algorithme des K-moyennes pour former le groupement \cite{alvarez_13_auto}. Le choix du nombre de groupe C est un choix critique ici. Une estimation du nombre de groupe peut être faite en estimant le rang de la matrice $\Pi = \begin{bmatrix}\Pi_{U_1}&\dots&\Pi_{U_K}\end{bmatrix}^T$. On calcul les valeurs singulières $\val{\sigma}{K}{\ge}$ de $\Pi$ et on considère $C = \arg\max_k \sigma_k \ge \rho_f \sigma_1$ avec $\rho_f \in \inter$. La similarité vaut alors 1 lorsque les composantes appartiennent au même groupe de l'algorithme des K-moyennes.
+    Le périodogramme peut aussi être utilisé comme descripteur des composantes. DEJA DIT NON ? POURQUOI C BIEN ? La distance entre ces périodogrammes est utilisée avec l'algorithme des K-moyennes pour former le groupement \cite{alvarez_13_auto}. Le choix du nombre de groupes $C$ est un choix critique ici. Une estimation du nombre de groupe peut être faite en estimant le rang de la matrice $\Pi = \begin{bmatrix}\Pi_{U_1}&\dots&\Pi_{U_K}\end{bmatrix}^T$. On calcul les valeurs singulières $\val{\sigma}{K}{\ge}$ de $\Pi$ et on considère $C = \arg\max_k \sigma_k \ge \rho_f \sigma_1$ avec $\rho_f \in \inter$. La similarité vaut alors 1 lorsque les composantes appartiennent au même groupe de l'algorithme des K-moyennes.
 % paragraph KM (end)
 
 
 \paragraph{Regroupement support harmonique (HGS)}\label{par:HGS}
-    L'une des faiblesses de la similarité (HG) est qu'elle se concentre sur des composantes harmoniques. En effet, deux composantes sont groupées si leur périodigramme sont piqués au même endroit. Ainsi, si les composantes extraites par la SSA ont une plage de fréquence plus large, cela peut nuire au groupement car la normalisation du spectre fera passer la métrique de similarité sous le seuil de regroupement.
+    L'une des faiblesses de la similarité (HG) est qu'elle se concentre sur des composantes harmoniques. En effet, deux composantes sont groupées si leur périodogramme ont des pics aux mêmes endroits. Ainsi, si les composantes extraites par la SSA ont une plage de fréquence plus large, cela peut nuire au groupement car la normalisation du spectre fera passer la métrique de similarité sous le seuil de regroupement.
     
-    Une idée pour palier à ce problème est de considérer le support fréquentiel des composantes et de définir le pique de fréquence comme le centre de ce support. On note le support fréquentiel de $f$ comme l'ensemble $\mathcal S_f = \left \{ k | \Pi_f(k) > \rho_1 \kappa_f \right \}$ avec $\kappa_f = \max_k \Pi_f(k)$. On note alors $\omega_f = \frac{\max \mathcal S_f + \min \mathcal S_f }{2 T}$ et $s_f = \frac{\max \mathcal S_f - \min \mathcal S_f }{2}$. On groupe alors les composantes  alors qu'une 
+    Une idée pour palier à ce problème est de considérer le support fréquentiel des composantes et de définir le pic de fréquence comme le centre de ce support. On note le support fréquentiel de $f$ comme l'ensemble $\mathcal S_f = \left \{ k | \Pi_f(k) > \rho_1 \kappa_f \right \}$ avec $\kappa_f = \max_k \Pi_f(k)$. On note alors $\omega_f = \frac{\max \mathcal S_f + \min \mathcal S_f }{2 T}$ et $s_f = \frac{\max \mathcal S_f - \min \mathcal S_f }{2}$. On groupe alors les composantes  alors qu'une 
 
 % paragraph HGS (end)
 % subsubsection per (end)
 % subsection sim (end)
 
 
-\subsection{Stratégie de clustering}
+\subsection{Stratégies de formation des groupes}
 \label{sub:clust}
 
-La stratégie de formation des groupes à partir de la matrice d'adjacence la plus simple est de considérer que toutes les composantes ont le même interet. On peut alors considéré que deux composantes sont dans le même groupe dès lors qu'elles sont adjacentes. L'algorithme \ref{alg:unif} décrit la méthode de formation des groupes dans ce cas.\\
+
+\paragraph{Méthode basique}
+La stratégie de formation des groupes à partir de la matrice d'adjacence la plus simple est de considérer que toutes les composantes ont le même interet. On peut alors considérer que deux composantes sont dans le même groupe dès lors qu'elles sont adjacentes. L'algorithme \ref{alg:unif} décrit la méthode de formation des groupes dans ce cas.\\
 
 \begin{algorithm}
 \caption{Groupement uniforme}\label{alg:unif}
@@ -196,6 +197,8 @@ Given G
 \end{algorithmic}
 \end{algorithm}
 
+
+\paragraph{Méthode hierarchique}
 Une autre possibilité est de considérer que les composantes ont une importance relative. L'importance de chaque composante peut être mesurée par la part de variance $\frac{\lambda_i}{\sum_{j=1}^n \lambda_j}$ expliquée par cette composante. On peut donc considérer qu'on ne rajoute une composante $j$ dans un groupe $I_k$ que si elle est similaire à la composante dominante du groupe \emph{ i.e. } $G_{i, j} = 1$ pour $i = \arg\max_{l \in I_k} \lambda_l$. Une telle procédure est décrite dans l'algorithme \ref{alg:ord}.
 
 % IL FAUT PEUT ETRE ENLEVER LES 2 ALGOS?? Je SUIS PAS CERTAIN DE CE QUE CELA APPORTE AU FINAL....
@@ -223,25 +226,26 @@ Given G
 \section{Méthode d'évaluation}
 \label{sec:eval}
 
-\subsection{Signaux artificiels}
+\subsection{Signaux}
 \label{sub:artsig}
 
-    Les stratégie de regroupement ont été évaluées sur des signaux artificiels générés aléatoirement. L'objectif du regroupement est de séparer les différentes composantes périodiques de la tendance et du bruit. Les signaux tests sont échantillonnés à $100Hz$ selon le modèle:
+    Les stratégie de regroupement ont été évaluées sur des signaux artificiels générés aléatoirement. L'objectif du regroupement est de séparer les différentes composantes périodiques de la tendance et du bruit. Les signaux tests sont échantillonnés à $100 Hz$ selon le modèle:
     \begin{equation}\label{eq:artsig}
     f(t) = \underbrace{a_0 t^p}_{c_0} + \sum_{i=1}^K \underbrace{a_i e^{-\alpha_i t} \sin\left(f_i t + \phi_i\right)}_{c_i}
     \end{equation} avec des valeurs aléatoires tirées sous les lois $a_i \sim \mathcal U(0, 1)$, $p \sim \mathcal U(0, 5)$, $\displaystyle \phi_i \sim \mathcal U\left(\frac{-\pi}{2}, \frac{\pi}{2}\right)$, $\alpha_i \sim \mathcal U\left(0, \frac{1}{2}\right)$ et $f_i \sim \mathcal U(0, 50Hz)$.
     
     On ajoute à ce signal une composante de bruit blanc $\epsilon_t$ de variance $\sigma = s*\sigma_f$, avec $s \sim \mathcal U(0, 30dB)$ le SNR de notre signal.
+A MODIFIER
 
 % subsection artsig  (end)
 
 \subsection{Métriques d'évaluation}
 \label{sub:met}
 
-    L'une métrique utilisée pour évaluer la qualité d'un groupement est le coefficient de détermination $R^2$ \cite{abalov_14_auto}. Ce coefficient rend compte de l'erreur commise par rapport à la variance de la composante. Pour une série $f$ de moyenne $\overline f$ et pour un estimateur $\widehat f$, le coefficient de détermination est calculer suivant
+    L'une des métriques utilisée pour évaluer la qualité d'un groupement est le coefficient de détermination $R^2$ \cite{abalov_14_auto}. Ce coefficient rend compte de l'erreur commise par rapport à la variance de la composante. Pour une série $f$ de moyenne $\overline f$ et pour un estimateur $\widehat f$, le coefficient de détermination est calculé suivant
     $$
         R^2(f, \widehat f) = 1 - \frac{\|f-\widehat f\|^2}{\|f-\overline f\|^2}
-    $$Cette quantité rend compte du rapport entre l'erreur d'estimation et la variance d'un signal. La métrique d'évaluation du regroupement est alors calculé en moyennant les valeurs minimales de $R^2$ pour chaque composante $c_i$ du signal d'origine et pour 
+    $$Cette quantité correspond aurapport entre l'erreur d'estimation et la variance d'un signal. La métrique d'évaluation du regroupement est alors calculée en moyennant les valeurs minimales de $R^2$ pour chaque composante $c_i$ du signal d'origine et pour 
     $$
         \overline{ R^2} = \sum_{i=1}^n \min_k R^2(c_i, g_k)
     $$où les $g_k$ sont les différentes composantes obtenue lors du groupement.
