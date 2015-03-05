@@ -80,7 +80,7 @@ $$où  $U_i$.Par linéarité de l'opération d'hankelisation, on obtient une dé
 
 Les oscillations harmoniques ou plus complexes, présentes dans la série initiale sont généralement décomposées sur plusieurs de ces composantes. Le bruit est lui aussi projeté sur plusieurs composantes. Une étape d'identification et de regroupement est alors nécessaire pour produire une décomposition intéressante. Une sélection des composantes peut être faite en se basant sur les valeurs singulières associées qui rendent compte de l'importance de la composante dans la série. Une étape de regroupement est ensuite nécessaire pour obtenir une décomposition plus simple à analyser.
 
-Diverses approches ont été utilisées dans la littérature pour réaliser ce groupement, même si la plupart des travaux utilisant la SSA réalisent cette étape de façon empirique. En particulier, certaines heuristiques basées sur la corrélation et le spectre de fréquence des composantes ont été développées pour aider au choix des groupes \cite{GNZ_10_SSA}. Ces indicateurs, d'abord utilisés pour le regroupement manuel, ont ouvert la voie au developpement de méthodes de groupement automatisé. Nous verrons dans la section \ref{sec:met} une description des principales méthodes existantes ainsi que de nouvelles stratégies, ainsi qu'un cadre unifié pour l'évaluation de ces méthodes dans la section \label{sec:eval}. PUIS RESULTATS
+Diverses approches ont été utilisées dans la littérature pour réaliser ce groupement, même si la plupart des travaux utilisant la SSA réalisent cette étape de façon empirique. En particulier, certaines heuristiques basées sur la corrélation et le spectre de fréquence des composantes ont été développées pour aider au choix des groupes \cite{GNZ_10_SSA}. Ces indicateurs, d'abord utilisés pour le regroupement manuel, ont ouvert la voie au développement de méthodes de groupement automatisé. Nous verrons dans la section \ref{sec:met} une description des principales méthodes existantes ainsi que de nouvelles stratégies, ainsi qu'un cadre unifié pour l'évaluation de ces méthodes dans la section \label{sec:eval}. PUIS RESULTATS
 
 %Les travaux de Alexandrov et Golyandina \cite{alexandrov_05_auto} propose une première approche pour le regroupement automatique, principalement tourner à la récupération d'harmonique pure dans le signal. Dans \cite{alvarez_13_auto}, Alvarez et al. propose une seconde méthode de regroupement automatique basé sur le clustering des périodogrammes des composantes reconstruites. Cette méthode vise un regroupement plus général des composantes. Dans des travaux récents, Abalov et Gubarev \cite{abalov_14_auto} présentent deux autres stratégies pour obtenir un regroupement automatique. 
 
@@ -131,7 +131,7 @@ Enfin, la troisième étape concerne la stratégie de formation des groupes à p
     La w-corrélation pour deux séries $x, y$ de taille $N$ et pour une taille de fenêtre $K$ est définie par:
     $$
     \text{w-corr}(x, y) = \frac{\langle x|y\rangle_w}{\|x\|_w\|y\|_w}
-    $$avec $\langle x|y\rangle_w = \sum_{i=1}^n w_i x_i y_i$, $w_i = \min(i, N-i, K)$ et $\|x\|_w = \sqrt{\langle x|x\rangle_w}$. Deux séries sont séparables par la SSA si leur w-corrélation est nulle \cite{GNZ_10_SSA}. Il est donc possible d'utiliser la valeur de la w-corrélation comme indicateur de similarité entre 2 composantes. On peut alors prendre une fonction de similarité identique à celle de Abalov en remplaçant la corrélation par la w-corrélation. Ceci permet de filtrer les effets de bord qui peuvent apparaître dans la corrélation et ainsi d'obtenir un meilleur regroupement. Les paramètres dirigeant cette mesure de similarité sont les mêmes que ceux de (GG1) et on les fixe donc aux mêmes valeurs.
+    $$avec $\langle x|y\rangle_w = \sum_{i=1}^n w_i x_i y_i$, $w_i = \min(i, N-i, K)$ et $\|x\|_w = \sqrt{\langle x|x\rangle_w}$. Deux séries sont séparables par la SSA si leur w-corrélation est nulle \cite{GNZ_10_SSA}. Il est donc possible d'utiliser la valeur de la w-corrélation comme indicateur de similarité entre 2 composantes. On peut alors prendre une fonction de similarité identique à la précédente en remplaçant la corrélation par la w-corrélation. Ceci permet de filtrer les effets de bord qui peuvent apparaître dans la corrélation et ainsi d'obtenir un meilleur regroupement. Les paramètres dirigeant cette mesure de similarité sont les mêmes que ceux de (GG1) et on les fixe donc aux mêmes valeurs.
 % paragraph GG3 (end)
 
 % subsubsection cor (end)
@@ -151,7 +151,7 @@ $$où $Z$ est une constante de normalisation telle que le périodogramme ait une
 % paragraph HG (end)
 
 \paragraph{Similarité des piques (GG2)}\label{par:GG2}
-    Une autre métrique de similarité basée sur les périodogramme est définie en prenant en compte la distance $\ell-\infty$ entre les fréquences non négligeables du périodogramme \cite{abalov_14_auto}. On définit l'ensemble ordonné $F_{f^{(i)}} = \left \{ k | \Pi_{f^{(i)}}(k) \ge \rho_p \|\Pi_{f^{(i)}}\|_\infty \right \}$ et on notera $F_{f^{(i)}}(h)$ la h-eme valeur de cette ensemble. On définit alors la matrice d'adjacence:
+    Une autre métrique de similarité basée sur les périodogrammes est définie en prenant en compte la distance $\ell-\infty$ entre les fréquences non négligeables du périodogramme \cite{abalov_14_auto}. On définit l'ensemble ordonné $F_{f^{(i)}} = \left \{ k | \Pi_{f^{(i)}}(k) \ge \rho_p \|\Pi_{f^{(i)}}\|_\infty \right \}$ et on notera $F_{f^{(i)}}(h)$ la h-eme valeur de cette ensemble. On définit alors la matrice d'adjacence:
     $$
     g_{i, j} = \begin{cases}
 	    1 & \text{ if } \displaystyle\frac{\min(\lambda_i, \lambda_j)}{\max(\lambda_i, \lambda_j)} \ge \rho_1\\
@@ -162,8 +162,8 @@ $$où $Z$ est une constante de normalisation telle que le périodogramme ait une
 % paragraph GG2 (end)
 UN PETIT COMMENTAIRE POUR LA ROUTE ?
 
-\paragraph{K-means spéctral (KM)}\label{par:KM}
-    Le périodogramme peut aussi être utilisé comme descripteur des composantes. DEJA DIT NON ? POURQUOI C BIEN ? La distance entre ces périodogrammes est utilisée avec l'algorithme des K-moyennes pour former le groupement \cite{alvarez_13_auto}. Le choix du nombre de groupes $C$ est un choix critique ici. Une estimation du nombre de groupe peut être faite en estimant le rang de la matrice $\Pi = \begin{bmatrix}\Pi_{U_1}&\dots&\Pi_{U_K}\end{bmatrix}^T$. On calcul les valeurs singulières $\val{\sigma}{K}{\ge}$ de $\Pi$ et on considère $C = \arg\max_k \sigma_k \ge \rho_f \sigma_1$ avec $\rho_f \in \inter$. La similarité vaut alors 1 lorsque les composantes appartiennent au même groupe de l'algorithme des K-moyennes.
+\paragraph{K-means spectral (KM)}\label{par:KM}
+    La distance entre les périodogrammes peut être utilisée avec l'algorithme des K-moyennes pour former le groupement \cite{alvarez_13_auto}. Ceci est intéressant car le choix des seuils sur les distances entre les composantes d'un groupe est adapté par les K-moyennes. Le choix du nombre de groupes $C$ est un choix critique ici. Une estimation du nombre de groupe peut être faite en estimant le rang de la matrice $\Pi = \begin{bmatrix}\Pi_{U_1}&\dots&\Pi_{U_K}\end{bmatrix}^T$. On calcul les valeurs singulières $\val{\sigma}{K}{\ge}$ de $\Pi$ et on considère $C = \arg\max_k \sigma_k \ge \rho_f \sigma_1$ avec $\rho_f \in \inter$. La similarité vaut alors 1 lorsque les composantes appartiennent au même groupe formé par l'algorithme des K-moyennes.
 % paragraph KM (end)
 
 
@@ -203,7 +203,7 @@ La stratégie de formation des groupes à partir de la matrice d'adjacence la pl
 
 
 \paragraph{Méthode hiérarchique}
-Une autre possibilité est de considérer que les composantes ont une importance relative. L'importance de chaque composante peut être mesurée par la part de variance $\frac{\lambda_i}{\sum_{j=1}^n \lambda_j}$ expliquée par cette composante. On peut donc considérer qu'on ne rajoute une composante $j$ dans un groupe $I_k$ que si elle est similaire à la composante dominante du groupe \emph{ i.e. } $G_{i, j} = 1$ pour $i = \arg\max_{l \in I_k} \lambda_l$. Cela permet de donner un poid plus important lors du groupement à la composante qui contient le plus de variance du signal.
+Une autre possibilité est de considérer que les composantes ont une importance relative. L'importance de chaque composante peut être mesurée par la part de variance $\frac{\lambda_i}{\sum_{j=1}^n \lambda_j}$ expliquée par cette composante. On peut donc considérer qu'on ne rajoute une composante $j$ dans un groupe $I_k$ que si elle est similaire à la composante dominante du groupe \emph{ i.e. } $G_{i, j} = 1$ pour $i = \arg\max_{l \in I_k} \lambda_l$. Cela permet de donner un poids plus important lors du groupement à la composante qui contient le plus de variance du signal.
 
 % IL FAUT PEUT ETRE ENLEVER LES 2 ALGOS?? Je SUIS PAS CERTAIN DE CE QUE CELA APPORTE AU FINAL....
 %\begin{algorithm}
@@ -249,7 +249,7 @@ A MODIFIER
     L'une des métriques utilisée pour évaluer la qualité d'un groupement est le coefficient de détermination $R^2$ \cite{abalov_14_auto}. Ce coefficient rend compte de l'erreur commise par rapport à la variance de la composante. Pour une série $f$ de moyenne $\overline f$ et pour un estimateur $\widehat f$, le coefficient de détermination est calculé suivant
     $$
         R^2(f, \widehat f) = 1 - \frac{\|f-\widehat f\|^2}{\|f-\overline f\|^2}
-    $$Cette quantité correspond aurapport entre l'erreur d'estimation et la variance d'un signal. La métrique d'évaluation du regroupement est alors calculée en moyennant les valeurs minimales de $R^2$ pour chaque composante $c_i$ du signal d'origine et pour 
+    $$Cette quantité correspond au rapport entre l'erreur d'estimation et la variance d'un signal. La métrique d'évaluation du regroupement est alors calculée en moyennant les valeurs minimales de $R^2$ pour chaque composante $c_i$ du signal d'origine et pour 
     $$
         \overline{ R^2} = \sum_{i=1}^n \min_k R^2(c_i, g_k)
     $$où les $g_k$ sont les différentes composantes obtenue lors du groupement.
