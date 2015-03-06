@@ -3,17 +3,30 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{amsmath, amssymb}
-\usepackage[english,francais]{babel}
+\usepackage[english,french]{babel}
+  \usepackage{times}	
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
 \usepackage{color}
+\usepackage{graphicx}
 %\usepackage{enumitem}
 
 
 %Gummi|065|=)
 \title{Separation de sources automatique}
-\author{Thomas Moreau}
-\date{}
+
+\auteur{\coord{Thomas}{Moreau}{1},
+        \coord{Laurent}{Oudre}{1},
+    \coord{Nicolas}{Vayatis}{2}}
+
+\adresse{\affil{1}{CMLA - ENS Cachan \\
+64 Avenue du Président Wilson, 94230 Cachan}
+         \affil{2}{L2TI - Université Paris 13 \\
+         99 Avenue Jean Baptiste Clément, 93430 Villetaneuse}}
+         
+\email{thomas.moreau@cmla.ens-cachan.fr,
+laurent.oudre@univ-paris13.fr\\
+nicolas.vayatis@cmla.ens-cachan.fr}
 
 \makeatletter
 \def\BState{\State\hskip-\ALG@thistlm}
@@ -146,8 +159,9 @@ $$où $Z$ est une constante de normalisation telle que le périodogramme ait une
     Une stratégie de regroupement efficace pour extraire les harmoniques exponentiellement modulées \cite{alexandrov_05_auto} utilise une fonction de similarité qui regroupe deux composantes successives $(j, j+1)$ si 
     $$
     \frac{1}{2}\max_{0\le k \le L/2}\left(\Pi_{U_j}(k) + \Pi_{U_{j+1}}(k)\right) \ge \rho_0 
-    $$pour $\rho_0\in \left[0, 1\right]$. Cette métrique rend compte du fait que les composantes successives ont des valeurs élevées aux même fréquences dans leur périodogramme. Cette méthode ne requiert qu'un seul paramètre $\rho_0$ que l'on fixe à 0.8 pour les expérimentations. %TODO
-{\color{red} \textbf{TODO} - UN PETIT COMMENTAIRE POUR LA ROUTE ? }  
+    $$pour $\rho_0\in \left[0, 1\right]$. Pour une composante harmonique pure décomposé sur les deux sous-séries $i,i+1$, cet indicateur vaut 1 car les périodogrammes sont les mêmes. Au contraire, si deux composantes successives ont des spéctres disjoints, l'indicateur ne peut dépasser 0.5. Cette métrique rend compte du fait que les composantes successives ont des piques de densité spéctrale aux mêmes fréquences.
+%TODO
+{\color{red} \textbf{TODO} - UN PETIT COMMENTAIRE POUR LA ROUTE ? }  {\color{green} \textbf{DONE} }  
 % paragraph HG (end)
 
 \paragraph{Similarité des piques (GG2)}\label{par:GG2}
@@ -158,10 +172,10 @@ $$où $Z$ est une constante de normalisation telle que le périodogramme ait une
 	      & \text{ et } \frac{|F_{f^{(i)}}(h) - F_{f^{(i)}}(h)|}{T/2} \le \rho_2 \forall h \in \set{m}\\
 	    0 & \text{ sinon}
     \end{cases}
-    $$ où $m = \min\left(\left|F_{f^{(i)}}\right|, \left|F_{f^{(i)}}\right|\right)$.
-    %TODO
-{\color{red} \textbf{TODO} - UN PETIT COMMENTAIRE POUR LA ROUTE ?
-} 
+    $$ où $m = \min\left(\left|F_{f^{(i)}}\right|, \left|F_{f^{(i)}}\right|\right)$. Cette métrique tente de rendre plus robuste la détection de composante ayant le même périodogramme en étendant la comparaison du pique maximal (HG) au support comum. Cette technique est cependant sensible au bruit.
+    
+%TODO
+{\color{red} \textbf{TODO} - UN PETIT COMMENTAIRE POUR LA ROUTE ?} {\color{green} \textbf{DONE}}  
 % paragraph GG2 (end)
 
 \paragraph{K-means spectral (KM)}\label{par:KM}
@@ -182,6 +196,13 @@ $$où $Z$ est une constante de normalisation telle que le périodogramme ait une
 \subsection{Stratégies de formation des groupes}
 \label{sub:clust}
 
+\begin{figure*}
+\center
+\includegraphics[width=0.45\textwidth]{img/mfig2.eps}
+\includegraphics[width=0.45\textwidth]{img/gfig2.eps}
+\caption{}
+\label{}
+\end{figure*}
 
 \paragraph{Méthode basique}
 La stratégie de formation des groupes à partir de la matrice d'adjacence la plus simple est de considérer que toutes les composantes ont le même intérêt. On peut alors considérer que deux composantes sont dans le même groupe dès lors qu'elles sont adjacentes. C'est la méthode qui est utilisé dans tous les algorithmes qui ont été proposés jusque là.\\
@@ -275,6 +296,7 @@ Une autre possibilité est de considérer que les composantes ont une importance
 Le Tableau \ref{tab:1} présente la moyenne des différentes métriques pour chaque stratégie de groupement sur 2000 tirages de fonctions selon le modèle (\ref{eq:artsig}).
 
 K fixé à T/2!! :)
+
 
 \bibliographystyle{plain} 
 \bibliography{bib_dl}{}
