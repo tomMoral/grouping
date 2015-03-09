@@ -53,7 +53,7 @@ nicolas.vayatis@cmla.ens-cachan.fr}
 \section{Introduction}
 \label{sec:intro}
 
-L'analyse du spectre singulier (en anglais SSA : Singular Spectral Analysis) est une technique introduite par Vautard et al \cite{vautard_ghil_89_SSA} permettant d'obtenir de manière simple une décomposition du signal en composantes de tendance, de saisonnalité (harmoniques) et de bruit. Elle est principalement utilisée en finance ou en météorologie où les séries étudiées sont souvent courtes et bruitées. De nombreuses publications ont montré la pertinence de la SSA dans ces contextes, où cette décomposition permet d'apporter de l'information sur les mécanismes produisant ces séries mais aussi de formuler des modèles de prédiction.
+L'analyse du spectre singulier (en anglais SSA : Singular Spectral Analysis) est une technique introduite par Vautard et al \cite{vautard_89_SSA} permettant d'obtenir de manière simple une décomposition du signal en composantes de tendance, de saisonnalité (harmoniques) et de bruit. Elle est principalement utilisée en finance ou en météorologie où les séries étudiées sont souvent courtes et bruitées. De nombreuses publications ont montré la pertinence de la SSA dans ces contextes, où cette décomposition permet d'apporter de l'information sur les mécanismes produisant ces séries mais aussi de formuler des modèles de prédiction.
 
 
 Néanmoins, cette technique a été rarement utilisée sur d'autres signaux, principalement à cause de son manque d'automatisation. La pertinence des décompositions obtenues dépend en effet énormément du regroupement des composantes extraites, et résoudre cette tâche de façon manuelle peut s'avérer laborieux. Cet article a pour but de présenter différentes stratégies de regroupement automatique (existantes et originales) ainsi qu'un cadre permettant leur évaluation et leur comparaison.
@@ -75,7 +75,6 @@ $$ X^{(K)} = \begin{bmatrix}
 Le signal peut être reconstruit naturellement à partir de cette matrice du fait de sa structure de Hankel, avec toutes les composantes sur les anti-diagonales égales. Si l'on considère une matrice $M$ n'ayant pas cette structure, le signal ayant la matrice de trajectoire la plus proche de $M$ peut être construit en moyennant le long des anti-diagonales. Cette opération permet de  passer de l'espace des matrices à celui des signaux. On notera par la suite $\HH: \R^{K\times L} \to \R^T$ l'opération d'hankelisation, qui effectue la moyenne le long des anti-diagonales. Cette opération est linéaire.
 
 
-
 Une décomposition en valeur singulière (en anglais SVD pour Singular Value Decomposition) de la matrice de K-trajectoire $X^{(K)}$ de $f$ permet d'extraire les motifs de longueur $K$ les plus intéressants au sens de la variance. En effet, la SVD donne: 
 $$X^{(K)} = U \Lambda V^T
 $$ avec $U, V$ deux matrices orthogonales et $\Lambda$ une matrice diagonale ayant pour valeurs $\lambda_1\ge \dots\ge \lambda_K$. La matrice $U$ peut être vue comme un dictionnaire de motifs de taille $K$ sur lequel est projeté le signal. Ces motifs permettent de capturer au mieux la variance du signal. Les vecteurs singuliers de la SVD maximisent récursivement la covariance de $U_i$ et des sous séries de longueur $K$ de $f$.
@@ -83,9 +82,9 @@ $$ avec $U, V$ deux matrices orthogonales et $\Lambda$ une matrice diagonale aya
 %\paragraph{Reconstruction de composantes}
 
 
-L'étape d'extraction de motif permet d'obtenir une décomposition de la matrice de trajectoire sous la forme d'une somme de matrice de rang 1:$$
+L'étape d'extraction de motifs permet d'obtenir une décomposition de la matrice de trajectoire sous la forme d'une somme de matrice de rang 1:$$
 X^{(K)} = \sum_{i=1}^K \lambda_i U_iV_i^T 
-$$où  $U_i$.Par linéarité de l'opération d'hankelisation, on obtient une décomposition de $f = \sum_{i=1}^K f^{(i)}$ avec $f^{(i)} = \HH(\lambda_iU_iV_i^T)$ la série associée à la matrice de rang 1 $\lambda_iU_iV_i^T$.
+$$où  $U_i, V_i$ sont les colomne des matrices $U, V$. Par linéarité de l'opération d'hankelisation, on obtient une décomposition de $f = \sum_{i=1}^K f^{(i)}$ avec $f^{(i)} = \HH(\lambda_iU_iV_i^T)$ la série associée à la matrice de rang 1 $\lambda_iU_iV_i^T$. C'est composantes sont associées avec le triplet propre $(\lambda_i, U_i, V_i)$. On appelera $U_i$ le motif associé et $\lambda_i$ la valeur singulière associée.
 
 
 \subsection{Regroupement des composantes}
@@ -93,7 +92,7 @@ $$où  $U_i$.Par linéarité de l'opération d'hankelisation, on obtient une dé
 
 Les oscillations harmoniques ou plus complexes, présentes dans la série initiale sont généralement décomposées sur plusieurs de ces composantes. Le bruit est lui aussi projeté sur plusieurs composantes. Une étape d'identification et de regroupement est alors nécessaire pour produire une décomposition intéressante. Une sélection des composantes peut être faite en se basant sur les valeurs singulières associées qui rendent compte de l'importance de la composante dans la série. Une étape de regroupement est ensuite nécessaire pour obtenir une décomposition plus simple à analyser.
 
-Diverses approches ont été utilisées dans la littérature pour réaliser ce groupement, même si la plupart des travaux utilisant la SSA réalisent cette étape de façon empirique. En particulier, certaines heuristiques basées sur la corrélation et le spectre de fréquence des composantes ont été développées pour aider au choix des groupes \cite{GNZ_10_SSA}. Ces indicateurs, d'abord utilisés pour le regroupement manuel, ont ouvert la voie au développement de méthodes de groupement automatisé. Nous verrons dans la section \ref{sec:met} une description des principales méthodes existantes ainsi que de nouvelles stratégies, ainsi qu'un cadre unifié pour l'évaluation de ces méthodes dans la section \label{sec:eval}. PUIS RESULTATS
+Diverses approches ont été utilisées dans la littérature pour réaliser ce groupement, même si la plupart des travaux utilisant la SSA réalisent cette étape de façon empirique. En particulier, certaines heuristiques basées sur la corrélation et le spectre de fréquence des composantes ont été développées pour aider au choix des groupes \cite{Golyandina_10_ssa}. Ces indicateurs, d'abord utilisés pour le regroupement manuel, ont ouvert la voie au développement de méthodes de groupement automatisé. Nous verrons dans la section \ref{sec:met} une description des principales méthodes existantes ainsi que de nouvelles stratégies, ainsi qu'un cadre unifié pour l'évaluation de ces méthodes dans la section \label{sec:eval}. PUIS RESULTATS
 
 %Les travaux de Alexandrov et Golyandina \cite{alexandrov_05_auto} propose une première approche pour le regroupement automatique, principalement tourner à la récupération d'harmonique pure dans le signal. Dans \cite{alvarez_13_auto}, Alvarez et al. propose une seconde méthode de regroupement automatique basé sur le clustering des périodogrammes des composantes reconstruites. Cette méthode vise un regroupement plus général des composantes. Dans des travaux récents, Abalov et Gubarev \cite{abalov_14_auto} présentent deux autres stratégies pour obtenir un regroupement automatique. 
 
@@ -149,33 +148,27 @@ Enfin, la troisième étape concerne la stratégie de formation des groupes à p
 %TODO
 {\color{red} \textbf{TODO} - Citer les param dans le text explicatif} 
 
-La fréquence des composantes obtenues peut aussi être utilisée comme un indicateur de similarité des séries. Le périodogramme d'une série $f$ de longueur $N$ est défini comme:
+La fréquence des composantes obtenues peut aussi être utilisée comme un indicateur de similarité des séries \cite{Golyandina_10_ssa}. Le périodogramme d'une série $f$ de longueur $N$ est défini comme:
 $$
 \Pi_f(k) = \frac{1}{Z}\left|\sum_{n=1}^N f_n e^{-2i\pi n \frac{k}{N}}\right|^2
-$$où $Z$ est une constante de normalisation telle que le périodogramme ait une norme unitaire. Cette estimation de la densité spectrale de puissance peut être utilisée  comme indicateur pour choisir un regroupement \cite{GNZ_10_SSA}. %TODO
-{\color{red} \textbf{TODO} - REDONDANT, NON ? DONNER UN ARGUMENT}   
+$$où $Z$ est une constante de normalisation telle que le périodogramme ait une norme unitaire. Les composantes contenant une même phase oscillante partage des structures communes dans leur périodogramme qui peuvent permettre leur identification.
 
 \paragraph{Regroupement harmonique (HG)}\label{par:HG}
     Une stratégie de regroupement efficace pour extraire les harmoniques exponentiellement modulées \cite{alexandrov_05_auto} utilise une fonction de similarité qui regroupe deux composantes successives $(j, j+1)$ si 
     $$
     \frac{1}{2}\max_{0\le k \le L/2}\left(\Pi_{U_j}(k) + \Pi_{U_{j+1}}(k)\right) \ge \rho_0 
-    $$pour $\rho_0\in \left[0, 1\right]$. Pour une composante harmonique pure décomposé sur les deux sous-séries $i,i+1$, cet indicateur vaut 1 car les périodogrammes sont les mêmes. Au contraire, si deux composantes successives ont des spéctres disjoints, l'indicateur ne peut dépasser 0.5. Cette métrique rend compte du fait que les composantes successives ont des piques de densité spéctrale aux mêmes fréquences.
-%TODO
-{\color{red} \textbf{TODO} - UN PETIT COMMENTAIRE POUR LA ROUTE ? }  {\color{green} \textbf{DONE} }  
+    $$pour $\rho_0\in \left[0, 1\right]$. Pour une composante harmonique pure décomposé sur les deux sous-séries $i,i+1$, cet indicateur vaut 1 car les périodogrammes sont les mêmes. Au contraire, si deux composantes successives ont des spectres disjoints, l'indicateur ne peut dépasser 0.5. Cette métrique rend compte du fait que les composantes successives ont des pics de densité spectrale aux mêmes fréquences.
 % paragraph HG (end)
 
-\paragraph{Similarité des piques (GG2)}\label{par:GG2}
-    Une autre métrique de similarité basée sur les périodogrammes est définie en prenant en compte la distance $\ell-\infty$ entre les fréquences non négligeables du périodogramme \cite{abalov_14_auto}. On définit l'ensemble ordonné $F_{f^{(i)}} = \left \{ k | \Pi_{f^{(i)}}(k) \ge \rho_p \|\Pi_{f^{(i)}}\|_\infty \right \}$ et on notera $F_{f^{(i)}}(h)$ la h-eme valeur de cette ensemble. On définit alors la matrice d'adjacence:
+\paragraph{Similarité des pics (GG2)}\label{par:GG2}
+    Une autre métrique de similarité basée sur les périodogrammes est définie en prenant en compte la distance $\ell-\infty$ entre les fréquences non négligeables du périodogramme \cite{abalov_14_auto}. Pour une série $f$, on définit l'ensemble ordonné $F_f = \left \{ k | \Pi_f(k) \ge \rho_p \|\Pi_f\|_\infty \right \}$ pour $\rho_p \in \inter$ et on notera $F_f(h)$ la h-ème valeur de cette ensemble. On définit alors la matrice d'adjacence:
     $$
     g_{i, j} = \begin{cases}
 	    1 & \text{ if } \displaystyle\frac{\min(\lambda_i, \lambda_j)}{\max(\lambda_i, \lambda_j)} \ge \rho_1\\
-	      & \text{ et } \frac{|F_{f^{(i)}}(h) - F_{f^{(i)}}(h)|}{T/2} \le \rho_2 \forall h \in \set{m}\\
+	      & \text{ et } \frac{|F_{f^{(i)}}(h) - F_{f^{(j)}}(h)|}{T/2} \le \rho_2 \forall h \in \set{m}\\
 	    0 & \text{ sinon}
     \end{cases}
-    $$ où $m = \min\left(\left|F_{f^{(i)}}\right|, \left|F_{f^{(i)}}\right|\right)$. Cette métrique tente de rendre plus robuste la détection de composante ayant le même périodogramme en étendant la comparaison du pique maximal (HG) au support comum. Cette technique est cependant sensible au bruit.
-    
-%TODO
-{\color{red} \textbf{TODO} - UN PETIT COMMENTAIRE POUR LA ROUTE ?} {\color{green} \textbf{DONE}}  
+    $$ où $m = \min\left(\left|F_{f^{(i)}}\right|, \left|F_{f^{(j)}}\right|\right)$. Cette métrique tente de rendre plus robuste la détection de composante ayant le même périodogramme en comparant non plus le pic maximal (HG) mais les supports spectraux des composantes. 
 % paragraph GG2 (end)
 
 \paragraph{K-means spectral (KM)}\label{par:KM}
@@ -185,8 +178,8 @@ $$où $Z$ est une constante de normalisation telle que le périodogramme ait une
 
 \paragraph{Regroupement support harmonique (HGS)}\label{par:HGS}
     L'une des faiblesses de la similarité (HG) est qu'elle se concentre sur des composantes harmoniques. En effet, deux composantes sont groupées si leur périodogramme ont des pics aux mêmes endroits. Ainsi, si les composantes extraites par la SSA ont une plage de fréquence plus large, cela peut nuire au groupement car la normalisation du spectre fera passer la métrique de similarité sous le seuil de regroupement.
-    
-    Une idée pour palier à ce problème est de considérer le support fréquentiel des composantes et de définir le pic de fréquence comme le centre de ce support. On note le support fréquentiel de $f$ comme l'ensemble $\mathcal S_f = \left \{ k | \Pi_f(k) > \rho_1 \kappa_f \right \}$ avec $\kappa_f = \max_k \Pi_f(k)$. On note alors $\omega_f = \frac{\max \mathcal S_f + \min \mathcal S_f }{2 T}$ et $s_f = \frac{\max \mathcal S_f - \min \mathcal S_f }{2}$. On groupe alors les composantes ayant un support restreint \emph{i.e.} $s_f \le 3*\log(T)$
+    Une idée pour palier à ce problème, on peut considérer le support fréquentiel $F_{U_i}$ des motifs associées au composantes et de considérer une fréquence fondamentale comme le centre de ce support. On note alors $\omega_i = \frac{\displaystyle\max \mathcal F_{U_i} + \min \mathcal F_{U_i} }{2 T}$ et $s_i = \frac{\displaystyle\max \mathcal F_{U_i} - \min \mathcal F_{U_i} }{2}$. On sélectionne alors les composantes ayant un support restreint \emph{i.e.} $s_i \le 3*\log(T)$ et on considère que les composantes $i, j$ sont similaires si $|\omega_i - \omega_j| < \rho_\omega$ avec $\rho_\omega \in \inter$.
+    Ceci permet donc de grouper les composantes associées à des dictionnaires ayant des périodogrammes concentrés qui se chevauchent.
 
 % paragraph HGS (end)
 % subsubsection per (end)
@@ -195,17 +188,8 @@ $$où $Z$ est une constante de normalisation telle que le périodogramme ait une
 
 \subsection{Stratégies de formation des groupes}
 \label{sub:clust}
-
-\begin{figure*}
-\center
-\includegraphics[width=0.45\textwidth]{img/mfig2.eps}
-\includegraphics[width=0.45\textwidth]{img/gfig2.eps}
-\caption{}
-\label{}
-\end{figure*}
-
-\paragraph{Méthode basique}
-La stratégie de formation des groupes à partir de la matrice d'adjacence la plus simple est de considérer que toutes les composantes ont le même intérêt. On peut alors considérer que deux composantes sont dans le même groupe dès lors qu'elles sont adjacentes. C'est la méthode qui est utilisé dans tous les algorithmes qui ont été proposés jusque là.\\
+\paragraph{Méthode uniforme}
+La stratégie de formation des groupes à partir de la matrice d'adjacence la plus simple est de considérer que toutes les composantes ont le même intérêt. On peut alors considérer que deux composantes sont dans le même groupe dès lors qu'elles sont adjacentes. C'est la méthode qui est utilisé dans la plupart des algorithmes qui ont été proposés jusque là \cite{abalov_14_auto, alvarez_13_auto}.\\
 
 %\begin{algorithm}
 %\caption{Groupement uniforme}\label{alg:unif}
@@ -253,51 +237,66 @@ Une autre possibilité est de considérer que les composantes ont une importance
 \section{Méthode d'évaluation}
 \label{sec:eval}
 
-\subsection{Signaux}
+\subsection{Génération de signaux}
 \label{sub:artsig}
 
-    Les stratégie de regroupement ont été évaluées sur des signaux artificiels générés aléatoirement. L'objectif du regroupement est de séparer la tendance des différentes composantes périodiques et du bruit. Les signaux tests sont échantillonnés à $100Hz$ selon le modèle:
+    Les stratégies de regroupement ont été évaluées sur des signaux artificiels générés aléatoirement. L'objectif du regroupement est de séparer la tendance des différentes composantes périodiques et du bruit. Les signaux tests sont échantillonnés à $100Hz$ selon le modèle:
     \begin{equation}\label{eq:artsig}
     f(t) = \underbrace{a_0 t^p}_{c_0} + \sum_{i=1}^K \underbrace{a_i e^{-\alpha_i t} \sin\left(f_i t + \phi_i\right)}_{c_i} + \epsilon_t
-    \end{equation} avec des valeurs aléatoires tirées sous les lois $a_i \sim \mathcal U(0, 1)$, $p \sim \mathcal U(0, 5)$, $\displaystyle \phi_i \sim \mathcal U\left(\frac{-\pi}{2}, \frac{\pi}{2}\right)$, $\alpha_i \sim \mathcal U\left(0, \frac{1}{2}\right)$ et $f_i \sim \mathcal U(0, 50Hz)$.
+    \end{equation}où $\epsilon_t$  est une composante de bruit blanc gaussien tiré selon $N(0, \sigma^2)$ avec un écart type $\sigma = s*\sigma_f$. Les différents paramètres sont choisit de manière aléatoire avec $a_i \in \inter$, $p \in \left[0, 5\right]$, $\displaystyle \phi_i \in\left[\frac{-\pi}{2}, \frac{\pi}{2}\right]$, $\alpha_i \in \left[0, \frac{1}{2}\right]$, $f_i \in \left[0, 50\right]Hz$ et $s \in \left[0, 40\right]dB$.
     
-    On ajoute à ce signal une composante de bruit blanc $\epsilon_t$ de variance $\sigma = s*\sigma_f$, avec $s \sim \mathcal U(0, 30dB)$ le SNR de notre signal.
-%TODO
-{\color{red} \textbf{TODO} - A Modifier }
+    \begin{figure}[htp]
+\centering
+\includegraphics[width=.45\textwidth]{img/gfig0.eps}
+\vspace{-.7cm}\caption{Exemples de signal généré}
+\label{}
+\end{figure}
+
 % subsection artsig  (end)
 
 \subsection{Métriques d'évaluation}
 \label{sub:met}
 
-    L'une des métriques utilisée pour évaluer la qualité d'un groupement est le coefficient de détermination $R^2$ \cite{abalov_14_auto}. Ce coefficient rend compte de l'erreur commise par rapport à la variance de la composante. Pour une série $f$ de moyenne $\overline f$ et pour un estimateur $\widehat f$, le coefficient de détermination est calculé suivant
-    $$
-        R^2(f, \widehat f) = 1 - \frac{\|f-\widehat f\|^2}{\|f-\overline f\|^2}
-    $$Cette quantité correspond au rapport entre l'erreur d'estimation et la variance d'un signal. La métrique d'évaluation du regroupement est alors calculée en moyennant les valeurs minimales de $R^2$ pour chaque composante $c_i$ du signal d'origine et pour 
-    $$
-        \overline{ R^2} = \sum_{i=1}^n \min_k R^2(c_i, g_k)
-    $$où les $g_k$ sont les différentes composantes obtenue lors du groupement.
-    
-    Cette métrique ne rend compte que du rappel de la méthode et non de la précision. Le but de la phase de groupement est d'obtenir des composantes haut niveau et de filtrer les composantes de bruit. Il est important de prendre en compte l'efficacité de la stratégie de groupement pour discerner les composantes utiles.
+L'une des métriques utilisée pour évaluer la qualité du groupement est le coefficient de détermination $R^2$ \cite{abalov_14_auto}. Ce coefficient rend compte de l'erreur commise par rapport à la variance de la composante. Pour une série $f$ de moyenne $\overline f$ et pour un estimateur $\widehat f$, le coefficient de détermination est calculé suivant $R^2(f, \widehat f) = 1 - \frac{\|f-\widehat f\|^2}{\|f-\overline f\|^2}$.Cette quantité correspond au rapport entre l'erreur d'estimation et la variance d'un signal. 
 
+On calcule alors le rappel et la précision du regroupement pour $R^2$.
+    $$
+        R = \frac{1}{N} \sum_{i=1}^N \min_k R^2(c_i, g_k) \hspace{0.8cm} P = \frac{1}{M}\sum_{k=1}^M \min_i R^2(c_i, g_k)
+    $$où les $(g_k)_{1\le k \le M}$ sont les différentes composantes obtenue lors du groupement et les $(c_i)_{1\le i\le N}$ sont les composantes formant le signal artificiel décomposé.
+    
+    Une manière de fusionner ces deux concepts est de considérer le score obtenu pour une allocation optimale entre les composantes recherchées et celles formées par le regroupement:$$
+        S =  \frac{1}{N} \min_{\sigma \in \mathcal S(M)} \sum_{i=1}^N R^2(c_i, g_{\sigma(i)})
+    $$
+    
+    La qualité du regroupement obtenu dépend fortement de la qualité des composantes de départ. Il est donc important de considérer non pas les valeurs brutes de ces scores mais l'amélioration apportée par le groupement. Pour cela, on calcule les métriques $R, P$ et $S$ pour le groupement évalué et pour les composantes avant groupement. La différence entre ces deux scores permet de mesurer l'apport d'un groupement par rapport au composantes de départ.
+    
 % subsection met (end)
 
-\subsection{Séparabilité}
-\label{sub:sep}
-    L'évaluation de la stratégie de regroupement doit prendre en compte la qualité des composantes obtenues lors de la décomposition initiale du signal. En effet, si les composantes que l'on essaie d'analyser ne sont pas séparables par l'analyse de la matrice de $K$-trajectoire, les stratégies de groupement ne pourront pas améliorer cette séparation.
+\subsection{Différence statistique}
+\label{sub:ds}
+
+La variabilité des métriques considérées rend difficile la comparaison des différentes méthodes. Pour permettre une analyse plus objective des résultats, il est possible d'utiliser le test de Friedman, qui met en évidence de manière non paramétrique si l'une des méthodes donne un score statistiquement plus élevé que les autres. Ce test se base sur l'étude du rang des différentes méthodes pour chaque tirage \cite{friedman_37_rank}.
+
+Une analyse des résultats de ce test à l'aide du test de Tukey-Kramer permet ensuite de conclure si l'une des méthodes donne un résultat significativement meilleur que les autres.
+    
+% subsection ds (end)
+
+
+%\subsection{Séparabilité}
+%\label{sub:sep}
+%    L'évaluation de la stratégie de regroupement doit prendre en compte la qualité des composantes obtenues lors de la décomposition initiale du signal. En effet, si les composantes que l'on essaie d'analyser ne sont pas séparables par l'analyse de la matrice de $K$-trajectoire, les stratégies de groupement ne pourront pas améliorer cette séparation.
     
     %Il est donc important de rappeler ici les propriétés des composantes séparables. Deux signaux $f_1$ et $f_2$ sont dit séparables s'il existe $I_1, I_2 \subset \left \{ 1,\dots, K \right \}$ tel que $I_1\cap I_2 = \emptyset$ et $f_i = \mathcal H(\sum_{j \in I_i} \lambda_j U_j V_j^T)$. Ceci implique notamment l'orthogonalité de toutes les sous séries de longueur $K$ et $L$ de $f_1$ et $f_2$. Différentes illustrations de ces propriétés peuvent être trouvées dans \cite{GNZ_10_SSA}. 
        
-   Pour évaluer l'amélioration apportée par le groupement pour une métrique, il est intéressant de considérer le rapport de cette métrique et de la même métrique calculer pour un groupement trivial tel que chaque groupe contienne une unique composante. $I_k = \left \{ k \right \}$ pour $k \in \set{m}$.
+%   Pour évaluer l'amélioration apportée par le groupement pour une métrique, il est intéressant de considérer le rapport de cette métrique et de la même métrique calculer pour un groupement trivial tel que chaque groupe contienne une unique composante. $I_k = \left \{ k \right \}$ pour $k \in \set{m}$.
 % subsection sep (end)
 % section eval (end)
 
 \section{Résultats}
 \label{sec:res}
-Le Tableau \ref{tab:1} présente la moyenne des différentes métriques pour chaque stratégie de groupement sur 2000 tirages de fonctions selon le modèle (\ref{eq:artsig}).
 
-K fixé à T/2!! :)
-
+Les expérimentations ont été menées en python. Pour chaque signal généré selon le modèle (\ref{eq:artsig}) de longueur $T$, les composantes de la SSA ont été calculées avec une valeur de fenêtre $K=T/2$. Les différents regroupements ont ensuite été réalisés avec les paramètres fixés suivant: $\tau_l=0.0025$, $\rho_0=0.8$, $\rho_1=0.8$, $rho_2=0.05$, $\rho_c=0.8$, $\rho_f=0.4$, $\rho_p=0.8$ and $\rho_t=0.0005$.
 
 \bibliographystyle{plain} 
-\bibliography{bib_dl}{}
+\bibliography{bib_dl2}{}
 \end{document}
