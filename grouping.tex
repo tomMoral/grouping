@@ -33,8 +33,8 @@ nicolas.vayatis@cmla.ens-cachan.fr}
 \makeatother
 \def\HH{\mathcal H}
 
-\resumefrancais{Cet article introduit différentes stratégies de groupement automatique pour les composantes issues d'une analyse du spectre singulier (SSA). Cette étape, cruciale à la séparation de composantes haut niveau, permet de séparer les différentes dynamiques présentes dans une signal.}
-\resumeanglais{This paper introduce automatic grouping strategies for Singular Spectrum Analysis (SSA) in an unified framework. This step is needed to be able to retrieve meaningful insight about the temporal dynamics of the series.}
+\resumefrancais{Cet article introduit différentes stratégies de groupement automatique pour les composantes issues d'une analyse du spectre singulier (SSA). Cette étape, cruciale à la reconstruction de composantes haut niveau, permet de séparer les différentes dynamiques présentes dans un signal. Un cadre général d'unification des différentes méthodes est proposé afin d'évaluer l'intérêt de différentes méthodes.}
+\resumeanglais{This paper introduce automatic grouping strategies for Singular Spectrum Analysis (SSA) in an unified framework. This step is needed to be able to retrieve meaningful insight about the temporal dynamics of the series. An unifying framework is proposed to evaluate and compare the efficiency of different methods.}
 
 
 \newcommand{\R}{\mathbb R}
@@ -87,7 +87,7 @@ $$ avec $U, V$ deux matrices orthogonales et $\Lambda$ une matrice diagonale aya
 
 L'étape d'extraction de motifs permet d'obtenir une décomposition de la matrice de trajectoire sous la forme d'une somme de matrice de rang 1:$$
 X^{(K)} = \sum_{i=1}^K \lambda_i U_iV_i^T 
-$$où  $U_i, V_i$ sont les colomne des matrices $U, V$. Par linéarité de l'opération d'hankelisation, on obtient une décomposition de $f = \sum_{i=1}^K f^{(i)}$ avec $f^{(i)} = \HH(\lambda_iU_iV_i^T)$ la série associée à la matrice de rang 1 $\lambda_iU_iV_i^T$. C'est composantes sont associées avec le triplet propre $(\lambda_i, U_i, V_i)$. On appelera $U_i$ le motif associé et $\lambda_i$ la valeur singulière associée.
+$$où  $U_i, V_i$ sont les colomne des matrices $U, V$. Par linéarité de l'opération d'hankelisation, on obtient une décomposition de $f = \sum_{i=1}^K f^{(i)}$ avec $f^{(i)} = \HH(\lambda_iU_iV_i^T)$ la série associée à la matrice de rang 1 $\lambda_iU_iV_i^T$. C'est composantes sont associées avec le triplet propre $(\lambda_i, U_i, V_i)$. On appellera $U_i$ le motif associé et $\lambda_i$ la valeur singulière associée.
 
 
 \subsection{Regroupement des composantes}
@@ -259,7 +259,7 @@ Une autre possibilité est de considérer que les composantes ont une importance
 \subsection{Métriques d'évaluation}
 \label{sub:met}
 
-L'une des métriques utilisée pour évaluer la qualité du groupement est le coefficient de détermination $R^2$ \cite{abalov_14_auto}. Ce coefficient rend compte de l'erreur commise par rapport à la variance de la composante. Pour une série $f$ de moyenne $\overline f$ et pour un estimateur $\widehat f$, le coefficient de détermination est calculé suivant $R^2(f, \widehat f) = 1 - \frac{\|f-\widehat f\|^2}{\|f-\overline f\|^2}$.Cette quantité correspond au rapport entre l'erreur d'estimation et la variance d'un signal. 
+L'une des métriques utilisée pour évaluer la qualité du groupement est le coefficient de détermination $R^2$ \cite{abalov_14_auto}. Ce coefficient rend compte de l'erreur commise par rapport à la variance de la composante. Pour une série $f$ de moyenne $\overline f$ et pour un estimateur $\widehat f$, le coefficient de détermination est calculé suivant $R^2(f, \widehat f) = 1 - \frac{\|f-\widehat f\|^2}{\|f-\overline f\|^2}$. Cette quantité correspond au rapport entre l'erreur d'estimation et la variance d'un signal. 
 
 On calcule alors le rappel et la précision du regroupement pour $R^2$.
     $$
