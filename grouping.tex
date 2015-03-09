@@ -275,9 +275,7 @@ On calcule alors le rappel et la précision du regroupement pour $R^2$.
 \subsection{Différence statistique}
 \label{sub:ds}
 
-La variabilité des métriques considérées rend difficile la comparaison des différentes méthodes. Pour permettre une analyse plus objective des résultats, il est possible d'utiliser le test de Friedman, qui met en évidence de manière non paramétrique si l'une des méthodes donne un score statistiquement plus élevé que les autres. Ce test se base sur l'étude du rang des différentes méthodes pour chaque tirage \cite{friedman_37_rank}.
-
-Une analyse des résultats de ce test à l'aide du test de Tukey-Kramer permet ensuite de conclure si l'une des méthodes donne un résultat significativement meilleur que les autres.
+La variabilité des métriques considérées rend difficile la comparaison des différentes méthodes. Pour permettre une analyse plus objective des résultats, il est possible d'utiliser le test de Friedman, qui met en évidence de manière non paramétrique si l'une des méthodes donne un score statistiquement plus élevé que les autres. Ce test se base sur l'étude du rang des différentes méthodes pour chaque tirage \cite{friedman_37_rank}. Une analyse des résultats de ce test à l'aide du test de Tukey-Kramer permet ensuite de conclure si l'une des méthodes donne pour un score donné un résultat statistiquement meilleur que les autres.
     
 % subsection ds (end)
 
@@ -295,7 +293,10 @@ Une analyse des résultats de ce test à l'aide du test de Tukey-Kramer permet e
 \section{Résultats}
 \label{sec:res}
 
-Les expérimentations ont été menées en python. Pour chaque signal généré selon le modèle (\ref{eq:artsig}) de longueur $T$, les composantes de la SSA ont été calculées avec une valeur de fenêtre $K=T/2$. Les différents regroupements ont ensuite été réalisés avec les paramètres fixés suivant: $\tau_l=0.0025$, $\rho_0=0.8$, $\rho_1=0.8$, $rho_2=0.05$, $\rho_c=0.8$, $\rho_f=0.4$, $\rho_p=0.8$ and $\rho_t=0.0005$.
+Les expérimentations ont été menées en python. Pour chaque signal généré selon le modèle (\ref{eq:artsig}) de longueur $T$, les composantes de la SSA ont été calculées avec une valeur de fenêtre $K=T/2$. Les différents regroupements ont ensuite été réalisés avec les paramètres fixés suivants: $\rho_0=0.8$, $\rho_1=0.8$, $\rho_2=0.05$, $\rho_c=0.8$, $\rho_f=0.4$, $\rho_p=0.8$ and $\rho_\omega=0.0005$.
+
+Pour les métriques de $R_r$ et $S_r$, l'utilisation de la similarité (HG) avec la formation de groupe hiérarchique donne un résultat statistiquement meilleur que les autres méthodes selon le test proposé. L'amélioration moyenne de $R_r$ est de 21.49\% et celle de $S_r$ est de 38.16\%. Pour $P_r$, cette méthode est meilleur que les autres à l'exception de (HGS) utilisé avec une stratégie hiérarchique qui lui est équivalente. L'amélioration moyenne de $P_r$ est de de 27.78\%. 
+Cette méthode semble donc être la plus appropriée pour le groupement automatique pour des signaux composés d'harmonique modulées.
 
 \bibliographystyle{plain} 
 \bibliography{bib_dl2}{}
