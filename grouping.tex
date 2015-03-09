@@ -16,8 +16,8 @@
 \title{Separation de sources automatique}
 
 \auteur{\coord{Thomas}{Moreau}{1},
-        \coord{Laurent}{Oudre}{1},
-    \coord{Nicolas}{Vayatis}{2}}
+        \coord{Laurent}{Oudre}{2},
+    \coord{Nicolas}{Vayatis}{1}}
 
 \adresse{\affil{1}{CMLA - ENS Cachan \\
 64 Avenue du Président Wilson, 94230 Cachan}
@@ -43,6 +43,9 @@ nicolas.vayatis@cmla.ens-cachan.fr}
 \newcommand{\vect}[3]{(#1_1 #3 \dots #3 #1_#2)}
 \newcommand{\set}[1]{\left \{ 1, \dots, #1 \right \}}
 \newcommand{\inter}{\left[0, 1\right]}
+
+
+\hyphenation{pério-do-gram-mes}
 
 
 \begin{document}
@@ -90,11 +93,9 @@ $$où  $U_i, V_i$ sont les colomne des matrices $U, V$. Par linéarité de l'op�
 \subsection{Regroupement des composantes}
 \label{sub:grp}
 
-Les oscillations harmoniques ou plus complexes, présentes dans la série initiale sont généralement décomposées sur plusieurs de ces composantes. Le bruit est lui aussi projeté sur plusieurs composantes. Une étape d'identification et de regroupement est alors nécessaire pour produire une décomposition intéressante. Une sélection des composantes peut être faite en se basant sur les valeurs singulières associées qui rendent compte de l'importance de la composante dans la série. Une étape de regroupement est ensuite nécessaire pour obtenir une décomposition plus simple à analyser.
+Les oscillations harmoniques ou plus complexes, présentes dans la série initiale sont généralement décomposées sur plusieurs de ces composantes. Le bruit est lui aussi projeté sur plusieurs composantes. Une étape d'identification et de regroupement est nécessaire pour produire une décomposition intéressante. Une sélection des composantes peut être faite en se basant sur les valeurs singulières associées qui rendent compte de l'importance de la composante dans la série. Une étape de regroupement est ensuite réalisée pour obtenir une décomposition plus simple à analyser.
 
-Diverses approches ont été utilisées dans la littérature pour réaliser ce groupement, même si la plupart des travaux utilisant la SSA réalisent cette étape de façon empirique. En particulier, certaines heuristiques basées sur la corrélation et le spectre de fréquence des composantes ont été développées pour aider au choix des groupes \cite{Golyandina_10_ssa}. Ces indicateurs, d'abord utilisés pour le regroupement manuel, ont ouvert la voie au développement de méthodes de groupement automatisé. Nous verrons dans la section \ref{sec:met} une description des principales méthodes existantes ainsi que de nouvelles stratégies, ainsi qu'un cadre unifié pour l'évaluation de ces méthodes dans la section \label{sec:eval}. PUIS RESULTATS
-
-%Les travaux de Alexandrov et Golyandina \cite{alexandrov_05_auto} propose une première approche pour le regroupement automatique, principalement tourner à la récupération d'harmonique pure dans le signal. Dans \cite{alvarez_13_auto}, Alvarez et al. propose une seconde méthode de regroupement automatique basé sur le clustering des périodogrammes des composantes reconstruites. Cette méthode vise un regroupement plus général des composantes. Dans des travaux récents, Abalov et Gubarev \cite{abalov_14_auto} présentent deux autres stratégies pour obtenir un regroupement automatique. 
+Diverses approches ont été utilisées dans la littérature pour réaliser ce groupement, même si la plupart des travaux utilisant la SSA réalisent cette étape de façon empirique. En particulier, certaines heuristiques basées sur la corrélation et le spectre de fréquence des composantes ont été développées pour aider au choix des groupes \cite{Golyandina_10_ssa}. Ces indicateurs, d'abord utilisés pour le regroupement manuel, ont ouvert la voie au développement de méthodes de groupement automatisé. Nous verrons dans la section \ref{sec:met} une description des principales méthodes existantes ainsi que de nouvelles stratégies, ainsi qu'un cadre unifié pour l'évaluation de ces méthodes dans la section \ref{sec:eval}. La section \ref{sec:res} présentera les résultats numériques de cette comparaison.
 
 % subsection grp (end)
 % section intro (end)
@@ -125,8 +126,11 @@ Enfin, la troisième étape concerne la stratégie de formation des groupes à p
 \label{sub:sim}
 
 \subsubsection{Corrélation}\label{ssub:cor}
+
+Les composantes à regrouper sont celles qui sont produites par les mêmes phénomènes. Elles ne sont donc pas indépendantes. Il est donc intéressant d'observer la corrélation entre les composantes comme indicateur de similarité.
+
 \paragraph{Corrélation (GG1)}\label{par:GG1}
-    Une première mesure de similarité est basée sur la corrélation \cite{abalov_14_auto}. Deux composantes sont regroupées si la corrélation entre elles est plus haute qu'une valeur seuil $\rho_c$. Pour éviter de grouper des composantes d'importance trop éloignée, deux composantes sont groupés si le ratio de leurs valeurs singulières associées $\frac{\min(\lambda_i, \lambda_j)}{\max(\lambda_i, \lambda_j)}$ est supérieur à un seuil $\rho_1 \in \inter$. Cela évite de grouper des phénomènes d'amplitude différentes. On définit donc la matrice d'adjacence $G = (g_{i, j})_{0 \le i,j\le K}$ par:
+    Deux composantes sont considéré comme similaire si la corrélation entre elles est plus haute qu'une valeur seuil $\rho_c$\cite{abalov_14_auto}. Pour éviter de grouper des composantes d'importance trop éloignée, on impose de plus que le ratio de leurs valeurs singulières associées $\frac{\min(\lambda_i, \lambda_j)}{\max(\lambda_i, \lambda_j)}$ soit supérieur à un seuil $\rho_1 \in \inter$. Cela évite de grouper des phénomènes d'amplitude différentes. On définit donc la matrice d'adjacence $G = (g_{i, j})_{0 \le i,j\le K}$ par:
     $$
     g_{i, j} = \begin{cases}
 	    1 &\text{ si } \displaystyle\frac{\min(\lambda_i, \lambda_j)}{\max(\lambda_i, \lambda_j)} \ge \rho_1 \text{ et } \text{corr}(f^{(i)}, f^{[j)}) \ge \rho_c\\
@@ -139,14 +143,12 @@ Enfin, la troisième étape concerne la stratégie de formation des groupes à p
     La w-corrélation pour deux séries $x, y$ de taille $N$ et pour une taille de fenêtre $K$ est définie par:
     $$
     \text{w-corr}(x, y) = \frac{\langle x|y\rangle_w}{\|x\|_w\|y\|_w}
-    $$avec $\langle x|y\rangle_w = \sum_{i=1}^n w_i x_i y_i$, $w_i = \min(i, N-i, K)$ et $\|x\|_w = \sqrt{\langle x|x\rangle_w}$. Deux séries sont séparables par la SSA si leur w-corrélation est nulle \cite{GNZ_10_SSA}. Il est donc possible d'utiliser la valeur de la w-corrélation comme indicateur de similarité entre 2 composantes. On peut alors prendre une fonction de similarité identique à la précédente en remplaçant la corrélation par la w-corrélation. Ceci permet de filtrer les effets de bord qui peuvent apparaître dans la corrélation et ainsi d'obtenir un meilleur regroupement. Les paramètres dirigeant cette mesure de similarité sont les mêmes que ceux de (GG1) et on les fixe donc aux mêmes valeurs.
+    $$avec $\langle x|y\rangle_w = \sum_{i=1}^n w_i x_i y_i$, $w_i = \min(i, N-i, K)$ et $\|x\|_w = \sqrt{\langle x|x\rangle_w}$. Deux séries sont séparables par la SSA si leur w-corrélation est nulle \cite{Golyandina_10_ssa}. Il est donc possible d'utiliser la valeur de la w-corrélation comme indicateur de similarité entre 2 composantes. On peut alors prendre une fonction de similarité identique à la précédente en remplaçant la corrélation par la w-corrélation. Ceci permet de filtrer les effets de bord qui peuvent apparaître dans la corrélation et ainsi d'obtenir un meilleur regroupement.
 % paragraph GG3 (end)
 
 % subsubsection cor (end)
 
 \subsubsection{Périodogramme}\label{ssub:per}
-%TODO
-{\color{red} \textbf{TODO} - Citer les param dans le text explicatif} 
 
 La fréquence des composantes obtenues peut aussi être utilisée comme un indicateur de similarité des séries \cite{Golyandina_10_ssa}. Le périodogramme d'une série $f$ de longueur $N$ est défini comme:
 $$
@@ -171,8 +173,8 @@ $$où $Z$ est une constante de normalisation telle que le périodogramme ait une
     $$ où $m = \min\left(\left|F_{f^{(i)}}\right|, \left|F_{f^{(j)}}\right|\right)$. Cette métrique tente de rendre plus robuste la détection de composante ayant le même périodogramme en comparant non plus le pic maximal (HG) mais les supports spectraux des composantes. 
 % paragraph GG2 (end)
 
-\paragraph{K-means spectral (KM)}\label{par:KM}
-    La distance entre les périodogrammes peut être utilisée avec l'algorithme des K-moyennes pour former le groupement \cite{alvarez_13_auto}. Ceci est intéressant car le choix des seuils sur les distances entre les composantes d'un groupe est adapté par les K-moyennes. Le choix du nombre de groupes $C$ est un choix critique ici. Une estimation du nombre de groupe peut être faite en estimant le rang de la matrice $\Pi = \begin{bmatrix}\Pi_{U_1}&\dots&\Pi_{U_K}\end{bmatrix}^T$. On calcul les valeurs singulières $\val{\sigma}{K}{\ge}$ de $\Pi$ et on considère $C = \arg\max_k \sigma_k \ge \rho_f \sigma_1$ avec $\rho_f \in \inter$. La similarité vaut alors 1 lorsque les composantes appartiennent au même groupe formé par l'algorithme des K-moyennes.
+
+\paragraph{K-means spectral (KM)}\label{par:KM} La distance entre les périodogrammes peut être utilisée avec l'algorithme des K-moyennes pour former le groupement \cite{alvarez_13_auto}. Ceci est intéressant car le choix des seuils sur les distances entre les composantes d'un groupe est adapté par les K-moyennes. Le choix du nombre de groupes $C$ est un choix critique ici. Une estimation du nombre de groupe peut être faite en estimant le rang de la matrice $\Pi = \begin{bmatrix}\Pi_{U_1}&\dots&\Pi_{U_K}\end{bmatrix}^T$. On calcul les valeurs singulières $\val{\sigma}{K}{\ge}$ de $\Pi$ et on considère $C = \arg\max_k \sigma_k \ge \rho_f \sigma_1$ avec $\rho_f \in \inter$. La similarité vaut alors 1 lorsque les composantes appartiennent au même groupe formé par l'algorithme des K-moyennes.
 % paragraph KM (end)
 
 
@@ -268,7 +270,7 @@ On calcule alors le rappel et la précision du regroupement pour $R^2$.
         S =  \frac{1}{N} \min_{\sigma \in \mathcal S(M)} \sum_{i=1}^N R^2(c_i, g_{\sigma(i)})
     $$
     
-    La qualité du regroupement obtenu dépend fortement de la qualité des composantes de départ. Il est donc important de considérer non pas les valeurs brutes de ces scores mais l'amélioration apportée par le groupement. Pour cela, on calcule les métriques $R, P$ et $S$ pour le groupement évalué et pour les composantes avant groupement. La différence entre ces deux scores permet de mesurer l'apport d'un groupement par rapport au composantes de départ.
+    La qualité du regroupement obtenu dépend fortement de la qualité des composantes de départ. Il est donc important de considérer non pas les valeurs brutes de ces scores mais l'amélioration apportée par le groupement. Pour cela, on calcule les métriques $R, P$ et $S$ pour le groupement évalué et pour les composantes avant groupement $R_0, P_0, S_0$. Le taux d'augmentation entre ces deux scores $\frac{R-R_0}{R_0}$ permet de mesurer l'apport d'un groupement par rapport aux composantes de départ. Cette métrique est moins sensible aux variations produites par une mauvaise décomposition de départ.
     
 % subsection met (end)
 
@@ -284,7 +286,7 @@ La variabilité des métriques considérées rend difficile la comparaison des d
 %\label{sub:sep}
 %    L'évaluation de la stratégie de regroupement doit prendre en compte la qualité des composantes obtenues lors de la décomposition initiale du signal. En effet, si les composantes que l'on essaie d'analyser ne sont pas séparables par l'analyse de la matrice de $K$-trajectoire, les stratégies de groupement ne pourront pas améliorer cette séparation.
     
-    %Il est donc important de rappeler ici les propriétés des composantes séparables. Deux signaux $f_1$ et $f_2$ sont dit séparables s'il existe $I_1, I_2 \subset \left \{ 1,\dots, K \right \}$ tel que $I_1\cap I_2 = \emptyset$ et $f_i = \mathcal H(\sum_{j \in I_i} \lambda_j U_j V_j^T)$. Ceci implique notamment l'orthogonalité de toutes les sous séries de longueur $K$ et $L$ de $f_1$ et $f_2$. Différentes illustrations de ces propriétés peuvent être trouvées dans \cite{GNZ_10_SSA}. 
+    %Il est donc important de rappeler ici les propriétés des composantes séparables. Deux signaux $f_1$ et $f_2$ sont dit séparables s'il existe $I_1, I_2 \subset \left \{ 1,\dots, K \right \}$ tel que $I_1\cap I_2 = \emptyset$ et $f_i = \mathcal H(\sum_{j \in I_i} \lambda_j U_j V_j^T)$. Ceci implique notamment l'orthogonalité de toutes les sous séries de longueur $K$ et $L$ de $f_1$ et $f_2$. Différentes illustrations de ces propriétés peuvent être trouvées dans \cite{Golyandina_10_SSA}. 
        
 %   Pour évaluer l'amélioration apportée par le groupement pour une métrique, il est intéressant de considérer le rapport de cette métrique et de la même métrique calculer pour un groupement trivial tel que chaque groupe contienne une unique composante. $I_k = \left \{ k \right \}$ pour $k \in \set{m}$.
 % subsection sep (end)
@@ -293,10 +295,10 @@ La variabilité des métriques considérées rend difficile la comparaison des d
 \section{Résultats}
 \label{sec:res}
 
-Les expérimentations ont été menées en python. Pour chaque signal généré selon le modèle (\ref{eq:artsig}) de longueur $T$, les composantes de la SSA ont été calculées avec une valeur de fenêtre $K=T/2$. Les différents regroupements ont ensuite été réalisés avec les paramètres fixés suivants: $\rho_0=0.8$, $\rho_1=0.8$, $\rho_2=0.05$, $\rho_c=0.8$, $\rho_f=0.4$, $\rho_p=0.8$ and $\rho_\omega=0.0005$.
+Les expérimentations ont été menées en python. Les signaux ont été tiré selon 3 classes Pour chaque signal généré selon le modèle (\ref{eq:artsig}) de longueur $T$, les composantes de la SSA ont été calculées avec une valeur de fenêtre $K=T/2$. Les différents regroupements ont ensuite été réalisés avec les paramètres fixés suivants: $\rho_0=0.8$, $\rho_1=0.8$, $\rho_2=0.05$, $\rho_c=0.8$, $\rho_f=0.4$, $\rho_p=0.8$ and $\rho_\omega=0.0005$.
 
 Pour les métriques de $R_r$ et $S_r$, l'utilisation de la similarité (HG) avec la formation de groupe hiérarchique donne un résultat statistiquement meilleur que les autres méthodes selon le test proposé. L'amélioration moyenne de $R_r$ est de 21.49\% et celle de $S_r$ est de 38.16\%. Pour $P_r$, cette méthode est meilleur que les autres à l'exception de (HGS) utilisé avec une stratégie hiérarchique qui lui est équivalente. L'amélioration moyenne de $P_r$ est de de 27.78\%. 
-Cette méthode semble donc être la plus appropriée pour le groupement automatique pour des signaux composés d'harmonique modulées.
+Cette méthode est donc la plus appropriée pour le groupement automatique pour des signaux composés d'harmoniques modulées.
 
 \bibliographystyle{plain} 
 \bibliography{bib_dl2}{}
