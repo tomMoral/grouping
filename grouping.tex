@@ -190,7 +190,7 @@ $$où $Z$ est une constante de normalisation telle que le périodogramme ait une
 
 \subsection{Stratégies de formation des groupes}
 \label{sub:clust}
-\paragraph{Méthode uniforme}
+\paragraph{Méthode uniforme (MU)}
 La stratégie de formation des groupes à partir de la matrice d'adjacence la plus simple est de considérer que toutes les composantes ont le même intérêt. On peut alors considérer que deux composantes sont dans le même groupe dès lors qu'elles sont adjacentes. C'est la méthode qui est utilisé dans la plupart des algorithmes qui ont été proposés jusque là \cite{abalov_14_auto, alvarez_13_auto}.\\
 
 %\begin{algorithm}
@@ -211,7 +211,7 @@ La stratégie de formation des groupes à partir de la matrice d'adjacence la pl
 %\end{algorithm}
 
 
-\paragraph{Méthode hiérarchique}
+\paragraph{Méthode hiérarchique (MH)}
 Une autre possibilité est de considérer que les composantes ont une importance relative. L'importance de chaque composante peut être mesurée par la part de variance $\frac{\lambda_i}{\sum_{j=1}^n \lambda_j}$ expliquée par cette composante. On peut donc considérer qu'on ne rajoute une composante $j$ dans un groupe $I_k$ que si elle est similaire à la composante dominante du groupe \emph{ i.e. } $G_{i, j} = 1$ pour $i = \arg\max_{l \in I_k} \lambda_l$. Cela permet de donner un poids plus important lors du groupement à la composante qui contient le plus de variance du signal.
 
 % IL FAUT PEUT ETRE ENLEVER LES 2 ALGOS?? Je SUIS PAS CERTAIN DE CE QUE CELA APPORTE AU FINAL....
@@ -254,6 +254,8 @@ Une autre possibilité est de considérer que les composantes ont une importance
 \label{}
 \end{figure}
 
+Trois classes de signaux pourrons être différenciées. La première classe $c=1$ fixe $a_0 = \alpha_i = 0$, la seconde $\alpha_i = 0$ et la troisième ne fixe rien dans le modèle (\ref{eq:artsig})
+
 % subsection artsig  (end)
 
 \subsection{Métriques d'évaluation}
@@ -295,10 +297,11 @@ La variabilité des métriques considérées rend difficile la comparaison des d
 \section{Résultats}
 \label{sec:res}
 
-Les expérimentations ont été menées en python. Les signaux ont été tiré selon 3 classes Pour chaque signal généré selon le modèle (\ref{eq:artsig}) de longueur $T$, les composantes de la SSA ont été calculées avec une valeur de fenêtre $K=T/2$. Les différents regroupements ont ensuite été réalisés avec les paramètres fixés suivants: $\rho_0=0.8$, $\rho_1=0.8$, $\rho_2=0.05$, $\rho_c=0.8$, $\rho_f=0.4$, $\rho_p=0.8$ and $\rho_\omega=0.0005$.
+Les expérimentations ont été menées en python. La base de signaux testé est composée de 1000 signaux aléatoires pour chacune des 3 classes. Pour chaque signal de longueur $T$, les composantes de la SSA sont calculées avec une valeur de fenêtre $K=T/2$. Les différents regroupements sont ensuite réalisés avec les paramètres de similarité suivants: $\rho_0=0.8$, $\rho_1=0.8$, $\rho_2=0.05$, $\rho_c=0.8$, $\rho_f=0.4$, $\rho_p=0.8$ and $\rho_\omega=0.0005$.
 
-Pour les métriques de $R_r$ et $S_r$, l'utilisation de la similarité (HG) avec la formation de groupe hiérarchique donne un résultat statistiquement meilleur que les autres méthodes selon le test proposé. L'amélioration moyenne de $R_r$ est de 21.49\% et celle de $S_r$ est de 38.16\%. Pour $P_r$, cette méthode est meilleur que les autres à l'exception de (HGS) utilisé avec une stratégie hiérarchique qui lui est équivalente. L'amélioration moyenne de $P_r$ est de de 27.78\%. 
-Cette méthode est donc la plus appropriée pour le groupement automatique pour des signaux composés d'harmoniques modulées.
+Pour les métriques de $R_r$ et $S_r$, l'utilisation de la méthode (HG)-(MH) donne un résultat statistiquement meilleur que les autres méthodes selon le test proposé. L'amélioration moyenne de $R_r$ est de 21.49\% et celle de $S_r$ est de 38.16\%. Pour $P_r$, cette méthode est meilleur que les autres à l'exception de (HGS) utilisé avec une stratégie hiérarchique qui lui est équivalente. L'amélioration moyenne de $P_r$ est de de 27.78\%.
+
+Lorsqu'on regarde les résultats classe par classe, on voit cependant que lorsque la complexité de la classe augmente, l'écart de significativité se réduit. Pour $R_r$, (HG)-(MH) est statistiquement meilleur que (HGS)-(MH) pour les classes 1 et 2 mais pas pour la classe 3.  Pour $P_r$, sur chaque classe séparément, 5 méthodes ont des performances comparables et (HGS)-(MH) a un rang plus élevé que (HG)-(MH) pour la classe 3. Ceci montre que si la méthode (HG)-(MH) semble la plus appropriée pour le groupement automatique pour des signaux composés d'harmoniques modulées, les autres méthodes peuvent donner des résultats intéressants pour des signaux plus complexes.
 
 \bibliographystyle{plain} 
 \bibliography{bib_dl2}{}
