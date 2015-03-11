@@ -84,7 +84,8 @@ La matrice de K-trajectoire $X^{(K)} \in \R^{K\times L}$ de la série $f$ est d�
 \end{equation*}
 avec $L = T-K+1$.
 Cette matrice contient toutes les sous séries de longueur $K$ de $f$.
-%\textcolor{red}{Attention il faut utiliser l'environnement equation et pas les signes double dollar + Probleme de notation : X est une matrice L par K non ? Bien vérifier}
+% TODO - Attention il faut utiliser l'environnement equation et pas les signes double dollar
+% TODO - Bien véridier les notations
 
 
 % Le signal peut être reconstruit naturellement à partir de cette matrice du fait de sa structure de Hankel, avec toutes les composantes sur les anti-diagonales égales. Si l'on considère une matrice $M$ n'ayant pas cette structure, le signal ayant la matrice de trajectoire la plus proche de $M$ peut être construit en moyennant le long des anti-diagonales. Cette opération permet de  passer de l'espace des matrices à celui des signaux. On notera par la suite $\HH: \R^{K\times L} \to \R^T$ l'opération d'hankelisation, qui effectue la moyenne le long des anti-diagonales. Cette opération est linéaire.
@@ -108,6 +109,7 @@ L'étape d'extraction de motifs permet d'obtenir une décomposition de la matric
     X^{(K)} = \sum_{i=1}^K \lambda_i U_iV_i^T 
 \end{equation*}
 où  $U_i, V_i$ sont les colonnes des matrices $U, V$.
+% TODO - Qu'est ce que l'hankelisation ???
 Grâce à une opération d'hankelisation, on peut transformer chaque matrice de trajectoire $\lambda_iU_iV_i^T$  en un signal temporel $f^{(i)}$, et une décomposition de $f$ sous la forme 
 \begin{equation*}
     f = \sum_{i=1}^K f^{(i)}
@@ -274,9 +276,8 @@ Les composantes contenant une même phase oscillante partagent des structures co
 \paragraph{Méthode hiérarchique (MH)}
     Une autre possibilité est de considérer que les composantes ont une importance relative.
     L'importance de chaque composante peut être mesurée par la part de variance $\frac{\lambda_i}{\sum_{j=1}^n \lambda_j}$ expliquée par cette composante.
-    On peut donc considérer qu'on ne rajoute une composante $j$ dans un groupe $I_k$
-    %\textcolor{red}{Tu n'as jamais défini cette notation} 
-    que si elle est similaire à la composante dominante du groupe \emph{ i.e.} $a_{i, j} = 1$ pour $i = \arg\max_{l \in I_k} \lambda_l$.
+    %TODO - vérifier que les notations sont claires et bien définies
+    On peut donc considérer qu'on ne rajoute une composante $j$ dans un groupe $I_k$ que si elle est similaire à la composante dominante du groupe \emph{ i.e.} $a_{i, j} = 1$ pour $i = \arg\max_{l \in I_k} \lambda_l$.
     Cela permet de donner un poids plus important lors du groupement à la composante qui contient le plus de variance du signal.
 
 % subsection clust (end)
@@ -301,7 +302,8 @@ Les composantes contenant une même phase oscillante partagent des structures co
         \hspace{-.5cm}
         \includegraphics[width=.5\textwidth]{img/artsig2.eps}
         \vspace{-.4cm}
-        \caption{Exemples de signal généré }%\textcolor{red}{Inutile : il faut une décomposition}}
+        \caption{Exemples de signal généré }
+        % TODO - mettre une décomposition
         \label{}
     \end{figure}
 
@@ -328,7 +330,8 @@ Les composantes contenant une même phase oscillante partagent des structures co
     \begin{equation*}
         S =  \frac{1}{N} \min_{\sigma \in \mathcal S(M)} \sum_{i=1}^N R^2(c_i, g_{\sigma(i)})
     \end{equation*}
-    où $\mathcal S(M)$ est le groupe des permutations de $\set{m}$ et \textcolor{red}{Decris tes notations !, permutations etc etc}
+    où $\mathcal S(M)$ est le groupe des permutations de $\set{m}$ et 
+    %TODO - Décrire les notations
     
     La qualité du regroupement obtenu dépend fortement de la qualité des composantes de départ.
     Il est donc important de considérer non pas les valeurs brutes de ces scores mais l'amélioration apportée par le groupement.
@@ -363,6 +366,7 @@ Pour chacune des 3 classes, on génère 1000 signaux aléatoires.
 Pour chaque signal de longueur $T$, les composantes de la SSA sont calculées avec une valeur de fenêtre $K=T/2$.
 Les différents regroupements sont ensuite réalisés avec les paramètres de similarité suivants: $\rho_0=0.8$, $\rho_1=0.8$, $\rho_2=0.05$, $\rho_c=0.8$, $\rho_f=0.4$, $\rho_p=0.8$ and $\rho_\omega=0.0005$.
 Ces valeurs ont été choisit à partir des travaux existants \cite{abalov_14_auto,alvarez_13_auto}, où fixées à un ordre de grandeur près après expérimentation.
+%TODO d'où vienne ces valeurs
 
 Pour les métriques de $R_r$ et $S_r$ calculé sur l'ensemble de la base de signaux tests, l'utilisation de la méthode (HG)-(MH) donne un résultat statistiquement meilleur (au sens du test de Friedman) que les autres méthodes avec une amélioration moyenne de 21.49\% pour $R_r$ et de 38.16\% pour $S_r$.
 Pour $P_r$, la méthode (HGS)-(MH) est statistiquement meilleure que les autres à l'exception de (HG)-(MH) qui lui est équivalente.
@@ -372,7 +376,7 @@ Lorsqu'on regarde les résultats classe par classe, on voit cependant que lorsqu
 Pour $R_r$, (HG)-(MH) est statistiquement meilleure que (HGS)-(MH) pour les classes 1 et 2 mais pas pour la classe 3. 
 Pour $P_r$, sur chaque classe séparément, 5 méthodes ont des performances comparables et (HGS)-(MH) a un rang plus élevé que (HG)-(MH) pour la classe 3.
 Ceci montre que si la méthode (HG)-(MH) semble la plus appropriée pour le groupement automatique pour des signaux composés d'harmoniques modulées, les autres méthodes peuvent donner des résultats intéressants pour des signaux plus complexes.
-\textcolor{red}{Il faut aller plus loin dans l'analyse !}
+%TODO - Il faut aller plus loin dans l'analyse !
 
 \bibliographystyle{plain} 
 \scriptsize
