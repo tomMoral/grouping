@@ -119,8 +119,10 @@ Les stratégies de regroupement peuvent être décrites en trois phases:
 \begin{enumerate}
 	\item Sélectionner des composantes intéressantes de la SSA
 	\item Calculer une matrice d'adjacence entre ces composantes
-	\item Regrouper les composantes adjacentes
+	\item Former les groupes $I_k$ de composantes adjacentes
 \end{enumerate}
+Enfin, les composantes finales sont obtenues en sommant les composantes regroupées $g_k = \sum_{i\in I_k} f^{(k)}$.
+
 La première étape est effectuée en supprimant les composantes de la SVD ayant une valeur singulière $\lambda_k$ plus faible qu'un certain seuil (que l'on choisira ici adaptatif et de la forme  $\tau_l*\lambda_1$ avec $\tau_l = 0.01$). Ceci permet de filtrer les composantes de bruit en considérant qu'elles ont une part négligeable dans la variance de la série. 
 
 La seconde étape utilise une mesure de similarité entre les composantes afin d'obtenir une matrice d'adjacence. Intuitivement, le choix de cette mesure influence fortement les résultats du regroupement. Il est par exemple parfois pertinent de se  baser sur le contenu fréquentiel des composantes afin d'obtenir un bon regroupement des composantes harmoniques.
@@ -137,9 +139,9 @@ Enfin, la troisième étape concerne la stratégie de formation des groupes à p
 Les composantes à regrouper sont celles qui sont produites par les mêmes phénomènes. Elles ne sont donc pas indépendantes. Il est donc intéressant d'observer la corrélation entre les composantes comme indicateur de similarité.
 
 \paragraph{Corrélation (GG1)}\label{par:GG1}
-    Deux composantes sont considéré comme similaire si la corrélation entre elles est plus haute qu'une valeur seuil $\rho_c$ \cite{abalov_14_auto}. Pour éviter de grouper des composantes d'importance trop éloignée, on impose de plus que le ratio de leurs valeurs singulières associées $\frac{\min(\lambda_i, \lambda_j)}{\max(\lambda_i, \lambda_j)}$ soit supérieur à un seuil $\rho_1 \in \inter$. Cela évite de grouper des phénomènes d'amplitude différentes. On définit donc la matrice d'adjacence $G = (g_{i, j})_{0 \le i,j\le K}$ par:
+    Deux composantes sont considéré comme similaire si la corrélation entre elles est plus haute qu'une valeur seuil $\rho_c$ \cite{abalov_14_auto}. Pour éviter de grouper des composantes d'importance trop éloignée, on impose de plus que le ratio de leurs valeurs singulières associées $\frac{\min(\lambda_i, \lambda_j)}{\max(\lambda_i, \lambda_j)}$ soit supérieur à un seuil $\rho_1 \in \inter$. Cela évite de grouper des phénomènes d'amplitude différentes. On définit donc la matrice d'adjacence $A = (a_{i, j})_{0 \le i,j\le K}$ par:
     \begin{equation*}
-    g_{i, j} = \begin{cases}
+    a_{i, j} = \begin{cases}
 	    1 &\text{ si } \displaystyle\frac{\min(\lambda_i, \lambda_j)}{\max(\lambda_i, \lambda_j)} \ge \rho_1 \text{ et } \text{corr}(f^{(i)}, f^{[j)}) \ge \rho_c\\
 	    0& \text{ sinon}
     \end{cases}
@@ -147,10 +149,10 @@ Les composantes à regrouper sont celles qui sont produites par les mêmes phén
 % paragraph GG1 (end)
 
 \paragraph{W-Corrélation (GG3)}\label{par:GG3} 
-    La w-corrélation pour deux séries $x, y$ de taille $N$ et pour une taille de fenêtre $K$ est définie par:
+    La w-corrélation pour deux séries $x, y$ de taille $T$ et pour une longueur de fenêtre $K$ est définie par:
     \begin{equation*}
     \text{w-corr}(x, y) = \frac{\langle x|y\rangle_w}{\|x\|_w\|y\|_w}
-    \end{equation*}avec $\langle x|y\rangle_w = \sum_{i=1}^n w_i x_i y_i$, $w_i = \min(i, N-i, K)$ et $\|x\|_w = \sqrt{\langle x|x\rangle_w}$. Deux séries sont séparables par la SSA si leur w-corrélation est nulle \cite{Golyandina_10_ssa}. Il est donc possible d'utiliser la valeur de la w-corrélation comme indicateur de similarité entre 2 composantes. On peut alors prendre une fonction de similarité identique à la précédente en remplaçant la corrélation par la w-corrélation. Ceci permet de filtrer les effets de bord qui peuvent apparaître dans la corrélation et ainsi d'obtenir un meilleur regroupement.
+    \end{equation*}avec $\langle x|y\rangle_w = \sum_{i=1}^n w_i x_i y_i$, $w_i = \min(i, T-i, K)$ et $\|x\|_w = \sqrt{\langle x|x\rangle_w}$. Deux séries sont séparables par la SSA si leur w-corrélation est nulle \cite{Golyandina_10_ssa}. Il est donc possible d'utiliser la valeur de la w-corrélation comme indicateur de similarité entre 2 composantes. On peut alors prendre une fonction de similarité identique à la précédente en remplaçant la corrélation par la w-corrélation. Ceci permet de filtrer les effets de bord qui peuvent apparaître dans la corrélation et ainsi d'obtenir un meilleur regroupement.
 % paragraph GG3 (end)
 
 % subsubsection cor (end)
@@ -170,9 +172,9 @@ La fréquence des composantes obtenues peut aussi être utilisée comme un indic
 % paragraph HG (end)
 
 \paragraph{Similarité des pics (GG2)}\label{par:GG2}
-    Une autre métrique de similarité basée sur les périodogrammes est définie en prenant en compte la distance $\ell_\infty$ entre les fréquences non négligeables du périodogramme \cite{abalov_14_auto}. Pour une série $f$, on définit l'ensemble ordonné $F_f = \left \{ k | \Pi_f(k) \ge \rho_p \|\Pi_f\|_\infty \right \}$ pour $\rho_p \in \inter$ et on notera $F_f(h)$ la h-ème valeur de cette ensemble. On définit alors la matrice d'adjacence:
+    Une autre métrique de similarité basée sur les périodogrammes est définie en prenant en compte la distance $\ell_\infty$ entre les fréquences non négligeables du périodogramme \cite{abalov_14_auto}. Pour une série $f$, on définit l'ensemble ordonné $F_f = \left \{ k | \Pi_f(k) \ge \rho_p \|\Pi_f\|_\infty \right \}$ pour $\rho_p \in \inter$ et on notera $F_f(h)$ la h-ème valeur de cette ensemble. On définit alors la matrice d'adjacence par:
     \begin{equation*}
-    g_{i, j} = \begin{cases}
+    a_{i, j} = \begin{cases}
 	    1 & \text{ si } \displaystyle\frac{\min(\lambda_i, \lambda_j)}{\max(\lambda_i, \lambda_j)} \ge \rho_1\\
 	      & \text{ et } \frac{|F_{f^{(i)}}(h) - F_{f^{(j)}}(h)|}{T/2} \le \rho_2\ \forall h \in \set{m}\\
 	    0 & \text{ sinon}
@@ -219,7 +221,7 @@ La stratégie de formation des groupes à partir de la matrice d'adjacence la pl
 
 
 \paragraph{Méthode hiérarchique (MH)}
-Une autre possibilité est de considérer que les composantes ont une importance relative. L'importance de chaque composante peut être mesurée par la part de variance $\frac{\lambda_i}{\sum_{j=1}^n \lambda_j}$ expliquée par cette composante. On peut donc considérer qu'on ne rajoute une composante $j$ dans un groupe $I_k$ \textcolor{red}{Tu n'as jamais défini cette notation} que si elle est similaire à la composante dominante du groupe \emph{ i.e. } $G_{i, j} = 1$ pour $i = \arg\max_{l \in I_k} \lambda_l$. Cela permet de donner un poids plus important lors du groupement à la composante qui contient le plus de variance du signal.
+Une autre possibilité est de considérer que les composantes ont une importance relative. L'importance de chaque composante peut être mesurée par la part de variance $\frac{\lambda_i}{\sum_{j=1}^n \lambda_j}$ expliquée par cette composante. On peut donc considérer qu'on ne rajoute une composante $j$ dans un groupe $I_k$ \textcolor{red}{Tu n'as jamais défini cette notation} que si elle est similaire à la composante dominante du groupe \emph{ i.e. } $a_{i, j} = 1$ pour $i = \arg\max_{l \in I_k} \lambda_l$. Cela permet de donner un poids plus important lors du groupement à la composante qui contient le plus de variance du signal.
 
 % IL FAUT PEUT ETRE ENLEVER LES 2 ALGOS?? Je SUIS PAS CERTAIN DE CE QUE CELA APPORTE AU FINAL....
 %\begin{algorithm}
@@ -304,9 +306,9 @@ On calcule alors le rappel et la précision du regroupement pour $R^2$.
 \section{Résultats}
 \label{sec:res}
 
-Pour chacune des 3 classes, on génère 1000 signaux aléatoires. Pour chaque signal de longueur $T$, les composantes de la SSA sont calculées avec une valeur de fenêtre $K=T/2$. Les différents regroupements sont ensuite réalisés avec les paramètres de similarité suivants: $\rho_0=0.8$, $\rho_1=0.8$, $\rho_2=0.05$, $\rho_c=0.8$, $\rho_f=0.4$, $\rho_p=0.8$ and $\rho_\omega=0.0005$. \textcolor{red}{Meme que la biblio ?}
+Pour chacune des 3 classes, on génère 1000 signaux aléatoires. Pour chaque signal de longueur $T$, les composantes de la SSA sont calculées avec une valeur de fenêtre $K=T/2$. Les différents regroupements sont ensuite réalisés avec les paramètres de similarité suivants: $\rho_0=0.8$, $\rho_1=0.8$, $\rho_2=0.05$, $\rho_c=0.8$, $\rho_f=0.4$, $\rho_p=0.8$ and $\rho_\omega=0.0005$. Ces valeurs ont été choisit à partir des travaux existants \cite{abalov_14_auto,alvarez_13_auto}, où fixées à un ordre de grandeur près après expérimentation.
 
-Pour les métriques de $R_r$ et $S_r$, l'utilisation de la méthode (HG)-(MH) donne un résultat statistiquement meilleur (au sens du test de Friedman) que les autres méthodes avec une amélioration moyenne de 21.49\% pour $R_r$ et de 38.16\% pour $S_r$. Pour $P_r$, la méthode est toujours statistiquement meilleure que les autres à l'exception de (HGS) utilisé avec une stratégie hiérarchique qui lui est équivalente. L'amélioration moyenne de $P_r$ est de de 27.78\%.\textcolor{red}{Dire que c'est sur toutes les classes !}
+Pour les métriques de $R_r$ et $S_r$ calculé sur l'ensemble de la base de signaux tests, l'utilisation de la méthode (HG)-(MH) donne un résultat statistiquement meilleur (au sens du test de Friedman) que les autres méthodes avec une amélioration moyenne de 21.49\% pour $R_r$ et de 38.16\% pour $S_r$. Pour $P_r$, la méthode (HGS)-(MH) est statistiquement meilleure que les autres à l'exception de (HG)-(MH) qui lui est équivalente. L'amélioration moyenne de $P_r$ est de 27.78\%.
 
 Lorsqu'on regarde les résultats classe par classe, on voit cependant que lorsque la complexité de la classe augmente, l'écart de significativité se réduit. Pour $R_r$, (HG)-(MH) est statistiquement meilleure que (HGS)-(MH) pour les classes 1 et 2 mais pas pour la classe 3.  Pour $P_r$, sur chaque classe séparément, 5 méthodes ont des performances comparables et (HGS)-(MH) a un rang plus élevé que (HG)-(MH) pour la classe 3. Ceci montre que si la méthode (HG)-(MH) semble la plus appropriée pour le groupement automatique pour des signaux composés d'harmoniques modulées, les autres méthodes peuvent donner des résultats intéressants pour des signaux plus complexes.
 \textcolor{red}{Il faut aller plus loin dans l'analyse !}
