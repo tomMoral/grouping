@@ -15,9 +15,9 @@
 %Gummi|065|=)
 \title{Groupement automatique pour l'analyse du spectre singulier}
 
-\auteur{\coord{Thomas}{Moreau}{1},
-        \coord{Laurent}{Oudre}{2},
-    \coord{Nicolas}{Vayatis}{1}}
+\auteur{\coord{Thomas}{Moreau}{1, 2},
+        \coord{Laurent}{Oudre}{3, 2},
+    \coord{Nicolas}{Vayatis}{1, 2}}
 
 \adresse{\affil{1}{CMLA - ENS Cachan - 64 Avenue du Président Wilson, 94230 Cachan}
          \affil{2}{COGNAC-G - Université Paris Descartes} %TODO fin
@@ -68,8 +68,7 @@ Cet article a pour but de présenter différentes stratégies de regroupement au
 %L'analyse de la dynamique sous-jacente d'une série temporelle est très intéressante pour l'étude de phénomènes non stationnaires. DEJA DIT NON ?
 
 
-\paragraph{Rappels sur la SSA}
-\label{sub:rap}
+\textbf{Rappels sur la SSA.}\label{sub:rap}
 On considère un signal fini échantillonné $f = \val{f}{T}{,}$ et un entier $K \in \left \{ 1, \dots, T/2 \right \}$.
 La matrice de K-trajectoire $X^{(K)} \in \R^{K\times L}$ de la série $f$ est défini par:
 \begin{equation} 
@@ -97,7 +96,7 @@ La matrice $U$ peut être vue comme un dictionnaire de motifs de taille $K$ sur 
 Ces motifs permettent de capturer au mieux la variance du signal.
 Les vecteurs singuliers de la SVD maximisent récursivement la covariance de $U_i$ et des sous séries de longueur $K$ de $f$.
 
-%\paragraph{Reconstruction de composantes}
+%\textbf{Reconstruction de composantes}
 
 
 L'étape d'extraction de motifs permet d'obtenir une décomposition de la matrice de trajectoire sous la forme d'une somme de matrices de rang 1 $X^{(K)} = \sum_{i=1}^K \lambda_i U_iV_i^T$ où  $U_i, V_i$ sont les colonnes des matrices $U, V$.
@@ -112,9 +111,7 @@ On appellera $U_i$ le motif associé et $\lambda_i$ la valeur singulière associ
 % $f^{(i)} = \HH(\lambda_iU_iV_i^T)$ la série associée à la matrice de rang 1 $\lambda_iU_iV_i^T$. C'est composantes sont associées avec le triplet propre $(\lambda_i, U_i, V_i)$. On appellera $U_i$ le motif associé et $\lambda_i$ la valeur singulière associée.
 
 
-\paragraph{Regroupement des composantes}
-\label{sub:grp}
-
+\textbf{Regroupement des composantes.}\label{sub:grp}
 Les oscillations harmoniques ou plus complexes, présentes dans la série initiale sont généralement décomposées sur plusieurs de ces composantes.
 Une étape d'identification et de regroupement est nécessaire pour produire une décomposition intéressante.
 %Une sélection des composantes peut être faite en se basant sur les valeurs singulières associées qui rendent compte de l'importance de la composante dans la série.
@@ -164,7 +161,7 @@ Les composantes à regrouper sont celles qui sont produites par les mêmes phén
 Elles ne sont donc pas indépendantes.
 Il est donc intéressant d'observer la corrélation entre les composantes comme indicateur de similarité.
 
-\paragraph{Corrélation (GG1)}\label{par:GG1}
+\textbf{Corrélation (GG1).}\label{par:GG1}
     Deux composantes sont considérées comme adjacentes si la corrélation entre elles est plus haute qu'une valeur seuil $\rho_c$ \cite{abalov_14_auto}.
     Pour éviter de grouper des composantes d'importance trop éloignée, on impose de plus que le ratio de leur valeur singulière associée $\frac{\min(\lambda_i, \lambda_j)}{\max(\lambda_i, \lambda_j)}$ soit supérieur à un seuil $\rho_1 \in \inter$.
     Cela évite de grouper des phénomènes d'amplitude différentes où du bruit.
@@ -175,9 +172,9 @@ Il est donc intéressant d'observer la corrélation entre les composantes comme 
 	        0& \text{ sinon}
         \end{cases}
     \end{equation}
-% paragraph GG1 (end)
+% textbf GG1 (end)
 
-\paragraph{W-Corrélation (GG3)}\label{par:GG3} 
+\textbf{W-Corrélation (GG3).}\label{par:GG3} 
     La w-corrélation pour deux séries $x, y$ de taille $T$ et pour une longueur de fenêtre $K$ est définie par:
     \begin{equation}
         \text{w-corr}(x, y) = \frac{\langle x|y\rangle_w}{\|x\|_w\|y\|_w}
@@ -187,7 +184,7 @@ Il est donc intéressant d'observer la corrélation entre les composantes comme 
     Il est donc possible d'utiliser la valeur de la w-corrélation comme indicateur de similarité entre deux composantes.
     On peut alors prendre une fonction de similarité identique à la précédente en remplaçant la corrélation par la w-corrélation.
     Ceci permet de filtrer les effets de bord qui peuvent apparaître dans la corrélation et ainsi d'obtenir un meilleur regroupement.
-% paragraph GG3 (end)
+% textbf GG3 (end)
 
 % subsubsection cor (end)
 
@@ -201,7 +198,7 @@ Le périodogramme d'une série $f$ de longueur $T$ est défini comme:
 où $Z$ est une constante de normalisation telle que le périodogramme ait une norme unitaire.
 Les composantes contenant une même phase oscillante partagent des structures communes dans leur périodogramme qui peuvent permettre leur identification.
 
-\paragraph{Regroupement harmonique (HG)}\label{par:HG}
+\textbf{Regroupement harmonique (HG).}\label{par:HG}
     Une stratégie de regroupement efficace pour extraire les harmoniques exponentiellement modulées \cite{alexandrov_05_auto} définit une matrice d'adjacence qui regroupe deux composantes successives $(i, i+1)$ si 
     \begin{equation}
         \frac{1}{2}\max_{0\le k \le L/2}\left(\Pi_{U_i}(k) + \Pi_{U_{i+1}}(k)\right) \ge \rho_0 
@@ -210,10 +207,10 @@ Les composantes contenant une même phase oscillante partagent des structures co
     Deux composantes $i, i+1$ représentant la même sinusoïde pure auront un même périodogramme ce qui donnera une valeur de cet indicateur proche de 1.
     Au contraire, si deux composantes successives ont des spectres disjoints, l'indicateur ne peut dépasser 0.5.
     Cette métrique rend compte du fait que les composantes successives ont des pics de densité spectrale aux mêmes fréquences.
-% paragraph HG (end)
+% textbf HG (end)
 
 
-\paragraph{Similarité des pics (GG2)}\label{par:GG2}
+\textbf{Similarité des pics (GG2).}\label{par:GG2}
     Une autre métrique de similarité basée sur les périodogrammes est définie en prenant en compte la distance $\ell_\infty$ entre les fréquences non négligeables du périodogramme \cite{abalov_14_auto}.
     Pour une série $f$, on définit l'ensemble ordonné $F_f = \left \{ k | \Pi_f(k) \ge \rho_p \|\Pi_f\|_\infty \right \}$ pour $\rho_p \in \inter$ et on notera $F_f(h)$ la h-ème valeur de cette ensemble.
     On définit alors la matrice d'adjacence par:
@@ -227,40 +224,40 @@ Les composantes contenant une même phase oscillante partagent des structures co
     \end{equation} 
     où $m = \min\left(\left|F_{f^{(i)}}\right|, \left|F_{f^{(j)}}\right|\right)$.
     Cette métrique tente de rendre plus robuste la détection de composantes ayant le même périodogramme en comparant non plus le pic maximal (HG) mais les supports spectraux des composantes. 
-% paragraph GG2 (end)
+% textbf GG2 (end)
 
 
 %TODO -reprendre
-\paragraph{Regroupement support harmonique (HGS)}\label{par:HGS}
+\textbf{Regroupement support harmonique (HGS).}\label{par:HGS}
     L'une des faiblesses de la similarité (HG) est qu'elle se concentre sur des composantes harmoniques. 
     Ainsi, si les composantes extraites par la SSA ont une plage de fréquence plus large, cela peut nuire au groupement car la normalisation du spectre fera passer la métrique de similarité sous le seuil de regroupement.
     Nous proposons pour palier à ce problème de considérer le support fréquentiel $F_{U_i}$ des motifs associées au composantes en définissant leur fréquence fondamentale comme le centre de ce support.
 %    On note alors $\omega_i = \frac{\displaystyle\max \mathcal F_{U_i} + \min \mathcal F_{U_i} }{2 T}$ et $s_i = \frac{\displaystyle\max \mathcal F_{U_i} - \min \mathcal F_{U_i} }{2}$. 
     On sélectionne alors les composantes ayant un support de largeur inférieur à $\rho_s$ et on considère que les composantes $i, j$ sont adjacente si l'écart entre leur fréquences fondamentales est inférieur à $\rho_\omega \in \inter$.
     Ceci permet donc de grouper les composantes associées à des dictionnaires ayant des périodogrammes peu étalés et qui se chevauchent.
-% paragraph HGS (end)
+% textbf HGS (end)
 
-\paragraph{K-moyennes (KM)}\label{par:KM} 
+\textbf{K-moyennes (KM).}\label{par:KM} 
     On peut aussi utiliser un algorithme de K-moyennes appliqué aux périodogrammes pour former le groupement \cite{alvarez_13_auto}.
     Ceci est intéressant car on compare la distance euclidienne entre les périodogrammes et le choix des seuils est automatiquement fourni par les K-moyennes.
     Le choix du nombre de groupes $C$ est un choix critique ici.
     Une estimation du nombre de groupe peut être faite en estimant le rang de la matrice $\Pi = \begin{bmatrix}\Pi_{U_1}&\dots&\Pi_{U_K}\end{bmatrix}^T$.
     On calcule les valeurs singulières $\val{\sigma}{K}{\ge}$ de $\Pi$ et on considère $C = \arg\max_k \sigma_k \ge \rho_f \sigma_1$ avec $\rho_f \in \inter$.
     Deux composantes sont adjacentes si elles appartiennent au même groupe formé par l'algorithme des K-moyennes.
-% paragraph KM (end)
+% textbf KM (end)
 % subsubsection per (end)
 % subsection sim (end)
 
 
 \subsection{Stratégies de formation des groupes}
 \label{sub:clust}
-\paragraph{Méthode uniforme (MU)}
+\textbf{Méthode uniforme (MU).}
     La stratégie de formation des groupes à partir de la matrice d'adjacence la plus simple est de considérer que toutes les composantes ont le même intérêt.
     On peut alors considérer que deux composantes sont dans le même groupe dès lors qu'elles sont adjacentes.
     C'est la méthode qui est utilisé dans la plupart des algorithmes qui ont été proposés jusque là \cite{abalov_14_auto, alvarez_13_auto}.
 
 
-\paragraph{Méthode hiérarchique (MH)}
+\textbf{Méthode hiérarchique (MH).}
     Une autre possibilité est de considérer que les composantes ont une importance relative.
     L'importance de chaque composante peut être mesurée par la part de variance expliquée par cette composante.
     On peut donc considérer qu'on ajoute une composante dans un groupe si elle est adjacente à la composante dominante du groupe (au sens de la variance).
