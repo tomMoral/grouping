@@ -11,7 +11,7 @@
 \usepackage{graphicx}
 %\usepackage{enumitem}
 
-
+%TODO - Une lettre, un usage + check notation
 %Gummi|065|=)
 \title{Groupement automatique pour l'analyse du spectre singulier}
 
@@ -19,10 +19,9 @@
         \coord{Laurent}{Oudre}{2},
     \coord{Nicolas}{Vayatis}{1}}
 
-\adresse{\affil{1}{CMLA - ENS Cachan \\
-64 Avenue du Président Wilson, 94230 Cachan}
-         \affil{2}{L2TI - Université Paris 13 \\
-         99 Avenue Jean Baptiste Clément, 93430 Villetaneuse}}
+\adresse{\affil{1}{CMLA - ENS Cachan - 64 Avenue du Président Wilson, 94230 Cachan}
+         \affil{2}{COGNAC-G - Université Paris Descartes} %TODO fin
+         \affil{3}{L2TI - Université Paris 13 - 99 Avenue Jean Baptiste Clément, 93430 Villetaneuse}}
          
 \email{thomas.moreau@cmla.ens-cachan.fr,
 laurent.oudre@univ-paris13.fr\\
@@ -69,11 +68,11 @@ Cet article a pour but de présenter différentes stratégies de regroupement au
 %L'analyse de la dynamique sous-jacente d'une série temporelle est très intéressante pour l'étude de phénomènes non stationnaires. DEJA DIT NON ?
 
 
-\subsection{Rappels sur la SSA}
+\paragraph{Rappels sur la SSA}
 \label{sub:rap}
 On considère un signal fini échantillonné $f = \val{f}{T}{,}$ et un entier $K \in \left \{ 1, \dots, T/2 \right \}$.
 La matrice de K-trajectoire $X^{(K)} \in \R^{K\times L}$ de la série $f$ est défini par:
-\begin{equation*} 
+\begin{equation} 
     X^{(K)} =
     \begin{bmatrix}
 	    f_1 & f_2 &\dots & f_L\\
@@ -81,21 +80,18 @@ La matrice de K-trajectoire $X^{(K)} \in \R^{K\times L}$ de la série $f$ est d�
 	    \dots\\
 	    f_{K} & f_{K+1} &\dots & f_T
     \end{bmatrix}
-\end{equation*}
+\end{equation}
 avec $L = T-K+1$.
 Cette matrice contient toutes les sous séries de longueur $K$ de $f$.
-% TODO - Attention il faut utiliser l'environnement equation et pas les signes double dollar
-% TODO - Bien véridier les notations
-
 
 % Le signal peut être reconstruit naturellement à partir de cette matrice du fait de sa structure de Hankel, avec toutes les composantes sur les anti-diagonales égales. Si l'on considère une matrice $M$ n'ayant pas cette structure, le signal ayant la matrice de trajectoire la plus proche de $M$ peut être construit en moyennant le long des anti-diagonales. Cette opération permet de  passer de l'espace des matrices à celui des signaux. On notera par la suite $\HH: \R^{K\times L} \to \R^T$ l'opération d'hankelisation, qui effectue la moyenne le long des anti-diagonales. Cette opération est linéaire.
 
 
 Une décomposition en valeur singulière (en anglais SVD pour Singular Value Decomposition) de la matrice de K-trajectoire $X^{(K)}$ de $f$ permet d'extraire les motifs de longueur $K$ les plus intéressants au sens de la variance.
 En effet, la SVD donne: 
-\begin{equation*}
+\begin{equation}
     X^{(K)} = U \Lambda V^T
-\end{equation*}
+\end{equation}
 avec $U, V$ deux matrices orthogonales et $\Lambda$ une matrice diagonale ayant pour valeurs $\lambda_1\ge \dots\ge \lambda_K$.
 La matrice $U$ peut être vue comme un dictionnaire de motifs de taille $K$ sur lequel est projeté le signal.
 Ces motifs permettent de capturer au mieux la variance du signal.
@@ -104,16 +100,11 @@ Les vecteurs singuliers de la SVD maximisent récursivement la covariance de $U_
 %\paragraph{Reconstruction de composantes}
 
 
-L'étape d'extraction de motifs permet d'obtenir une décomposition de la matrice de trajectoire sous la forme d'une somme de matrices de rang 1:
-\begin{equation*}
-    X^{(K)} = \sum_{i=1}^K \lambda_i U_iV_i^T 
-\end{equation*}
-où  $U_i, V_i$ sont les colonnes des matrices $U, V$.
-% TODO - Qu'est ce que l'hankelisation ???
-Grâce à une opération d'hankelisation, on peut transformer chaque matrice de trajectoire $\lambda_iU_iV_i^T$  en un signal temporel $f^{(i)}$, et une décomposition de $f$ sous la forme 
-\begin{equation*}
+L'étape d'extraction de motifs permet d'obtenir une décomposition de la matrice de trajectoire sous la forme d'une somme de matrices de rang 1 $X^{(K)} = \sum_{i=1}^K \lambda_i U_iV_i^T$ où  $U_i, V_i$ sont les colonnes des matrices $U, V$.
+En faisant la moyenne le long des anti-diagonales, on peut transformer chaque matrice de trajectoire $\lambda_iU_iV_i^T$  en un signal temporel $f^{(i)}$, et une décomposition de $f$ sous la forme 
+\begin{equation}
     f = \sum_{i=1}^K f^{(i)}
-\end{equation*}
+\end{equation}
 où $f^{(i)} $ est la composante associée avec le triplet propre $(\lambda_i, U_i, V_i)$.
 On appellera $U_i$ le motif associé et $\lambda_i$ la valeur singulière associée.
 
@@ -121,15 +112,13 @@ On appellera $U_i$ le motif associé et $\lambda_i$ la valeur singulière associ
 % $f^{(i)} = \HH(\lambda_iU_iV_i^T)$ la série associée à la matrice de rang 1 $\lambda_iU_iV_i^T$. C'est composantes sont associées avec le triplet propre $(\lambda_i, U_i, V_i)$. On appellera $U_i$ le motif associé et $\lambda_i$ la valeur singulière associée.
 
 
-\subsection{Regroupement des composantes}
+\paragraph{Regroupement des composantes}
 \label{sub:grp}
 
 Les oscillations harmoniques ou plus complexes, présentes dans la série initiale sont généralement décomposées sur plusieurs de ces composantes.
-Le bruit est lui aussi projeté sur plusieurs composantes.
 Une étape d'identification et de regroupement est nécessaire pour produire une décomposition intéressante.
-Une sélection des composantes peut être faite en se basant sur les valeurs singulières associées qui rendent compte de l'importance de la composante dans la série.
-Une étape de regroupement est ensuite réalisée pour obtenir une décomposition plus simple à analyser.
-
+%Une sélection des composantes peut être faite en se basant sur les valeurs singulières associées qui rendent compte de l'importance de la composante dans la série.
+%Une étape de regroupement est ensuite réalisée pour obtenir une décomposition plus simple à analyser.
 Diverses approches ont été utilisées dans la littérature pour réaliser ce groupement, même si la plupart des travaux utilisant la SSA réalisent cette étape de façon empirique.
 En particulier, certaines heuristiques basées sur la corrélation et le spectre de fréquence des composantes ont été développées pour aider au choix des groupes \cite{Golyandina_10_ssa}.
 Ces indicateurs, d'abord utilisés pour le regroupement manuel, ont ouvert la voie au développement de méthodes de groupement automatisé.
@@ -154,8 +143,7 @@ Les stratégies de regroupement peuvent être décrites en trois phases:
 	\item Calculer une matrice d'adjacence entre ces composantes
 	\item Former les groupes $I_k$ de composantes adjacentes
 \end{enumerate}
-Enfin, les composantes finales sont obtenues en sommant les composantes regroupées $g_k = \sum_{i\in I_k} f^{(k)}$.
-
+Enfin, les composantes finales sont obtenues en sommant les composantes regroupées $g_j = \sum_{i\in I_k} f^{(i)}$.
 La première étape est effectuée en supprimant les composantes de la SVD ayant une valeur singulière $\lambda_k$ plus faible qu'un certain seuil (que l'on choisira ici adaptatif et de la forme  $\tau_l*\lambda_1$ avec $\tau_l = 0.01$).
 Ceci permet de filtrer les composantes de bruit en considérant qu'elles ont une part négligeable dans la variance de la série.
 
@@ -177,23 +165,23 @@ Elles ne sont donc pas indépendantes.
 Il est donc intéressant d'observer la corrélation entre les composantes comme indicateur de similarité.
 
 \paragraph{Corrélation (GG1)}\label{par:GG1}
-    Deux composantes sont considérées comme similaires si la corrélation entre elles est plus haute qu'une valeur seuil $\rho_c$ \cite{abalov_14_auto}.
+    Deux composantes sont considérées comme adjacentes si la corrélation entre elles est plus haute qu'une valeur seuil $\rho_c$ \cite{abalov_14_auto}.
     Pour éviter de grouper des composantes d'importance trop éloignée, on impose de plus que le ratio de leur valeur singulière associée $\frac{\min(\lambda_i, \lambda_j)}{\max(\lambda_i, \lambda_j)}$ soit supérieur à un seuil $\rho_1 \in \inter$.
     Cela évite de grouper des phénomènes d'amplitude différentes où du bruit.
-    On définit donc la matrice d'adjacence $A = (a_{i, j})_{0 \le i,j\le K}$ par:
-    \begin{equation*}
+    On définit donc la matrice d'adjacence $A = (a_{i, j})_{0 \le i,j\le K} \in \left \{ 0, 1 \right \}^{K\times K}$ par:
+    \begin{equation}
         a_{i, j} = \begin{cases}
 	        1 &\text{ si } \displaystyle\frac{\min(\lambda_i, \lambda_j)}{\max(\lambda_i, \lambda_j)} \ge \rho_1 \text{ et } \text{corr}(f^{(i)}, f^{[j)}) \ge \rho_c\\
 	        0& \text{ sinon}
         \end{cases}
-    \end{equation*}
+    \end{equation}
 % paragraph GG1 (end)
 
 \paragraph{W-Corrélation (GG3)}\label{par:GG3} 
     La w-corrélation pour deux séries $x, y$ de taille $T$ et pour une longueur de fenêtre $K$ est définie par:
-    \begin{equation*}
+    \begin{equation}
         \text{w-corr}(x, y) = \frac{\langle x|y\rangle_w}{\|x\|_w\|y\|_w}
-    \end{equation*}
+    \end{equation}
     avec $\langle x|y\rangle_w = \sum_{i=1}^n w_i x_i y_i$, $w_i = \min(i, T-i, K)$ et $\|x\|_w = \sqrt{\langle x|x\rangle_w}$.
     Deux séries sont séparables par la SSA si leur w-corrélation est nulle \cite{Golyandina_10_ssa}.
     Il est donc possible d'utiliser la valeur de la w-corrélation comme indicateur de similarité entre deux composantes.
@@ -205,62 +193,61 @@ Il est donc intéressant d'observer la corrélation entre les composantes comme 
 
 \subsubsection{Périodogramme}\label{ssub:per}
 
-La fréquence des composantes obtenues peut aussi être utilisée comme un indicateur de similarité des séries \cite{Golyandina_10_ssa}.
-Le périodogramme d'une série $f$ de longueur $N$ est défini comme:
-\begin{equation*}
-    \Pi_f(k) = \frac{1}{Z}\left|\sum_{n=1}^N f_n e^{-2i\pi n \frac{k}{N}}\right|^2
-\end{equation*}
+Le profil spectral des composantes obtenues peut aussi être utilisé comme un indicateur de similarité des séries \cite{Golyandina_10_ssa}.
+Le périodogramme d'une série $f$ de longueur $T$ est défini comme:
+\begin{equation}
+    \Pi_f(k) = \frac{1}{Z}\left|\sum_{t=1}^T f_t e^{-2i\pi t \frac{k}{N}}\right|^2
+\end{equation}
 où $Z$ est une constante de normalisation telle que le périodogramme ait une norme unitaire.
 Les composantes contenant une même phase oscillante partagent des structures communes dans leur périodogramme qui peuvent permettre leur identification.
 
 \paragraph{Regroupement harmonique (HG)}\label{par:HG}
-    Une stratégie de regroupement efficace pour extraire les harmoniques exponentiellement modulées \cite{alexandrov_05_auto} utilise une fonction de similarité qui regroupe deux composantes successives $(j, j+1)$ si 
-    \begin{equation*}
-        \frac{1}{2}\max_{0\le k \le L/2}\left(\Pi_{U_j}(k) + \Pi_{U_{j+1}}(k)\right) \ge \rho_0 
-    \end{equation*}
+    Une stratégie de regroupement efficace pour extraire les harmoniques exponentiellement modulées \cite{alexandrov_05_auto} définit une matrice d'adjacence qui regroupe deux composantes successives $(i, i+1)$ si 
+    \begin{equation}
+        \frac{1}{2}\max_{0\le k \le L/2}\left(\Pi_{U_i}(k) + \Pi_{U_{i+1}}(k)\right) \ge \rho_0 
+    \end{equation}
     pour $\rho_0\in \left[0, 1\right]$.
-    Pour une composante harmonique pure décomposée sur les deux sous-séries $i, i+1$, cet indicateur vaut 1 car les périodogrammes sont les mêmes.
+    Deux composantes $i, i+1$ représentant la même sinusoïde pure auront un même périodogramme ce qui donnera une valeur de cet indicateur proche de 1.
     Au contraire, si deux composantes successives ont des spectres disjoints, l'indicateur ne peut dépasser 0.5.
     Cette métrique rend compte du fait que les composantes successives ont des pics de densité spectrale aux mêmes fréquences.
 % paragraph HG (end)
+
 
 \paragraph{Similarité des pics (GG2)}\label{par:GG2}
     Une autre métrique de similarité basée sur les périodogrammes est définie en prenant en compte la distance $\ell_\infty$ entre les fréquences non négligeables du périodogramme \cite{abalov_14_auto}.
     Pour une série $f$, on définit l'ensemble ordonné $F_f = \left \{ k | \Pi_f(k) \ge \rho_p \|\Pi_f\|_\infty \right \}$ pour $\rho_p \in \inter$ et on notera $F_f(h)$ la h-ème valeur de cette ensemble.
     On définit alors la matrice d'adjacence par:
-    \begin{equation*}
+    \begin{equation}
         a_{i, j} = 
         \begin{cases}
 	        1 & \text{ si } \displaystyle\frac{\min(\lambda_i, \lambda_j)}{\max(\lambda_i, \lambda_j)} \ge \rho_1\\
 	          & \text{ et } \frac{|F_{f^{(i)}}(h) - F_{f^{(j)}}(h)|}{T/2} \le \rho_2\ \forall h \in \set{m}\\
 	        0 & \text{ sinon}
         \end{cases}
-    \end{equation*} 
+    \end{equation} 
     où $m = \min\left(\left|F_{f^{(i)}}\right|, \left|F_{f^{(j)}}\right|\right)$.
     Cette métrique tente de rendre plus robuste la détection de composantes ayant le même périodogramme en comparant non plus le pic maximal (HG) mais les supports spectraux des composantes. 
 % paragraph GG2 (end)
 
 
-\paragraph{K-means spectral (KM)}\label{par:KM} 
+%TODO -reprendre
+\paragraph{Regroupement support harmonique (HGS)}\label{par:HGS}
+    L'une des faiblesses de la similarité (HG) est qu'elle se concentre sur des composantes harmoniques. 
+    Ainsi, si les composantes extraites par la SSA ont une plage de fréquence plus large, cela peut nuire au groupement car la normalisation du spectre fera passer la métrique de similarité sous le seuil de regroupement.
+    Nous proposons pour palier à ce problème de considérer le support fréquentiel $F_{U_i}$ des motifs associées au composantes en définissant leur fréquence fondamentale comme le centre de ce support.
+%    On note alors $\omega_i = \frac{\displaystyle\max \mathcal F_{U_i} + \min \mathcal F_{U_i} }{2 T}$ et $s_i = \frac{\displaystyle\max \mathcal F_{U_i} - \min \mathcal F_{U_i} }{2}$. 
+    On sélectionne alors les composantes ayant un support de largeur inférieur à $\rho_s$ et on considère que les composantes $i, j$ sont adjacente si l'écart entre leur fréquences fondamentales est inférieur à $\rho_\omega \in \inter$.
+    Ceci permet donc de grouper les composantes associées à des dictionnaires ayant des périodogrammes peu étalés et qui se chevauchent.
+% paragraph HGS (end)
+
+\paragraph{K-moyennes (KM)}\label{par:KM} 
     On peut aussi utiliser un algorithme de K-moyennes appliqué aux périodogrammes pour former le groupement \cite{alvarez_13_auto}.
-    Ceci est intéressant car on compare la distance entre les périodogrammes et le choix des seuils est automatiquement fourni par les K-moyennes.
+    Ceci est intéressant car on compare la distance euclidienne entre les périodogrammes et le choix des seuils est automatiquement fourni par les K-moyennes.
     Le choix du nombre de groupes $C$ est un choix critique ici.
     Une estimation du nombre de groupe peut être faite en estimant le rang de la matrice $\Pi = \begin{bmatrix}\Pi_{U_1}&\dots&\Pi_{U_K}\end{bmatrix}^T$.
     On calcule les valeurs singulières $\val{\sigma}{K}{\ge}$ de $\Pi$ et on considère $C = \arg\max_k \sigma_k \ge \rho_f \sigma_1$ avec $\rho_f \in \inter$.
-    La similarité vaut alors 1 lorsque les composantes appartiennent au même groupe formé par l'algorithme des K-moyennes.
+    Deux composantes sont adjacentes si elles appartiennent au même groupe formé par l'algorithme des K-moyennes.
 % paragraph KM (end)
-
-
-\paragraph{Regroupement support harmonique (HGS)}\label{par:HGS}
-    L'une des faiblesses de la similarité (HG) est qu'elle se concentre sur des composantes harmoniques. 
-    En effet, deux composantes sont groupées si leur périodogramme ont des pics aux mêmes endroits.
-    Ainsi, si les composantes extraites par la SSA ont une plage de fréquence plus large, cela peut nuire au groupement car la normalisation du spectre fera passer la métrique de similarité sous le seuil de regroupement.
-    Une idée pour palier à ce problème est de considérer le support fréquentiel $F_{U_i}$ des motifs associées au composantes en définissant leur fréquence fondamentale comme le centre de ce support.
-    On note alors $\omega_i = \frac{\displaystyle\max \mathcal F_{U_i} + \min \mathcal F_{U_i} }{2 T}$ et $s_i = \frac{\displaystyle\max \mathcal F_{U_i} - \min \mathcal F_{U_i} }{2}$. 
-    On sélectionne alors les composantes ayant un support restreint \emph{i.e.} $s_i \le 3*\log(T)$ et on considère que les composantes $i, j$ sont similaires si $|\omega_i - \omega_j| < \rho_\omega$ avec $\rho_\omega \in \inter$.
-    Ceci permet donc de grouper les composantes associées à des dictionnaires ayant des périodogrammes peu étalés et qui se chevauchent.
-
-% paragraph HGS (end)
 % subsubsection per (end)
 % subsection sim (end)
 
@@ -270,15 +257,15 @@ Les composantes contenant une même phase oscillante partagent des structures co
 \paragraph{Méthode uniforme (MU)}
     La stratégie de formation des groupes à partir de la matrice d'adjacence la plus simple est de considérer que toutes les composantes ont le même intérêt.
     On peut alors considérer que deux composantes sont dans le même groupe dès lors qu'elles sont adjacentes.
-    C'est la méthode qui est utilisé dans la plupart des algorithmes qui ont été proposés jusque là \cite{abalov_14_auto, alvarez_13_auto}.\\
+    C'est la méthode qui est utilisé dans la plupart des algorithmes qui ont été proposés jusque là \cite{abalov_14_auto, alvarez_13_auto}.
 
 
 \paragraph{Méthode hiérarchique (MH)}
     Une autre possibilité est de considérer que les composantes ont une importance relative.
-    L'importance de chaque composante peut être mesurée par la part de variance $\frac{\lambda_i}{\sum_{j=1}^n \lambda_j}$ expliquée par cette composante.
-    %TODO - vérifier que les notations sont claires et bien définies
-    On peut donc considérer qu'on ne rajoute une composante $j$ dans un groupe $I_k$ que si elle est similaire à la composante dominante du groupe \emph{ i.e.} $a_{i, j} = 1$ pour $i = \arg\max_{l \in I_k} \lambda_l$.
-    Cela permet de donner un poids plus important lors du groupement à la composante qui contient le plus de variance du signal.
+    L'importance de chaque composante peut être mesurée par la part de variance expliquée par cette composante.
+    On peut donc considérer qu'on ajoute une composante dans un groupe si elle est adjacente à la composante dominante du groupe (au sens de la variance).
+    %TODO - Change?
+    Cela permet de donner un poids plus important lors du groupement aux composantes les plus intéressantes.
 
 % subsection clust (end)
 % section met (end)
@@ -296,16 +283,7 @@ Les composantes contenant une même phase oscillante partagent des structures co
     \end{equation}
     où $\epsilon_t$  est une composante de bruit blanc gaussien d'écart type $\sigma = s*\sigma_f$.
     Les différents paramètres sont choisis de manière aléatoire avec $a_i \in \inter$, $p \in \left[0, 5\right]$, $\displaystyle \phi_i \in\left[\frac{-\pi}{2}, \frac{\pi}{2}\right]$, $\alpha_i \in \left[0, \frac{1}{2}\right]$, $f_i \in \left[0, 50\right]Hz$ et $s \in \left[0, 40\right]dB$.
-    
-    \begin{figure}[htp]
-        %\centering
-        \hspace{-.5cm}
-        \includegraphics[width=.5\textwidth]{img/artsig2.eps}
-        \vspace{-.4cm}
-        \caption{Exemples de signal généré }
-        % TODO - mettre une décomposition
-        \label{}
-    \end{figure}
+   
 
     Trois classes de signaux sont définies.
     La première classe fixe $a_0 = \alpha_i = 0$ (harmoniques + bruit) , la seconde $\alpha_i = 0$ (tendance + harmoniques + bruit) et la troisième correspond au modèle général \eqref{eq:artsig}.
@@ -321,18 +299,16 @@ Les composantes contenant une même phase oscillante partagent des structures co
     Cette quantité correspond au rapport entre l'erreur d'estimation et la variance d'un signal.
 
     On calcule alors le rappel et la précision du regroupement pour $R^2$.
-    \begin{equation*}
+    \begin{equation}
         R = \frac{1}{N} \sum_{i=1}^N \min_k R^2(c_i, g_k) \hspace{0.8cm} P = \frac{1}{M}\sum_{k=1}^M \min_i R^2(c_i, g_k)
-    \end{equation*}
+    \end{equation}
     où les $(g_k)_{1\le k \le M}$ sont les différentes composantes obtenues lors du groupement et les $(c_i)_{1\le i\le N}$ sont les composantes initiales formant le signal artificiel.
     
     Une manière de fusionner ces deux concepts est de considérer le score obtenu pour une allocation optimale entre les composantes recherchées et celles formées par le regroupement:
-    \begin{equation*}
+    \begin{equation}
         S =  \frac{1}{N} \min_{\sigma \in \mathcal S(M)} \sum_{i=1}^N R^2(c_i, g_{\sigma(i)})
-    \end{equation*}
-    où $\mathcal S(M)$ est le groupe des permutations de $\set{m}$ et 
-    %TODO - Décrire les notations
-    
+    \end{equation}
+    où $\mathcal S(M)$ est le groupe des permutations de $\set{m}$.
     La qualité du regroupement obtenu dépend fortement de la qualité des composantes de départ.
     Il est donc important de considérer non pas les valeurs brutes de ces scores mais l'amélioration apportée par le groupement.
     Pour cela, on calcule les métriques $R, P$ et $S$ pour le groupement évalué et pour les composantes avant groupement $R_0, P_0, S_0$.
@@ -362,21 +338,54 @@ Les composantes contenant une même phase oscillante partagent des structures co
 \section{Résultats}
 \label{sec:res}
 
+ 
+    \begin{figure}[tp]
+        %\centering
+        \hspace{-.5cm}
+        \includegraphics[width=.5\textwidth]{img/artsig2.eps}
+        \vspace{-.4cm}
+        \caption{Exemples de signal généré et ces composantes}
+        % TODO - mettre une décomposition par HGMH
+        \label{}
+    \end{figure}
+
+Pour expérience, les composantes de la SSA sont calculées avec une valeur de fenêtre $K=T/2$.
+Les différents regroupements sont ensuite réalisés avec les paramètres suivants: $\rho_0=0.8$, $\rho_1=0.8$, $\rho_2=0.05$, $\rho_c=0.8$, $\rho_f=0.4$, $\rho_p=0.8$ and $\rho_\omega=0.0005$.
+%TODO add \rho_s = 3log(T) and other?
+Pour les similarités déjà documentées (GG1, GG2, HG, KM), ces valeurs sont celles utilisées dans les publications originales \cite{abalov_14_auto, alvarez_13_auto}. Pour nos similarités (HGS, GG3), les paramètres ont été fixés empiriquement sur quelques exemples.
+
+%TODO analyse des résultats!!!!
+
+%1/ un exemple
+
+%2/ Toutes les classes
+
 Pour chacune des 3 classes, on génère 1000 signaux aléatoires.
-Pour chaque signal de longueur $T$, les composantes de la SSA sont calculées avec une valeur de fenêtre $K=T/2$.
-Les différents regroupements sont ensuite réalisés avec les paramètres de similarité suivants: $\rho_0=0.8$, $\rho_1=0.8$, $\rho_2=0.05$, $\rho_c=0.8$, $\rho_f=0.4$, $\rho_p=0.8$ and $\rho_\omega=0.0005$.
-Ces valeurs ont été choisit à partir des travaux existants \cite{abalov_14_auto,alvarez_13_auto}, où fixées à un ordre de grandeur près après expérimentation.
-%TODO d'où vienne ces valeurs
 
-Pour les métriques de $R_r$ et $S_r$ calculé sur l'ensemble de la base de signaux tests, l'utilisation de la méthode (HG)-(MH) donne un résultat statistiquement meilleur (au sens du test de Friedman) que les autres méthodes avec une amélioration moyenne de 21.49\% pour $R_r$ et de 38.16\% pour $S_r$.
+
+Pour les métriques de $R_r$ et $S_r$ calculées sur l'ensemble de la base de signaux tests (3 classes), l'utilisation de la méthode (HG)-(MH) donne un résultat statistiquement meilleur (au sens du test de Friedman) que les autres méthodes avec une amélioration moyenne de 21.49\% pour $R_r$ et de 38.16\% pour $S_r$.
 Pour $P_r$, la méthode (HGS)-(MH) est statistiquement meilleure que les autres à l'exception de (HG)-(MH) qui lui est équivalente.
-L'amélioration moyenne de $P_r$ est de 27.78\%.
+Elle permet d'obtenir une amélioration moyenne de $P_r$ de 27.78\%.
 
-Lorsqu'on regarde les résultats classe par classe, on voit cependant que lorsque la complexité de la classe augmente, l'écart de significativité se réduit.
-Pour $R_r$, (HG)-(MH) est statistiquement meilleure que (HGS)-(MH) pour les classes 1 et 2 mais pas pour la classe 3. 
+
+%3/ Classes par classes
+Lorsqu'on regarde les résultats classe par classe, on voit cependant que lorsque la complexité de la classe augmente, les différences sont de moins en moins significatives entre (HG)-(MH) et les autres méthodes.
+Pour $R_r$, (HG)-(MH) est statistiquement meilleure que (HGS)-(MH) pour les classes 1 et 2 mais pas pour la classe 3.
 Pour $P_r$, sur chaque classe séparément, 5 méthodes ont des performances comparables et (HGS)-(MH) a un rang plus élevé que (HG)-(MH) pour la classe 3.
 Ceci montre que si la méthode (HG)-(MH) semble la plus appropriée pour le groupement automatique pour des signaux composés d'harmoniques modulées, les autres méthodes peuvent donner des résultats intéressants pour des signaux plus complexes.
-%TODO - Il faut aller plus loin dans l'analyse !
+
+%4/ Méthode par méthode
+
+
+\section{Conclusion}
+\label{sec:ccl}
+bla
+
+bla
+
+bla
+
+% section ccl (end)
 
 \bibliographystyle{plain} 
 \scriptsize
