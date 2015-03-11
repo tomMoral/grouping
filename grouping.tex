@@ -68,28 +68,30 @@ Néanmoins, cette technique a été rarement utilisée sur d'autres signaux, pri
 \subsection{Rappels sur la SSA}
 \label{sub:rap}
 On considère un signal fini échantillonné $f = \val{f}{T}{,}$ et un entier $K \in \left \{ 1, \dots, T/2 \right \}$. La matrice de K-trajectoire $X^{(K)} \in \R^{K\times L}$ de la série $f$ est défini par:
-$$ X^{(K)} = \begin{bmatrix}
-	f_1 & f_2 &\dots & f_K\\
-	f_2 & f_3 &\dots & f_{K+1}\\
+\begin{equation*} X^{(K)} = \begin{bmatrix}
+	f_1 & f_2 &\dots & f_L\\
+	f_2 & f_3 &\dots & f_{L+1}\\
 	\dots\\
-	f_{L} & f_{L+1} &\dots & f_T
-\end{bmatrix}$$ avec $L = T-K$. Cette matrice contient toutes les sous séries de longueur $K$ de $f$. \textcolor{red}{Attention il faut utiliser l'environnement equation et pas les signes double dollar + Probleme de notation : X est une matrice L par K non ? Bien vérifier}
+	f_{K} & f_{K+1} &\dots & f_T
+\end{bmatrix}
+\end{equation*} avec $L = T-K+1$. Cette matrice contient toutes les sous séries de longueur $K$ de $f$.
+\textcolor{red}{Attention il faut utiliser l'environnement equation et pas les signes double dollar + Probleme de notation : X est une matrice L par K non ? Bien vérifier}
 
 
 % Le signal peut être reconstruit naturellement à partir de cette matrice du fait de sa structure de Hankel, avec toutes les composantes sur les anti-diagonales égales. Si l'on considère une matrice $M$ n'ayant pas cette structure, le signal ayant la matrice de trajectoire la plus proche de $M$ peut être construit en moyennant le long des anti-diagonales. Cette opération permet de  passer de l'espace des matrices à celui des signaux. On notera par la suite $\HH: \R^{K\times L} \to \R^T$ l'opération d'hankelisation, qui effectue la moyenne le long des anti-diagonales. Cette opération est linéaire.
 
 
 Une décomposition en valeur singulière (en anglais SVD pour Singular Value Decomposition) de la matrice de K-trajectoire $X^{(K)}$ de $f$ permet d'extraire les motifs de longueur $K$ les plus intéressants au sens de la variance. En effet, la SVD donne: 
-$$X^{(K)} = U \Lambda V^T
-$$ avec $U, V$ deux matrices orthogonales et $\Lambda$ une matrice diagonale ayant pour valeurs $\lambda_1\ge \dots\ge \lambda_K$. La matrice $U$ peut être vue comme un dictionnaire de motifs de taille $K$ sur lequel est projeté le signal. Ces motifs permettent de capturer au mieux la variance du signal. Les vecteurs singuliers de la SVD maximisent récursivement la covariance de $U_i$ et des sous séries de longueur $K$ de $f$.
+\begin{equation*}X^{(K)} = U \Lambda V^T
+\end{equation*} avec $U, V$ deux matrices orthogonales et $\Lambda$ une matrice diagonale ayant pour valeurs $\lambda_1\ge \dots\ge \lambda_K$. La matrice $U$ peut être vue comme un dictionnaire de motifs de taille $K$ sur lequel est projeté le signal. Ces motifs permettent de capturer au mieux la variance du signal. Les vecteurs singuliers de la SVD maximisent récursivement la covariance de $U_i$ et des sous séries de longueur $K$ de $f$.
 
 %\paragraph{Reconstruction de composantes}
 
 
-L'étape d'extraction de motifs permet d'obtenir une décomposition de la matrice de trajectoire sous la forme d'une somme de matrices de rang 1:$$
+L'étape d'extraction de motifs permet d'obtenir une décomposition de la matrice de trajectoire sous la forme d'une somme de matrices de rang 1:\begin{equation*}
 X^{(K)} = \sum_{i=1}^K \lambda_i U_iV_i^T 
-$$où  $U_i, V_i$ sont les colonnes des matrices $U, V$. Grâce à une opération d'hankelisation, on peut transformer chaque matrice de trajectoire $\lambda_iU_iV_i^T$  en un signal temporel $f^{(i)}$, et une décomposition de $f$ sous la forme 
-$$f = \sum_{i=1}^K f^{(i)}$$ où $f^{(i)} $ est la composante associée avec le triplet propre $(\lambda_i, U_i, V_i)$. On appellera $U_i$ le motif associé et $\lambda_i$ la valeur singulière associée.
+\end{equation*}où  $U_i, V_i$ sont les colonnes des matrices $U, V$. Grâce à une opération d'hankelisation, on peut transformer chaque matrice de trajectoire $\lambda_iU_iV_i^T$  en un signal temporel $f^{(i)}$, et une décomposition de $f$ sous la forme 
+\begin{equation*}f = \sum_{i=1}^K f^{(i)}\end{equation*} où $f^{(i)} $ est la composante associée avec le triplet propre $(\lambda_i, U_i, V_i)$. On appellera $U_i$ le motif associé et $\lambda_i$ la valeur singulière associée.
 
 
 % $f^{(i)} = \HH(\lambda_iU_iV_i^T)$ la série associée à la matrice de rang 1 $\lambda_iU_iV_i^T$. C'est composantes sont associées avec le triplet propre $(\lambda_i, U_i, V_i)$. On appellera $U_i$ le motif associé et $\lambda_i$ la valeur singulière associée.
@@ -136,19 +138,19 @@ Les composantes à regrouper sont celles qui sont produites par les mêmes phén
 
 \paragraph{Corrélation (GG1)}\label{par:GG1}
     Deux composantes sont considéré comme similaire si la corrélation entre elles est plus haute qu'une valeur seuil $\rho_c$ \cite{abalov_14_auto}. Pour éviter de grouper des composantes d'importance trop éloignée, on impose de plus que le ratio de leurs valeurs singulières associées $\frac{\min(\lambda_i, \lambda_j)}{\max(\lambda_i, \lambda_j)}$ soit supérieur à un seuil $\rho_1 \in \inter$. Cela évite de grouper des phénomènes d'amplitude différentes. On définit donc la matrice d'adjacence $G = (g_{i, j})_{0 \le i,j\le K}$ par:
-    $$
+    \begin{equation*}
     g_{i, j} = \begin{cases}
 	    1 &\text{ si } \displaystyle\frac{\min(\lambda_i, \lambda_j)}{\max(\lambda_i, \lambda_j)} \ge \rho_1 \text{ et } \text{corr}(f^{(i)}, f^{[j)}) \ge \rho_c\\
 	    0& \text{ sinon}
     \end{cases}
-    $$
+    \end{equation*}
 % paragraph GG1 (end)
 
 \paragraph{W-Corrélation (GG3)}\label{par:GG3} 
     La w-corrélation pour deux séries $x, y$ de taille $N$ et pour une taille de fenêtre $K$ est définie par:
-    $$
+    \begin{equation*}
     \text{w-corr}(x, y) = \frac{\langle x|y\rangle_w}{\|x\|_w\|y\|_w}
-    $$avec $\langle x|y\rangle_w = \sum_{i=1}^n w_i x_i y_i$, $w_i = \min(i, N-i, K)$ et $\|x\|_w = \sqrt{\langle x|x\rangle_w}$. Deux séries sont séparables par la SSA si leur w-corrélation est nulle \cite{Golyandina_10_ssa}. Il est donc possible d'utiliser la valeur de la w-corrélation comme indicateur de similarité entre 2 composantes. On peut alors prendre une fonction de similarité identique à la précédente en remplaçant la corrélation par la w-corrélation. Ceci permet de filtrer les effets de bord qui peuvent apparaître dans la corrélation et ainsi d'obtenir un meilleur regroupement.
+    \end{equation*}avec $\langle x|y\rangle_w = \sum_{i=1}^n w_i x_i y_i$, $w_i = \min(i, N-i, K)$ et $\|x\|_w = \sqrt{\langle x|x\rangle_w}$. Deux séries sont séparables par la SSA si leur w-corrélation est nulle \cite{Golyandina_10_ssa}. Il est donc possible d'utiliser la valeur de la w-corrélation comme indicateur de similarité entre 2 composantes. On peut alors prendre une fonction de similarité identique à la précédente en remplaçant la corrélation par la w-corrélation. Ceci permet de filtrer les effets de bord qui peuvent apparaître dans la corrélation et ainsi d'obtenir un meilleur regroupement.
 % paragraph GG3 (end)
 
 % subsubsection cor (end)
@@ -156,26 +158,26 @@ Les composantes à regrouper sont celles qui sont produites par les mêmes phén
 \subsubsection{Périodogramme}\label{ssub:per}
 
 La fréquence des composantes obtenues peut aussi être utilisée comme un indicateur de similarité des séries \cite{Golyandina_10_ssa}. Le périodogramme d'une série $f$ de longueur $N$ est défini comme:
-$$
+\begin{equation*}
 \Pi_f(k) = \frac{1}{Z}\left|\sum_{n=1}^N f_n e^{-2i\pi n \frac{k}{N}}\right|^2
-$$où $Z$ est une constante de normalisation telle que le périodogramme ait une norme unitaire. Les composantes contenant une même phase oscillante partagent des structures communes dans leur périodogramme qui peuvent permettre leur identification.
+\end{equation*}où $Z$ est une constante de normalisation telle que le périodogramme ait une norme unitaire. Les composantes contenant une même phase oscillante partagent des structures communes dans leur périodogramme qui peuvent permettre leur identification.
 
 \paragraph{Regroupement harmonique (HG)}\label{par:HG}
     Une stratégie de regroupement efficace pour extraire les harmoniques exponentiellement modulées \cite{alexandrov_05_auto} utilise une fonction de similarité qui regroupe deux composantes successives $(j, j+1)$ si 
-    $$
+    \begin{equation*}
     \frac{1}{2}\max_{0\le k \le L/2}\left(\Pi_{U_j}(k) + \Pi_{U_{j+1}}(k)\right) \ge \rho_0 
-    $$pour $\rho_0\in \left[0, 1\right]$. Pour une composante harmonique pure décomposée sur les deux sous-séries $i,i+1$, cet indicateur vaut 1 car les périodogrammes sont les mêmes. Au contraire, si deux composantes successives ont des spectres disjoints, l'indicateur ne peut dépasser 0.5. Cette métrique rend compte du fait que les composantes successives ont des pics de densité spectrale aux mêmes fréquences.
+    \end{equation*}pour $\rho_0\in \left[0, 1\right]$. Pour une composante harmonique pure décomposée sur les deux sous-séries $i,i+1$, cet indicateur vaut 1 car les périodogrammes sont les mêmes. Au contraire, si deux composantes successives ont des spectres disjoints, l'indicateur ne peut dépasser 0.5. Cette métrique rend compte du fait que les composantes successives ont des pics de densité spectrale aux mêmes fréquences.
 % paragraph HG (end)
 
 \paragraph{Similarité des pics (GG2)}\label{par:GG2}
     Une autre métrique de similarité basée sur les périodogrammes est définie en prenant en compte la distance $\ell_\infty$ entre les fréquences non négligeables du périodogramme \cite{abalov_14_auto}. Pour une série $f$, on définit l'ensemble ordonné $F_f = \left \{ k | \Pi_f(k) \ge \rho_p \|\Pi_f\|_\infty \right \}$ pour $\rho_p \in \inter$ et on notera $F_f(h)$ la h-ème valeur de cette ensemble. On définit alors la matrice d'adjacence:
-    $$
+    \begin{equation*}
     g_{i, j} = \begin{cases}
 	    1 & \text{ si } \displaystyle\frac{\min(\lambda_i, \lambda_j)}{\max(\lambda_i, \lambda_j)} \ge \rho_1\\
 	      & \text{ et } \frac{|F_{f^{(i)}}(h) - F_{f^{(j)}}(h)|}{T/2} \le \rho_2\ \forall h \in \set{m}\\
 	    0 & \text{ sinon}
     \end{cases}
-    $$ où $m = \min\left(\left|F_{f^{(i)}}\right|, \left|F_{f^{(j)}}\right|\right)$. Cette métrique tente de rendre plus robuste la détection de composantes ayant le même périodogramme en comparant non plus le pic maximal (HG) mais les supports spectraux des composantes. 
+    \end{equation*} où $m = \min\left(\left|F_{f^{(i)}}\right|, \left|F_{f^{(j)}}\right|\right)$. Cette métrique tente de rendre plus robuste la détection de composantes ayant le même périodogramme en comparant non plus le pic maximal (HG) mais les supports spectraux des composantes. 
 % paragraph GG2 (end)
 
 
@@ -254,7 +256,7 @@ Une autre possibilité est de considérer que les composantes ont une importance
     
     \begin{figure}[htp]
 \centering
-\includegraphics[width=.5\textwidth]{img/artsig.eps}
+\includegraphics[width=.5\textwidth]{img/artsig2.eps}
 \vspace{-.7cm}\caption{Exemples de signal généré \textcolor{red}{Inutile : il faut une décomposition}}
 \label{}
 \end{figure}
@@ -269,13 +271,13 @@ Trois classes de signaux sont définies. La première classe fixe $a_0 = \alpha_
 L'une des métriques utilisée pour évaluer la qualité du groupement est le coefficient de détermination $R^2$ \cite{abalov_14_auto}. Ce coefficient rend compte de l'erreur commise par rapport à la variance de la composante. Pour une série $f$ de moyenne $\overline f$ et pour un estimateur $\widehat f$, le coefficient de détermination est calculé suivant $R^2(f, \widehat f) = 1 - \frac{\|f-\widehat f\|^2}{\|f-\overline f\|^2}$. Cette quantité correspond au rapport entre l'erreur d'estimation et la variance d'un signal. 
 
 On calcule alors le rappel et la précision du regroupement pour $R^2$.
-    $$
+    \begin{equation*}
         R = \frac{1}{N} \sum_{i=1}^N \min_k R^2(c_i, g_k) \hspace{0.8cm} P = \frac{1}{M}\sum_{k=1}^M \min_i R^2(c_i, g_k)
-    $$où les $(g_k)_{1\le k \le M}$ sont les différentes composantes obtenues lors du groupement et les $(c_i)_{1\le i\le N}$ sont les composantes initiales formant le signal artificiel.
+    \end{equation*}où les $(g_k)_{1\le k \le M}$ sont les différentes composantes obtenues lors du groupement et les $(c_i)_{1\le i\le N}$ sont les composantes initiales formant le signal artificiel.
     
-    Une manière de fusionner ces deux concepts est de considérer le score obtenu pour une allocation optimale entre les composantes recherchées et celles formées par le regroupement:$$
+    Une manière de fusionner ces deux concepts est de considérer le score obtenu pour une allocation optimale entre les composantes recherchées et celles formées par le regroupement:\begin{equation*}
         S =  \frac{1}{N} \min_{\sigma \in \mathcal S(M)} \sum_{i=1}^N R^2(c_i, g_{\sigma(i)})
-    $$ \textcolor{red}{Decris tes notations !, permutations etc etc}
+    \end{equation*} \textcolor{red}{Decris tes notations !, permutations etc etc}
     
     La qualité du regroupement obtenu dépend fortement de la qualité des composantes de départ. Il est donc important de considérer non pas les valeurs brutes de ces scores mais l'amélioration apportée par le groupement. Pour cela, on calcule les métriques $R, P$ et $S$ pour le groupement évalué et pour les composantes avant groupement $R_0, P_0, S_0$. Le taux d'augmentation entre ces deux scores $\frac{R-R_0}{R_0}$ permet de mesurer l'apport d'un groupement par rapport aux composantes de départ. Cette métrique est moins sensible aux variations produites par une mauvaise décomposition de départ.
     
