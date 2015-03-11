@@ -9,6 +9,7 @@
 \usepackage[noend]{algpseudocode}
 \usepackage{color}
 \usepackage{graphicx}
+\usepackage[font=scriptsize]{caption}
 %\usepackage{enumitem}
 
 %TODO - Une lettre, un usage + check notation
@@ -335,13 +336,12 @@ Les composantes contenant une même phase oscillante partagent des structures co
 \section{Résultats}
 \label{sec:res}
 
- 
     \begin{figure}[tp]
         %\centering
         \hspace{-.5cm}
-        \includegraphics[width=.5\textwidth]{img/artsig2.eps}
+        \includegraphics[width=.5\textwidth]{img/artsig3.eps}
         \vspace{-.4cm}
-        \caption{Exemples de signal généré et ces composantes}
+        \caption{Décomposition d'un signal artificiel (\emph{haut}). Les quatres composantes du milieux correspondent aux groupes formés après la SSA par (HG)-(MH). Le signal du bas correspond au résiduel de la décomposition. Les échelles des 4 signaux du bas ont étés adaptées pour ne pas écraser les signaux. Le regroupement retrouve correctement plusieurs composantes harmoniques. Le bruits est largement filtré du signal de départ. Il n'est pas totalement gaussien car il intègre une composante harmonique du signal de départ qui n'est pas séparée par la décomposition du fait de sa trop faible amplitude.}
         % TODO - mettre une décomposition par HGMH
         \label{}
     \end{figure}
