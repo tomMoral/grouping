@@ -21,7 +21,7 @@
     \coord{Nicolas}{Vayatis}{1, 2}}
 
 \adresse{\affil{1}{CMLA - ENS Cachan - 64 Avenue du Président Wilson, 94230 Cachan}
-         \affil{2}{COGNAC-G - Université Paris Descartes} %TODO fin
+         \affil{2}{CCOGNAC G - Université Paris Descartes - 45, rue des Saints-Pères, 75006 Paris} 
          \affil{3}{L2TI - Université Paris 13 - 99 Avenue Jean Baptiste Clément, 93430 Villetaneuse}}
          
 \email{thomas.moreau@cmla.ens-cachan.fr,
@@ -156,9 +156,9 @@ Il est souvent intéressant de donner plus d'importance à la composante associ�
 \subsection{Mesures de similarité}
 \label{sub:sim}
 
-\subsubsection{Corrélation}\label{ssub:cor}
+\subsubsection{Mesures basées sur la corrélation}\label{ssub:cor}
 
-Les composantes à regrouper sont celles qui sont produites par les mêmes phénomènes
+Les composantes à regrouper sont celles qui sont produites par les mêmes phénomènes.
 Elles ne sont donc pas indépendantes.
 Il est donc intéressant d'observer la corrélation entre les composantes comme indicateur de similarité.
 
@@ -176,28 +176,26 @@ Il est donc intéressant d'observer la corrélation entre les composantes comme 
 % textbf GG1 (end)
 
 \textbf{W-Corrélation (GG3).}\label{par:GG3} 
-    La w-corrélation pour deux séries $x, y$ de taille $T$ et pour une longueur de fenêtre $K$ est définie par:
-    \begin{equation}
-        \text{w-corr}(x, y) = \frac{\langle x|y\rangle_w}{\|x\|_w\|y\|_w}
-    \end{equation}
-    avec $\langle x|y\rangle_w = \sum_{i=1}^n w_i x_i y_i$, $w_i = \min(i, T-i, K)$ et $\|x\|_w = \sqrt{\langle x|x\rangle_w}$.
-    Deux séries sont séparables par la SSA si leur w-corrélation est nulle \cite{Golyandina_10_ssa}.
+    La W-corrélation pour deux séries $x, y$ de taille $T$ et pour une longueur de fenêtre $K$ est similaire à une corrélation classique mais utilise un produit scalaire pondéré $\langle x|y\rangle_w = \sum_{i=1}^n w_i x_i y_i$, $w_i = \min(i, T-i, K)$ qui permet de limiter les effets de bord.
+%     \begin{equation}
+%         \text{w-corr}(x, y) = \frac{\langle x|y\rangle_w}{\|x\|_w\|y\|_w}
+%     \end{equation}
+%     avec $\langle x|y\rangle_w = \sum_{i=1}^n w_i x_i y_i$, $w_i = \min(i, T-i, K)$ et $\|x\|_w = \sqrt{\langle x|x\rangle_w}$.
+    En théorie, deux séries sont séparables par la SSA si leur w-corrélation est nulle \cite{Golyandina_10_ssa}.
     Il est donc possible d'utiliser la valeur de la w-corrélation comme indicateur de similarité entre deux composantes.
     On peut alors prendre une fonction de similarité identique à la précédente en remplaçant la corrélation par la w-corrélation.
-    Ceci permet de filtrer les effets de bord qui peuvent apparaître dans la corrélation et ainsi d'obtenir un meilleur regroupement.
+    %Ceci permet de filtrer les effets de bord qui peuvent apparaître dans la corrélation et ainsi d'obtenir un meilleur regroupement.
 % textbf GG3 (end)
-
-% subsubsection cor (end)
-
-\subsubsection{Périodogramme}\label{ssub:per}
-
+\subsubsection{Mesures basées sur le périodogramme}\label{ssub:per}
 Le profil spectral des composantes obtenues peut aussi être utilisé comme un indicateur de similarité des séries \cite{Golyandina_10_ssa}.
-Le périodogramme d'une série $f$ de longueur $T$ est défini comme:
-\begin{equation}
-    \Pi_f(k) = \frac{1}{Z}\left|\sum_{t=1}^T f_t e^{-2i\pi t \frac{k}{N}}\right|^2
-\end{equation}
-où $Z$ est une constante de normalisation telle que le périodogramme ait une norme unitaire.
-Les composantes contenant une même phase oscillante partagent des structures communes dans leur périodogramme qui peuvent permettre leur identification.
+En effet, les composantes contenant une même phase oscillante partagent des structures communes dans leur périodogramme qui peuvent permettre leur identification.
+On notera dans la suite $\Pi_f(k)$ le périodogramme d'une série $f$ de longueur $T$.
+%  est défini comme:
+% \begin{equation}
+%     \Pi_f(k) = \frac{1}{Z}\left|\sum_{t=1}^T f_t e^{-2i\pi t \frac{k}{N}}\right|^2
+% \end{equation}
+% où $Z$ est une constante de normalisation telle que le périodogramme ait une norme unitaire.
+
 
 \textbf{Regroupement harmonique (HG).}\label{par:HG}
     Une stratégie de regroupement efficace pour extraire les harmoniques exponentiellement modulées \cite{alexandrov_05_auto} définit une matrice d'adjacence qui regroupe deux composantes successives $(i, i+1)$ si 
@@ -296,7 +294,7 @@ Les composantes contenant une même phase oscillante partagent des structures co
     Pour une série $f$ de moyenne $\overline f$ et pour un estimateur $\widehat f$, le coefficient de détermination est calculé suivant $R^2(f, \widehat f) = 1 - \frac{\|f-\widehat f\|^2}{\|f-\overline f\|^2}$.
     Cette quantité correspond au rapport entre l'erreur d'estimation et la variance d'un signal.
 
-    On calcule alors le rappel et la précision du regroupement pour $R^2$.
+    On calcule alors le rappel et la précision du regroupement pour $R^2$
     \begin{equation}
         R = \frac{1}{N} \sum_{i=1}^N \min_j R^2(c_i, g_j) \hspace{0.8cm} P = \frac{1}{M}\sum_{j=1}^M \min_i R^2(c_i, g_j)
     \end{equation}
@@ -337,11 +335,11 @@ Les composantes contenant une même phase oscillante partagent des structures co
 \label{sec:res}
 
     \begin{figure}[tp]
-        %\centering
-        \hspace{-.5cm}
+        \centering
+        %\hspace{-.5cm}
         \includegraphics[width=.5\textwidth]{img/artsig3.eps}
-        \vspace{-.4cm}
-        \caption{Décomposition d'un signal artificiel (\emph{haut}). Les quatres composantes du milieux correspondent aux groupes formés après la SSA par (HG)-(MH). Le signal du bas correspond au résiduel de la décomposition. Les échelles des 4 signaux du bas ont étés adaptées pour ne pas écraser les signaux. Le regroupement retrouve correctement plusieurs composantes harmoniques. Le bruits est largement filtré du signal de départ. Il n'est pas totalement gaussien car il intègre une composante harmonique du signal de départ qui n'est pas séparée par la décomposition du fait de sa trop faible amplitude.}
+        %\vspace{-.4cm}
+        \caption{Décomposition d'un signal artificiel (\emph{haut}). Les quatres composantes du milieu correspondent aux groupes formés après la SSA par (HG)-(MH). Le signal du bas correspond au résiduel de la décomposition. Attention, les échelles des 4 signaux du bas ont été adaptées pour ne pas écraser les signaux.} %Le regroupement retrouve correctement plusieurs composantes harmoniques. Le bruits est largement filtré du signal de départ. Il n'est pas totalement gaussien car il intègre une composante harmonique du signal de départ qui n'est pas séparée par la décomposition du fait de sa trop faible amplitude.}
         \label{fig:dec}
     \end{figure}
 
@@ -354,10 +352,8 @@ Pour les similarités déjà documentées (GG1, GG2, HG, KM), ces valeurs sont c
 
 
 %1/ un exemple
-La Figure~\ref{fig:dec} présente un résultat de décomposition par la SSA d'un signal de la classe 3 composé d'une tendance, de 4 harmoniques exponentiellement modulées et d'un bruit blanc gaussien.
-Le SNR de ce signal est de 9.7dB.
-La décomposition  avec un grouping (HG)-(MH) permet de mettre en évidence 4 des 5 composantes.
-Les composantes sont retrouvées avec une faible déformation. 
+La Figure~\ref{fig:dec} présente un résultat de décomposition par la SSA d'un signal de la classe 3 composé d'une tendance, de 4 harmoniques exponentiellement modulées et d'un bruit blanc gaussien (SNR de 9.7dB).
+On observe que la décomposition  avec un grouping (HG)-(MH) permet de mettre en évidence 4 des 5 composantes, qui sont retrouvées avec une faible déformation. 
 Le coefficient de détermination $R^2$ moyen est de 0.96 pour ces 4 composantes alors que sans le groupement, le coefficient moyen est de 0.21.
 La 5e composante harmonique est rejetée comme du bruit par le filtrage des composantes initiales car son amplitude est faible par rapport aux autres composantes.
 Il est en effet difficile de retrouver les composantes avec une amplitude faible devant le bruit.
@@ -374,17 +370,17 @@ Elle permet d'obtenir une amélioration moyenne de $P_r$ de 27.78\%.
 Lorsqu'on regarde les résultats classe par classe, on voit cependant que lorsque la complexité de la classe augmente, les différences sont de moins en moins significatives entre (HG)-(MH) et les autres méthodes.
 Pour $R_r$, (HG)-(MH) est statistiquement meilleure que (HGS)-(MU) pour les classes 1 et 2 mais pas pour la classe 3.
 Pour $P_r$, sur chaque classe séparément, 5 méthodes ont des performances comparables bien que (HG)-(MH) donne un meilleur performance moyenne et  pour la classe 3, (HGS)-(MU) a une meilleure précision que (HG)-(MH).
-Ceci montre que si la méthode (HG)-(MH) semble la plus appropriée pour le groupement automatique pour des signaux composés d'harmoniques modulées, les autres méthodes peuvent donner des résultats intéressants pour des signaux avec des périodogrammes moins compactes.
+Ceci montre que si la méthode (HG)-(MH) semble la plus appropriée pour le groupement automatique pour des signaux composés d'harmoniques modulées, les autres méthodes peuvent donner des résultats intéressants pour des signaux avec des périodogrammes moins compacts.
 
 
 
 %5/ Par composantes
-Cette analyse est étayée par l'étude des résultats pour chaque composantes.
-Le coefficient de détermination $R^2$ moyen obtenue pour la composante $c_0$ dans les classes 2 et 3 est en probabilité plus grand avec la méthode (KM) que pour les 10 autre méthodes (cette méthode ne varie pas avec le choix de la stratégie de formation des groupes). 
-Cette méthode observe l'intégralité du contenu fréquentiel pour effectuer le groupement ce qui est un avantage pour retrouver la composante de tendance qui peut avoir un périodogramme plus étalées. 
+Cette analyse est étayée par l'étude des résultats pour chaque type de composantes.
+Le coefficient de détermination $R^2$ moyen obtenu pour la composante $c_0$ dans les classes 2 et 3 est en probabilité plus grand avec la méthode (KM) que pour les 10 autres méthodes (cette méthode ne varie pas avec le choix de la stratégie de formation des groupes). 
+Cette méthode observe l'intégralité du contenu fréquentiel pour effectuer le groupement ce qui est un avantage pour retrouver la composante de tendance qui peut avoir un périodogramme plus étalée. 
 Pour les composantes harmoniques dans les classes 1 et 2, la méthode (HG)-(MH) donne statistiquement un meilleur score $R^2$. 
 Ces composantes sont particulièrement adaptées à la similarité (HG) car elles ont un périodogramme ne comportant qu'un pic.
-Pour les composantes exponentiellement modulées, (HG)-(MH) et (HGS)-(MU) donnent des résultats statistiquement équivalents. Ce rapprochement s'explique car sur les cas difficiles, (HGS)-(MU) donne une plus grand stabilité au support spectral des composantes et permet un meilleur regroupement. Les harmoniques faiblement modulées sont tout de même mieux récupéré par la première technique.
+Pour les composantes exponentiellement modulées, (HG)-(MH) et (HGS)-(MU) donnent des résultats statistiquement équivalents. Ce rapprochement s'explique car sur les cas difficiles, (HGS)-(MU) donne une plus grand stabilité au support spectral des composantes et permet un meilleur regroupement. Les harmoniques faiblement modulées sont tout de même mieux récupérées par la première technique.
 
 %4/ Méthode par méthode
 
