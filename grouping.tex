@@ -138,9 +138,10 @@ Les stratégies de regroupement peuvent être décrites en trois phases:
 	\item Calculer une matrice d'adjacence entre ces composantes
 	\item Former les groupes $I_j$ de composantes adjacentes
 \end{enumerate}
-Enfin, les composantes finales sont obtenues en sommant les composantes regroupées $y_j = \sum_{i\in I_k} x^{(i)}$.
+Les composantes finales sont obtenues en sommant les composantes regroupées $y_j = \sum_{i\in I_k} x^{(i)}$.
 La première étape est effectuée en supprimant les composantes de la SVD ayant une valeur singulière $\lambda_i$ plus faible qu'un certain seuil (que l'on choisira ici adaptatif et de la forme  $\tau_l*\lambda_2$ avec $\tau_l = 0.01$).
 Ceci permet de filtrer les composantes de bruit en considérant qu'elles ont une part négligeable dans la variance de la série.
+On utilise la seconde valeur propre car la première, liée à la variance de la série, peut rejeter la plupart des composantes.
 
 La seconde étape utilise une mesure de similarité entre les composantes afin d'obtenir une matrice d'adjacence.% Intuitivement, le choix de cette mesure influence fortement les résultats du regroupement.
 %Il est par exemple parfois pertinent de se  baser sur le contenu fréquentiel des composantes afin d'obtenir un bon regroupement des composantes harmoniques.
