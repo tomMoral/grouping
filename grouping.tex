@@ -24,9 +24,7 @@
          \affil{2}{CCOGNAC G - Université Paris Descartes - 45, rue des Saints-Pères, 75006 Paris} 
          \affil{3}{L2TI - Université Paris 13 - 99 Avenue Jean Baptiste Clément, 93430 Villetaneuse}}
          
-\email{thomas.moreau@cmla.ens-cachan.fr,
-laurent.oudre@univ-paris13.fr\\
-nicolas.vayatis@cmla.ens-cachan.fr}
+\email{\footnotesize thomas.moreau@cmla.ens-cachan.fr, laurent.oudre@univ-paris13.fr, nicolas.vayatis@cmla.ens-cachan.fr}
 
 \makeatletter
 \def\BState{\State\hskip-\ALG@thistlm}
@@ -142,14 +140,15 @@ Les stratégies de regroupement peuvent être décrites en trois phases:
 	\item Former les groupes $I_k$ de composantes adjacentes
 \end{enumerate}
 Enfin, les composantes finales sont obtenues en sommant les composantes regroupées $g_j = \sum_{i\in I_k} f^{(i)}$.
+
 La première étape est effectuée en supprimant les composantes de la SVD ayant une valeur singulière $\lambda_k$ plus faible qu'un certain seuil (que l'on choisira ici adaptatif et de la forme  $\tau_l*\lambda_1$ avec $\tau_l = 0.01$).
 Ceci permet de filtrer les composantes de bruit en considérant qu'elles ont une part négligeable dans la variance de la série.
 
-La seconde étape utilise une mesure de similarité entre les composantes afin d'obtenir une matrice d'adjacence. Intuitivement, le choix de cette mesure influence fortement les résultats du regroupement.
-Il est par exemple parfois pertinent de se  baser sur le contenu fréquentiel des composantes afin d'obtenir un bon regroupement des composantes harmoniques.
+La seconde étape utilise une mesure de similarité entre les composantes afin d'obtenir une matrice d'adjacence.% Intuitivement, le choix de cette mesure influence fortement les résultats du regroupement.
+%Il est par exemple parfois pertinent de se  baser sur le contenu fréquentiel des composantes afin d'obtenir un bon regroupement des composantes harmoniques.
 
 Enfin, la troisième étape concerne la stratégie de formation des groupes à partir de la matrice d'adjacence. Cette stratégie permet de gérer la prévalence des composantes entre elles.
-Il est souvent intéressant de donner plus d'importance à la composante associée de plus forte valeur singulière car elle a un poids important dans la variance de la série initiale.
+%Il est souvent intéressant de donner plus d'importance à la composante associée de plus forte valeur singulière car elle a un poids important dans la variance de la série initiale.
 
 % subsection form (end)
 
@@ -243,11 +242,6 @@ On notera dans la suite $\Pi_f(k)$ le périodogramme d'une série $f$ de longueu
     Une estimation du nombre de groupe peut être faite en estimant le rang de la matrice $\Pi = \begin{bmatrix}\Pi_{U_1}&\dots&\Pi_{U_K}\end{bmatrix}^T$.
     On calcule les valeurs singulières $\val{\sigma}{K}{\ge}$ de $\Pi$ et on considère $C = \arg\max_k \sigma_k \ge \rho_f \sigma_1$ avec $\rho_f \in \inter$.
     Deux composantes sont adjacentes si elles appartiennent au même groupe formé par l'algorithme des K-moyennes.
-% textbf KM (end)
-% subsubsection per (end)
-% subsection sim (end)
-
-
 \subsection{Stratégies de formation des groupes}
 \label{sub:clust}
 \textbf{Méthode uniforme (MU).}
@@ -268,10 +262,8 @@ On notera dans la suite $\Pi_f(k)$ le périodogramme d'une série $f$ de longueu
 
 \section{Méthode d'évaluation}
 \label{sec:eval}
-
 \subsection{Génération de signaux}
 \label{sub:artsig}
-
     Les stratégies de regroupement ont été évaluées sur des signaux artificiels générés aléatoirement.
     L'objectif du regroupement est de séparer la tendance des différentes composantes périodiques et du bruit. Les signaux tests sont échantillonnés à $100Hz$ selon le modèle:
     \begin{equation}\label{eq:artsig}
