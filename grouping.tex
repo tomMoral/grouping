@@ -298,9 +298,9 @@ Les composantes contenant une même phase oscillante partagent des structures co
 
     On calcule alors le rappel et la précision du regroupement pour $R^2$.
     \begin{equation}
-        R = \frac{1}{N} \sum_{i=1}^N \min_k R^2(c_i, g_k) \hspace{0.8cm} P = \frac{1}{M}\sum_{k=1}^M \min_i R^2(c_i, g_k)
+        R = \frac{1}{N} \sum_{i=1}^N \min_j R^2(c_i, g_j) \hspace{0.8cm} P = \frac{1}{M}\sum_{j=1}^M \min_i R^2(c_i, g_j)
     \end{equation}
-    où les $(g_k)_{1\le k \le M}$ sont les différentes composantes obtenues lors du groupement et les $(c_i)_{1\le i\le N}$ sont les composantes initiales formant le signal artificiel.
+    où les $(g_j)_{1\le j \le M}$ sont les différentes composantes obtenues lors du groupement et les $(c_i)_{1\le i\le N}$ sont les composantes initiales formant le signal artificiel.
     
     Une manière de fusionner ces deux concepts est de considérer le score obtenu pour une allocation optimale entre les composantes recherchées et celles formées par le regroupement:
     \begin{equation}
@@ -342,8 +342,7 @@ Les composantes contenant une même phase oscillante partagent des structures co
         \includegraphics[width=.5\textwidth]{img/artsig3.eps}
         \vspace{-.4cm}
         \caption{Décomposition d'un signal artificiel (\emph{haut}). Les quatres composantes du milieux correspondent aux groupes formés après la SSA par (HG)-(MH). Le signal du bas correspond au résiduel de la décomposition. Les échelles des 4 signaux du bas ont étés adaptées pour ne pas écraser les signaux. Le regroupement retrouve correctement plusieurs composantes harmoniques. Le bruits est largement filtré du signal de départ. Il n'est pas totalement gaussien car il intègre une composante harmonique du signal de départ qui n'est pas séparée par la décomposition du fait de sa trop faible amplitude.}
-        % TODO - mettre une décomposition par HGMH
-        \label{}
+        \label{fig:dec}
     \end{figure}
 
 Pour expérience, les composantes de la SSA sont calculées avec une valeur de fenêtre $K=T/2$.
@@ -353,13 +352,9 @@ Pour les similarités déjà documentées (GG1, GG2, HG, KM), ces valeurs sont c
 
 %TODO analyse des résultats!!!!
 
-%1/ un exemple
-
 %2/ Toutes les classes
 
 Pour chacune des 3 classes, on génère 1000 signaux aléatoires.
-
-
 Pour les métriques de $R_r$ et $S_r$ calculées sur l'ensemble de la base de signaux tests (3 classes), l'utilisation de la méthode (HG)-(MH) donne un résultat statistiquement meilleur (au sens du test de Friedman) que les autres méthodes avec une amélioration moyenne de 21.49\% pour $R_r$ et de 38.16\% pour $S_r$.
 Pour $P_r$, la méthode (HGS)-(MH) est statistiquement meilleure que les autres à l'exception de (HG)-(MH) qui lui est équivalente.
 Elle permet d'obtenir une amélioration moyenne de $P_r$ de 27.78\%.
@@ -370,6 +365,13 @@ Lorsqu'on regarde les résultats classe par classe, on voit cependant que lorsqu
 Pour $R_r$, (HG)-(MH) est statistiquement meilleure que (HGS)-(MH) pour les classes 1 et 2 mais pas pour la classe 3.
 Pour $P_r$, sur chaque classe séparément, 5 méthodes ont des performances comparables et (HGS)-(MH) a un rang plus élevé que (HG)-(MH) pour la classe 3.
 Ceci montre que si la méthode (HG)-(MH) semble la plus appropriée pour le groupement automatique pour des signaux composés d'harmoniques modulées, les autres méthodes peuvent donner des résultats intéressants pour des signaux plus complexes.
+
+
+%1/ un exemple
+La Figure~\ref{fig:dec} présente un résultat de décomposition par la SSA d'un signal de la classe 3 composé d'une tendance, de 4 harmoniques modulées et d'un bruit blanc gaussien. Le SNR de ce signal est de 9.7dB. La décomposition  avec un grouping (HG)-(MH) permet de mettre en évidence 4 des 5 composantes. Les composantes sont retrouvées avec une faible déformation. Le coefficient de détermination $R^2$ moyen est de 0.96 pour ces 4 composantes alors que sans le groupement, le coefficient moyen est de 0.21. La 5e composante harmonique est rejetée comme du bruit par le filtrage des composantes initiales car son amplitude est faible par rapport aux autres composantes. Il est en effet difficile de retrouver les composantes avec une amplitude faible devant le bruit.
+
+%5/ Par composantes
+Le coefficient de determination $R^2$ obtenue
 
 %4/ Méthode par méthode
 
