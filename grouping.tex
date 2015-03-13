@@ -126,7 +126,7 @@ La section \ref{sec:res} présentera les résultats numériques de cette compara
 Dans cette section, nous allons présenter plusieurs méthodes de groupement automatique pour la SSA.
 Une description unifiée de celles-ci permet de les comparer dans un cadre simple, comme paramètres d'une stratégie globale.
 
-\vspace{-.5cm}
+\vspace{-.2cm}
 \subsection{Formulation générale}
 \label{sub:form}
 
@@ -149,13 +149,12 @@ Enfin, la troisième étape concerne la stratégie de formation des groupes à p
 
 % subsection form (end)
 
-\vspace{-.5cm}
+\vspace{-.2cm}
 \subsection{Mesures de similarité}
 \label{sub:sim}
 
-\vspace{-.1cm}
 \subsubsection{Mesures basées sur la corrélation}\label{ssub:cor}
-\vspace{-.3cm}
+\vspace{-.1cm}
 
 Les composantes à regrouper sont celles qui sont produites par les mêmes phénomènes.
 Elles ne sont donc pas indépendantes.
@@ -245,7 +244,7 @@ On notera dans la suite $\Pi_x(k)$ le périodogramme d'une série $x$ de longueu
     On calcule les valeurs singulières $\val{\sigma}{K}{\ge}$ de $\Pi$ et on considère $C = \arg\max_k \sigma_k \ge \rho_f.\sigma_1$ avec $\rho_f \in \inter$.
     Deux composantes sont adjacentes si elles appartiennent au même groupe formé par l'algorithme des K-moyennes.
 
-\vspace{-.5cm}
+\vspace{-.2cm}
 \subsection{Stratégies de formation des groupes}
 \label{sub:clust}
 \vspace{-.1cm}
@@ -267,10 +266,8 @@ On notera dans la suite $\Pi_x(k)$ le périodogramme d'une série $x$ de longueu
 % subsection clust (end)
 % section met (end)
 
-\vspace{-.5cm}
 \section{Méthode d'évaluation}
 \label{sec:eval}
-\vspace{-.3cm}
 \subsection{Génération de signaux}
 \label{sub:artsig}
     Les stratégies de regroupement ont été évaluées sur des signaux artificiels générés aléatoirement.
@@ -285,7 +282,7 @@ On notera dans la suite $\Pi_x(k)$ le périodogramme d'une série $x$ de longueu
     La première classe fixe $b_0 = \alpha_i = 0$ (harmoniques + bruit) , la seconde $\alpha_i = 0$ (tendance + harmoniques + bruit) et la troisième correspond au modèle général \eqref{eq:artsig}.
 % subsection artsig  (end)
 
-\vspace{-.5cm}
+\vspace{-.2cm}
 \subsection{Métriques d'évaluation}
 \label{sub:met}
 
@@ -356,7 +353,9 @@ La 5e composante harmonique est rejetée comme du bruit par le filtrage des comp
 Il est en effet difficile de retrouver les composantes avec une amplitude faible devant le bruit.
 
 %2/ Toutes les classes
-
+%R_r 17.91%
+%P_r 50.57%
+%S_r 46.16%
 Pour chacune des 3 classes, on génère 1000 signaux aléatoires.
 Pour les métriques de $R_r$ et $S_r$ calculées sur l'ensemble de la base de signaux tests (3 classes), l'utilisation de la méthode (HG)-(MH) donne un résultat statistiquement meilleur (au sens du test de Friedman) que les autres méthodes avec une amélioration moyenne de 21.49\% pour $R_r$ et de 38.16\% pour $S_r$.
 Pour $P_r$, la méthode (HGS)-(MH) est statistiquement meilleure que les autres à l'exception de (HG)-(MH) qui lui est équivalente.
@@ -383,6 +382,17 @@ Pour les composantes exponentiellement modulées, (HG)-(MH) et (HGS)-(MU) donnen
 
 %4/ Méthode par méthode
 
+\begin{table}[h]
+\begin{tabular}{|c|c|c|c|c|c|c|}
+	\hline
+	Méthodes & GG1 & GG2 & GG3 & HG & KM & HGS\\\hline 
+	$R_r$ & 0.158& 0.134& 0.161& \textbf{0.179}& 0.128& 0.168\\\hline 
+	$P_r$ & 0.146& 0.154& 0.154& 0.422& \textbf{0.506}& 0.2\\\hline 
+	$S_r$ & 0.236& 0.256& 0.244& 0.42& \textbf{0.462}& 0.278\\\hline 
+\end{tabular}
+\caption{Résultat des différentes méthodes }
+\label{tab:res}
+\end{table}
 
 \section{Conclusion}
 \label{sec:ccl}
