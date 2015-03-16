@@ -234,7 +234,7 @@ On notera dans la suite $\Pi_x(k)$ le périodogramme d'une série $x$ de longueu
 
     Nous proposons pour pallier ce problème de considérer le support fréquentiel $F_{U_i}$ des motifs associées au composantes en définissant leur fréquence fondamentale comme le centre de ce support.
 %    On note alors $\omega_i = \frac{\displaystyle\max \mathcal F_{U_i} + \min \mathcal F_{U_i} }{2 T}$ et $s_i = \frac{\displaystyle\max \mathcal F_{U_i} - \min \mathcal F_{U_i} }{2}$. 
-    On sélectionne alors les composantes ayant un support de largeur inférieur à $\rho_s \in \inter$ et on considère que les composantes $i, j$ sont adjacentes si l'écart entre leurs fréquences fondamentales est inférieur à $\rho_\omega \in \inter$.
+    On sélectionne alors les composantes ayant un support de largeur inférieure à un seuil $\rho_s \in \inter$ et on considère que les composantes $i, j$ sont adjacentes si l'écart entre leurs fréquences fondamentales est inférieur à $\rho_f \in \inter$.
     Ceci permet donc de grouper les composantes associées à des dictionnaires ayant des périodogrammes peu étalés et qui se chevauchent.
 % textbf HGS (end)
 
@@ -243,7 +243,7 @@ On notera dans la suite $\Pi_x(k)$ le périodogramme d'une série $x$ de longueu
     Ceci est intéressant car on compare la distance euclidienne entre les périodogrammes et le choix des seuils est automatiquement fourni par les K-moyennes.
     Le choix du nombre de groupes $C$ est un choix critique ici.
     Une estimation du nombre de groupe peut être faite en estimant le rang de la matrice $\Pi = \begin{bmatrix}\Pi_{U_1}&\dots&\Pi_{U_K}\end{bmatrix}^T$.
-    On calcule les valeurs singulières $\val{\sigma}{K}{\ge}$ de $\Pi$ et on considère le rang $C$ comme le premier indice $i$ tel que la valeur singulière $\sigma_i$  soit inférieure à un seuil de la forme $\rho_f.\sigma_1$ avec $\rho_f \in \inter$.
+    On calcule les valeurs singulières $\val{\sigma}{K}{\ge}$ de $\Pi$ et on considère le rang $C$ comme le premier indice $i$ tel que la valeur singulière $\sigma_i$  soit inférieure à un seuil de la forme $\rho_r.\sigma_1$ avec $\rho_r \in \inter$.
     Ceci est intéressant car cela permet d'avoir une idée du nombre de composante indépendantes au sens du spectre de Fourier.
     %On calcule les valeurs singulières $\val{\sigma}{K}{\ge}$ de $\Pi$ et on considère $C = \arg\max_k \sigma_k \ge \rho_f.\sigma_1$ avec $\rho_f \in \inter$.
     Deux composantes sont adjacentes si elles appartiennent au même groupe formé par l'algorithme des K-moyennes.
@@ -338,8 +338,8 @@ On notera dans la suite $\Pi_x(k)$ le périodogramme d'une série $x$ de longueu
 
 
 Pour toutes les expériences, les composantes de la SSA sont calculées avec une valeur de fenêtre $K=T/2$.
-Les différents regroupements sont ensuite réalisés avec les paramètres suivants: $\rho_0=0.8$, $\rho_1=0.8$, $\rho_2=0.05$, $\rho_c=0.8$, $\rho_f=0.4$, $\rho_p=0.8$, $\rho_\omega=0.001$ and $\rho_s=0.6$.
-Pour les similarités déjà documentées (GG1, GG2, HG, KM), ces valeurs sont celles utilisées dans les publications originales \cite{abalov_14_auto, alvarez_13_auto}. Pour nos similarités (HGS, GG3), les paramètres ont été fixés empiriquement sur quelques exemples.
+Les regroupements sont ensuite réalisés avec les paramètres $\rho_0=0.8$, $\rho_1=0.8$, $\rho_2=0.05$, $\rho_c=0.8$ et $\rho_p=0.8$ fixés comme ceux utilisés dans les publications originales \cite{abalov_14_auto, alvarez_13_auto}. 
+Pour nos similarités (HGS, GG3), les paramètres $\rho_r=0.4$, $\rho_f=0.001$ et $\rho_s=0.6$ ont été fixés empiriquement sur quelques exemples.
 
 
 %1/ un exemple
