@@ -50,11 +50,12 @@
 \section{Introduction}
 \label{sec:intro}
 
+\begin{sloppypar}
 L'analyse du spectre singulier (en anglais SSA : Singular Spectral Analysis) est une technique introduite par Vautard et al \cite{vautard_89_SSA} permettant d'obtenir de manière simple une décomposition du signal en composantes de tendance, de saisonnalité (harmoniques) et de bruit.
 Elle est principalement utilisée en finance ou en météorologie où les séries étudiées sont souvent courtes et bruitées.
 De nombreuses publications ont montré la pertinence de la SSA dans ces contextes, où cette décomposition permet d'apporter de l'information sur les mécanismes produisant ces séries mais aussi de formuler des modèles de prédiction.
-
-\begin{sloppypar}
+%Cette approche peut aussi s'interpréter comme une technique de décomposition en dictionnaires empiriques.
+%Les propriétés particulières de chaque élément dudicitonnaire peuvent données d'intéressantes informations sur la série de base.
 Néanmoins, cette technique a été rarement utilisée sur d'autres signaux, principalement à cause de son manque d'automatisation.
 La pertinence des décompositions obtenues dépend en effet énormément du regroupement des composantes extraites, et résoudre cette tâche de façon manuelle peut s'avérer laborieux.
 Dans cet article, nous proposons un cadre permettant l'évaluation et la comparaison de différentes stratégies de regroupement automatique (existantes et originales).
@@ -126,7 +127,7 @@ La section \ref{sec:res} présentera les résultats numériques de cette compara
 Dans cette section, nous allons présenter plusieurs méthodes de groupement automatique pour la SSA.
 Une description unifiée de celles-ci permet de les comparer dans un cadre simple, comme paramètres d'une stratégie globale.
 
-\vspace{-.2cm}
+\vspace{-.4cm}
 \subsection{Formulation générale}
 \label{sub:form}
 
@@ -137,8 +138,8 @@ Les stratégies de regroupement peuvent être décrites en trois phases:
 	\item Former les groupes $I_j$ de composantes adjacentes
 \end{enumerate}
 Les composantes finales sont obtenues en sommant les composantes regroupées $y_j = \sum_{i\in I_k} x^{(i)}$.
-La première étape est effectuée en supprimant les composantes de la SVD ayant une valeur singulière $\lambda_i$ plus faible qu'un certain seuil (que l'on choisira ici adaptatif et de la forme  $\tau_l*\lambda_2$ avec $\tau_l = 0.01$).
-Ceci permet de filtrer les composantes de bruit en considérant qu'elles ont une part négligeable dans la variance de la série.
+La première étape est effectuée en supprimant les composantes de la SVD ayant une valeur singulière $\lambda_i$ plus faible qu'un certain seuil (que l'on choisira ici adaptatif et de la forme  $\tau_l.\lambda_2$ avec $\tau_l = 0.01$).
+%Ceci permet de filtrer les composantes de bruit en considérant qu'elles ont une part négligeable dans la variance de la série.
 On utilise la seconde valeur propre car la première, liée à la variance de la série, peut rejeter la plupart des composantes.
 
 La seconde étape utilise une mesure de similarité entre les composantes afin d'obtenir une matrice d'adjacence.% Intuitivement, le choix de cette mesure influence fortement les résultats du regroupement.
@@ -149,7 +150,7 @@ Enfin, la troisième étape concerne la stratégie de formation des groupes à p
 
 % subsection form (end)
 
-\vspace{-.2cm}
+\vspace{-.4cm}
 \subsection{Mesures de similarité}
 \label{sub:sim}
 
@@ -166,6 +167,7 @@ Il est donc intéressant d'observer la corrélation entre les composantes comme 
     Pour éviter de grouper des composantes $i, j$d'importance trop éloignée, on impose de plus que le ratio de leur valeur singulière associée $\frac{\min(\lambda_i, \lambda_j)}{\max(\lambda_i, \lambda_j)}$ soit supérieur à un seuil $\rho_1 \in \inter$.
     Cela évite de grouper des phénomènes d'amplitude différentes ou du bruit.
     On définit donc la matrice d'adjacence $A = (a_{i, j})_{0 \le i,j\le K} \in \left \{ 0, 1 \right \}^{K\times K}$ par:\end{sloppypar}
+    \vspace{-.4cm}
     \begin{equation}
         a_{i, j} = \begin{cases}
 	        1 &\text{ si } \displaystyle\frac{\min(\lambda_i, \lambda_j)}{\max(\lambda_i, \lambda_j)} \ge \rho_1 \text{ et } \text{corr}(x^{(i)}, x^{(j)}) \ge \rho_c\\
@@ -241,7 +243,9 @@ On notera dans la suite $\Pi_x(k)$ le périodogramme d'une série $x$ de longueu
     Ceci est intéressant car on compare la distance euclidienne entre les périodogrammes et le choix des seuils est automatiquement fourni par les K-moyennes.
     Le choix du nombre de groupes $C$ est un choix critique ici.
     Une estimation du nombre de groupe peut être faite en estimant le rang de la matrice $\Pi = \begin{bmatrix}\Pi_{U_1}&\dots&\Pi_{U_K}\end{bmatrix}^T$.
-    On calcule les valeurs singulières $\val{\sigma}{K}{\ge}$ de $\Pi$ et on considère $C = \arg\max_k \sigma_k \ge \rho_f.\sigma_1$ avec $\rho_f \in \inter$.
+    On calcule les valeurs singulières $\val{\sigma}{K}{\ge}$ de $\Pi$ et on considère le rang $C$ comme le premier indice $i$ tel que la valeur singulière $\sigma_i$  soit inférieure à un seuil de la forme $\rho_f.\sigma_1$ avec $\rho_f \in \inter$.
+    Ceci est intéressant car cela permet d'avoir une idée du nombre de composante indépendantes au sens du spectre de Fourier.
+    %On calcule les valeurs singulières $\val{\sigma}{K}{\ge}$ de $\Pi$ et on considère $C = \arg\max_k \sigma_k \ge \rho_f.\sigma_1$ avec $\rho_f \in \inter$.
     Deux composantes sont adjacentes si elles appartiennent au même groupe formé par l'algorithme des K-moyennes.
 
 \vspace{-.2cm}
@@ -265,7 +269,7 @@ On notera dans la suite $\Pi_x(k)$ le périodogramme d'une série $x$ de longueu
 \end{sloppypar}
 % subsection clust (end)
 % section met (end)
-
+\vspace{-.2cm}
 \section{Méthode d'évaluation}
 \label{sec:eval}
 \subsection{Génération de signaux}
@@ -327,18 +331,11 @@ On notera dans la suite $\Pi_x(k)$ le périodogramme d'une série $x$ de longueu
 %   Pour évaluer l'amélioration apportée par le groupement pour une métrique, il est intéressant de considérer le rapport de cette métrique et de la même métrique calculer pour un groupement trivial tel que chaque groupe contienne une unique composante. $I_k = \left \{ k \right \}$ pour $k \in \set{m}$.
 % subsection sep (end)
 % section eval (end)
-
+\vspace{-.4cm}
 \section{Résultats}
 \label{sec:res}
+\vspace{-.2cm}
 
-    \begin{figure}[tp]
-        \centering
-        %\hspace{-.5cm}
-        \includegraphics[width=.5\textwidth]{img/artsig3.eps}
-        %\vspace{-.4cm}
-        \caption{Décomposition d'un signal artificiel (\emph{haut}). Les quatres composantes du milieu correspondent aux groupes formés après la SSA par (HG)-(MH). Le signal du bas correspond au résiduel de la décomposition. On notera que les échelles des quatres signaux du bas ont été adaptées pour ne pas écraser les signaux.} %Le regroupement retrouve correctement plusieurs composantes harmoniques. Le bruits est largement filtré du signal de départ. Il n'est pas totalement gaussien car il intègre une composante harmonique du signal de départ qui n'est pas séparée par la décomposition du fait de sa trop faible amplitude.}
-        \label{fig:dec}
-    \end{figure}
 
 Pour toutes les expériences, les composantes de la SSA sont calculées avec une valeur de fenêtre $K=T/2$.
 Les différents regroupements sont ensuite réalisés avec les paramètres suivants: $\rho_0=0.8$, $\rho_1=0.8$, $\rho_2=0.05$, $\rho_c=0.8$, $\rho_f=0.4$, $\rho_p=0.8$ and $\rho_\omega=0.0005$. On fixe de plus le paramètre adaptatif $\rho_s=3\log(T)$.
@@ -351,6 +348,16 @@ On observe que la décomposition  avec un groupement (HG)-(MH) permet de mettre 
 Le coefficient de détermination $r^2$ moyen est de 0.96 pour ces 4 composantes alors que sans le groupement, le coefficient moyen est de 0.21.
 La 5e composante harmonique est rejetée comme du bruit par le filtrage des composantes initiales car son amplitude est faible par rapport aux autres composantes.
 Il est en effet difficile de retrouver les composantes avec une amplitude faible devant le bruit.
+
+
+    \begin{figure}[tp]
+        \centering
+        %\hspace{-.5cm}
+        \includegraphics[width=.5\textwidth]{img/artsig3.eps}
+        %\vspace{-.4cm}
+        \caption{Décomposition d'un signal artificiel (\emph{haut}). Les quatres composantes du milieu correspondent aux groupes formés après la SSA par (HG)-(MH). Le signal du bas correspond au résiduel de la décomposition. On notera que les échelles des quatres signaux du bas ont été adaptées pour ne pas écraser les signaux.} %Le regroupement retrouve correctement plusieurs composantes harmoniques. Le bruits est largement filtré du signal de départ. Il n'est pas totalement gaussien car il intègre une composante harmonique du signal de départ qui n'est pas séparée par la décomposition du fait de sa trop faible amplitude.}
+        \label{fig:dec}
+    \end{figure}
 
 %2/ Toutes les classes
 %R_r 17.91%
@@ -394,6 +401,7 @@ Pour les composantes exponentiellement modulées, (HG)-(MH) et (HGS)-(MU) donnen
 \label{tab:res}
 \end{table}
 
+\vspace{-.3cm}
 \section{Conclusion}
 \label{sec:ccl}
 
