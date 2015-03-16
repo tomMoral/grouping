@@ -369,27 +369,6 @@ Pour $P_r$ et $S_r$, la méthode (KM) est statistiquement meilleure que les autr
 Elle permet d'obtenir une amélioration moyenne de $P_r$ de 80.4\% et de 63.9\% pour $S_r$.
 L'estimation du nombre de composantes précise dans (KM) explique la précision largement meilleur que les autres ce qui se traduit aussi dans $S_r$.
 
-
-%3/ Classes par classes
-\begin{sloppypar}
-Lorsqu'on les résultats uniquement sur la classe 1, on observe que (HG)-(MH) est statistiquement équivalente en rappel à (HGS)-(MU) et (HGS)-(MH). 
-Pour les deux autres métriques, (HG)-(MH) et (HGS)-(MH) sont équivalentes et donnent un meilleur score que (KM).
-Ces deux similarité sont particulièrement adaptées à la reconstruction d'harmonique pure ce qui explique leurs performances sur la classe 1. 
-Pour les spectres très concentrés, elles donnent des résultats similaires ce qui explique leur proximité.
-Pour les classes 2 et 3, (KM) est équivalente à (HGS)-(MH) pour $R_r$ et statistiquement meilleure que les autres méthodes pour les deux autres métriques.
-%Lorsqu'on regarde les résultats classe par classe, on voit cependant que lorsque la complexité de la classe augmente, les différences sont de moins en moins significatives entre (HG)-(MH) et les autres méthodes.
-%Pour $R_r$, (HG)-(MH) est statistiquement meilleure que (HGS)-(MU) pour les classes 1 et 2 mais pas pour la classe 3.
-%Pour $P_r$, sur chaque classe séparément, cinq méthodes ont des performances comparables bien que (HG)-(MH) donne une meilleure performance moyenne et pour la classe 3, (HGS)-(MU) a une meilleure précision que (HG)-(MH).
-%Ceci montre que si la méthode (HG)-(MH) semble la plus appropriée pour le groupement automatique pour des signaux composés d'harmoniques modulées, les autres méthodes peuvent donner des résultats intéressants pour des signaux avec des périodogrammes moins compacts.
-%5/ Par composantes
-Cette analyse est étayée par l'étude des résultats pour chaque type de composantes.
-Le coefficient de détermination $r^2$ moyen obtenu pour la composante $c_0$ dans les classes 2 et 3 est en probabilité plus grand avec la méthode (KM) que pour les dix autres méthodes (cette méthode ne varie pas avec le choix de la stratégie de formation des groupes). 
-Cette méthode observe l'intégralité du contenu fréquentiel pour effectuer le groupement ce qui est un avantage pour retrouver la composante de tendance qui peut avoir un périodogramme plus étalée. 
-Pour les composantes harmoniques dans les classes 1 et 2, la méthode (HGS)-(MH) donne statistiquement un meilleur score $r^2$ sauf pour (HG)-(MH). 
-Ces composantes sont particulièrement adaptées à la similarité basée sur leurs périodogrammes car ils ne sont composés que d'un pic.
-Pour les composantes exponentiellement modulées, toutes les méthodes donnent des résultats statistiquement équivalents.
-\end{sloppypar}
-
 %4/ Méthode par méthode
 
 \begin{table}[h]
@@ -408,11 +387,37 @@ $S_r$ - MH & 0.361 & 0.389 & 0.373 & 0.592 & \textbf{0.639} & 0.437\\\hline
 \label{tab:res}
 \end{table}
 
-\vspace{-.3cm}
-\section{Conclusion}
-\label{sec:ccl}
+Un autre effet mis en évidence par cette comparaison est l'apport de (MH) par rapport à (MU).
+On voit que le choix n'a que très peu d'impact sur les performances des méthodes basées sur la corrélation et pour (KM).
+Pour les méthodes basées sur l'étude du périodogramme autre que (KM), l'utilisation de (MH) apporte presque toujours un avantage sauf pour le rappel de (HGS). 
+Cependant, dans ce cas, les resultats sont tout de même équivalent.
+Il est donc intéressant d'utiliser cette stratégie pour le groupement automatique.
 
-Le cadre général introduit pour la comparaison des stratégies de regroupement permet de voir que la méthode (HG)-(MH) est la plus adaptée à l'extraction de signaux harmoniques. Une étude plus poussé montre cependant que cette technique ne permet pas de retrouver aisément la tendance qui est plus facilement récupérer par (KM). Ces résultats prometteurs sont en cours d'adaptation pour l'étude de signaux physiologiques d'oculométrie.
+%3/ Classes par classes
+\begin{sloppypar}
+Lorsqu'on les résultats uniquement sur la classe 1, on observe que (HG)-(MH) est statistiquement équivalente en rappel à (HGS)-(MU) et (HGS)-(MH). 
+Pour les deux autres métriques, (HG)-(MH) et (HGS)-(MH) sont équivalentes et donnent un meilleur score que (KM).
+Ces deux similarité sont particulièrement adaptées à la reconstruction d'harmonique pure ce qui explique leurs performances sur la classe 1. 
+Pour les spectres très concentrés, elles donnent des résultats similaires ce qui explique leur proximité.
+Pour les classes 2 et 3, (KM) est équivalente à (HGS)-(MH) pour $R_r$ et statistiquement meilleure que les autres méthodes pour les deux autres métriques.
+%Lorsqu'on regarde les résultats classe par classe, on voit cependant que lorsque la complexité de la classe augmente, les différences sont de moins en moins significatives entre (HG)-(MH) et les autres méthodes.
+%Pour $R_r$, (HG)-(MH) est statistiquement meilleure que (HGS)-(MU) pour les classes 1 et 2 mais pas pour la classe 3.
+%Pour $P_r$, sur chaque classe séparément, cinq méthodes ont des performances comparables bien que (HG)-(MH) donne une meilleure performance moyenne et pour la classe 3, (HGS)-(MU) a une meilleure précision que (HG)-(MH).
+%Ceci montre que si la méthode (HG)-(MH) semble la plus appropriée pour le groupement automatique pour des signaux composés d'harmoniques modulées, les autres méthodes peuvent donner des résultats intéressants pour des signaux avec des périodogrammes moins compacts.
+
+%5/ Par composantes
+Cette analyse est étayée par l'étude des résultats pour chaque type de composantes.
+Le coefficient de détermination $r^2$ moyen obtenu pour la composante $c_0$ dans les classes 2 et 3 est en probabilité plus grand avec la méthode (KM) que pour les dix autres méthodes (cette méthode ne varie pas avec le choix de la stratégie de formation des groupes). 
+Cette méthode observe l'intégralité du contenu fréquentiel pour effectuer le groupement ce qui est un avantage pour retrouver la composante de tendance qui peut avoir un périodogramme plus étalée. 
+Pour les composantes harmoniques dans les classes 1 et 2, la méthode (HGS)-(MH) donne statistiquement un meilleur score $r^2$ sauf pour (HG)-(MH). 
+Ces composantes sont particulièrement adaptées à la similarité basée sur leurs périodogrammes car ils ne sont composés que d'un pic.
+Pour les composantes exponentiellement modulées, toutes les méthodes donnent des résultats statistiquement équivalents.
+\end{sloppypar}
+
+Le cadre général introduit pour la comparaison des stratégies de regroupement permet de voir que la stratégie de regroupement à choisir est dépendante de l'importance donnée à l'extraction de chaque type de composantes.
+L'utilisation de la stratégie (MH) proposée pour la formation des groupes une légère amélioration des performances.
+La méthode (KM) apparaît comme adaptative est permet une estimation précise du nombre de composantes.
+Ces résultats prometteurs sont en cours d'adaptation pour l'étude de signaux physiologiques d'oculométrie.
 
 
 \bibliographystyle{plain} 
