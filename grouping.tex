@@ -114,9 +114,9 @@ Les oscillations harmoniques ou plus complexes, présentes dans la série initia
 Une étape d'identification et de regroupement est nécessaire pour produire une décomposition intéressante.
 %Une sélection des composantes peut être faite en se basant sur les valeurs singulières associées qui rendent compte de l'importance de la composante dans la série.
 %Une étape de regroupement est ensuite réalisée pour obtenir une décomposition plus simple à analyser.
-Diverses approches ont été utilisées dans la littérature pour réaliser ce groupement, même si la plupart des travaux utilisant la SSA réalisent cette étape de façon empirique.
+Diverses approches ont été utilisées dans la littérature pour réaliser ce groupement, même si la plupart des travaux utilisant la SSA réalisent cette étape de façon empirique \cite{Ghil_02_SSA, Golyandina_10_ssa}.
 En particulier, certaines heuristiques basées sur la corrélation et le spectre de fréquence des composantes ont été développées pour aider au choix des groupes \cite{Golyandina_10_ssa}.
-Ces indicateurs, d'abord utilisés pour le regroupement manuel, ont ouvert la voie au développement de méthodes de groupement automatisé.
+Ces indicateurs, d'abord utilisés pour le regroupement manuel, ont ouvert la voie au développement de méthodes de groupement automatisé \cite{abalov_14_auto, alvarez_13_auto, alexandrov_05_auto}.
 Nous verrons dans la section \ref{sec:met} une description des principales méthodes existantes ainsi que de nouvelles stratégies, ainsi qu'un cadre unifié pour l'évaluation de ces méthodes dans la section \ref{sec:eval}.
 La section \ref{sec:res} présentera les résultats numériques de cette comparaison.
 \end{sloppypar}
@@ -219,12 +219,12 @@ On notera dans la suite $\Pi_x(k)$ le périodogramme d'une série $x$ de longueu
         a_{i, j} = 
         \begin{cases}
 	        1 & \text{ si } \displaystyle\frac{\min(\lambda_i, \lambda_j)}{\max(\lambda_i, \lambda_j)} \ge \rho_1\\
-	          & \text{ et } \frac{|F_{x^{(i)}}(h) - F_{x^{(j)}}(h)|}{T/2} \le \rho_2\ \forall h \in \set{m}\\
+	          & \text{ et } \frac{|F_{x^{(i)}}(h) - F_{x^{(j)}}(h)|}{T/2} \le \rho_2, \forall h \in \set{m}\\
 	        0 & \text{ sinon}
         \end{cases}
     \end{equation} 
     où $m = \min\left(\left|F_{x^{(i)}}\right|, \left|F_{x^{(j)}}\right|\right)$.
-    Cette métrique tente de rendre plus robuste la détection de composantes ayant le même périodogramme en comparant non plus le pic maximal (HG) mais les supports spectraux des composantes. 
+    Cette métrique rend plus robuste la détection de composantes ayant le même périodogramme en comparant non plus le pic maximal (HG) mais les supports spectraux des composantes. 
 % textbf GG2 (end)
 
 
@@ -234,7 +234,7 @@ On notera dans la suite $\Pi_x(k)$ le périodogramme d'une série $x$ de longueu
 
     Nous proposons pour pallier ce problème de considérer le support fréquentiel $F_{U_i}$ des motifs associées au composantes en définissant leur fréquence fondamentale comme le centre de ce support.
 %    On note alors $\omega_i = \frac{\displaystyle\max \mathcal F_{U_i} + \min \mathcal F_{U_i} }{2 T}$ et $s_i = \frac{\displaystyle\max \mathcal F_{U_i} - \min \mathcal F_{U_i} }{2}$. 
-    On sélectionne alors les composantes ayant un support de largeur inférieur à $\rho_s \in \inter$ et on considère que les composantes $i, j$ sont adjacente si l'écart entre leurs fréquences fondamentales est inférieur à $\rho_\omega \in \inter$.
+    On sélectionne alors les composantes ayant un support de largeur inférieur à $\rho_s \in \inter$ et on considère que les composantes $i, j$ sont adjacentes si l'écart entre leurs fréquences fondamentales est inférieur à $\rho_\omega \in \inter$.
     Ceci permet donc de grouper les composantes associées à des dictionnaires ayant des périodogrammes peu étalés et qui se chevauchent.
 % textbf HGS (end)
 
@@ -309,8 +309,8 @@ On notera dans la suite $\Pi_x(k)$ le périodogramme d'une série $x$ de longueu
     La qualité du regroupement obtenu dépend fortement de la qualité des composantes de départ.
     Il est donc important de considérer non pas les valeurs brutes de ces scores mais l'amélioration apportée par le groupement.
     Pour cela, on calcule les métriques $R, P$ et $S$ pour le groupement évalué et pour les composantes avant groupement $R_0, P_0, S_0$.
-    Le taux d'augmentation entre ces deux scores $\frac{R-R_0}{R_0}$ permet de mesurer l'apport d'un groupement par rapport aux composantes de départ.
-    Cette métrique est moins sensible aux variations produites par une mauvaise décomposition de départ.
+    Le taux d'augmentation entre ces deux scores $\frac{R-R_0}{1-R_0}$ permet de mesurer l'apport d'un groupement par rapport aux composantes de départ.
+    Ces métriques sont moins sensibles aux variations produites par une mauvaise décomposition de départ. On les notera respectivement $R_r, P_r$ et $S_r$
     
 % subsection met (end)
 
@@ -338,12 +338,12 @@ On notera dans la suite $\Pi_x(k)$ le périodogramme d'une série $x$ de longueu
 
 
 Pour toutes les expériences, les composantes de la SSA sont calculées avec une valeur de fenêtre $K=T/2$.
-Les différents regroupements sont ensuite réalisés avec les paramètres suivants: $\rho_0=0.8$, $\rho_1=0.8$, $\rho_2=0.05$, $\rho_c=0.8$, $\rho_f=0.4$, $\rho_p=0.8$ and $\rho_\omega=0.0005$. On fixe de plus le paramètre adaptatif $\rho_s=3\log(T)$.
+Les différents regroupements sont ensuite réalisés avec les paramètres suivants: $\rho_0=0.8$, $\rho_1=0.8$, $\rho_2=0.05$, $\rho_c=0.8$, $\rho_f=0.4$, $\rho_p=0.8$, $\rho_\omega=0.001$ and $\rho_s=0.6$.
 Pour les similarités déjà documentées (GG1, GG2, HG, KM), ces valeurs sont celles utilisées dans les publications originales \cite{abalov_14_auto, alvarez_13_auto}. Pour nos similarités (HGS, GG3), les paramètres ont été fixés empiriquement sur quelques exemples.
 
 
 %1/ un exemple
-La Figure~\ref{fig:dec} présente un résultat de décomposition par la SSA d'un signal de la classe 3 composé d'une tendance, de 4 harmoniques exponentiellement modulées et d'un bruit blanc gaussien (SNR de 9.7dB).
+La Figure~\ref{fig:dec} présente un résultat de décomposition par la SSA d'un signal de la classe 3 composé d'une tendance, de quatre harmoniques exponentiellement modulées et d'un bruit blanc gaussien (SNR de 9.7dB).
 On observe que la décomposition  avec un groupement (HG)-(MH) permet de mettre en évidence 4 des 5 composantes, qui sont retrouvées avec une faible déformation. 
 Le coefficient de détermination $r^2$ moyen est de 0.96 pour ces 4 composantes alors que sans le groupement, le coefficient moyen est de 0.21.
 La 5e composante harmonique est rejetée comme du bruit par le filtrage des composantes initiales car son amplitude est faible par rapport aux autres composantes.
@@ -363,28 +363,31 @@ Il est en effet difficile de retrouver les composantes avec une amplitude faible
 %R_r 17.91%
 %P_r 50.57%
 %S_r 46.16%
-Pour chacune des 3 classes, on génère 1000 signaux aléatoires.
-Pour les métriques de $R_r$ et $S_r$ calculées sur l'ensemble de la base de signaux tests (3 classes), l'utilisation de la méthode (HG)-(MH) donne un résultat statistiquement meilleur (au sens du test de Friedman) que les autres méthodes avec une amélioration moyenne de 21.49\% pour $R_r$ et de 38.16\% pour $S_r$.
-Pour $P_r$, la méthode (HGS)-(MH) est statistiquement meilleure que les autres à l'exception de (HG)-(MH) qui lui est équivalente.
-Elle permet d'obtenir une amélioration moyenne de $P_r$ de 27.78\%.
+Les méthodes ont été testées sur 100 signaux pour chacune des 3 classes, et les résultats moyennés sont reportés dans le Tableau \ref{tab:res}.
+Pour la métrique $R_r$ calculées sur l'ensemble de la base de signaux tests (3 classes), l'utilisation de la méthode (HG)-(MH) donne un résultat statistiquement meilleur (au sens du test de Friedman) que les autres méthodes avec une amélioration moyenne de 48.4\%.
+Pour $P_r$ et $S_r$, la méthode (KM) est statistiquement meilleure que les autres.
+Elle permet d'obtenir une amélioration moyenne de $P_r$ de 80.4\% et de 63.9\% pour $S_r$.
+L'estimation du nombre de composantes précise dans (KM) explique la précision largement meilleur que les autres ce qui se traduit aussi dans $S_r$.
 
 
 %3/ Classes par classes
-Lorsqu'on regarde les résultats classe par classe, on voit cependant que lorsque la complexité de la classe augmente, les différences sont de moins en moins significatives entre (HG)-(MH) et les autres méthodes.
-Pour $R_r$, (HG)-(MH) est statistiquement meilleure que (HGS)-(MU) pour les classes 1 et 2 mais pas pour la classe 3.
-Pour $P_r$, sur chaque classe séparément, cinq méthodes ont des performances comparables bien que (HG)-(MH) donne une meilleure performance moyenne et pour la classe 3, (HGS)-(MU) a une meilleure précision que (HG)-(MH).
-Ceci montre que si la méthode (HG)-(MH) semble la plus appropriée pour le groupement automatique pour des signaux composés d'harmoniques modulées, les autres méthodes peuvent donner des résultats intéressants pour des signaux avec des périodogrammes moins compacts.
-
-
-
+\begin{sloppypar}
+Lorsqu'on les résultats uniquement sur la classe 1, on observe que (HG)-(MH) est statistiquement équivalente en rappel à (HGS)-(MU) et (HGS)-(MH). 
+Pour les deux autres métriques, (HG)-(MH) et (HGS)-(MH) sont équivalentes et donnent un meilleur score que (KM).
+Ces deux similarité sont particulièrement adaptées à la reconstruction d'harmonique pure ce qui explique leurs performances sur la classe 1. 
+Pour les spectres très concentrés, elles donnent des résultats similaires ce qui explique leur proximité.
+Pour les classes 2 et 3, (KM) est équivalente à (HGS)-(MH) pour $R_r$ et statistiquement meilleure que les autres méthodes pour les deux autres métriques.
+%Lorsqu'on regarde les résultats classe par classe, on voit cependant que lorsque la complexité de la classe augmente, les différences sont de moins en moins significatives entre (HG)-(MH) et les autres méthodes.
+%Pour $R_r$, (HG)-(MH) est statistiquement meilleure que (HGS)-(MU) pour les classes 1 et 2 mais pas pour la classe 3.
+%Pour $P_r$, sur chaque classe séparément, cinq méthodes ont des performances comparables bien que (HG)-(MH) donne une meilleure performance moyenne et pour la classe 3, (HGS)-(MU) a une meilleure précision que (HG)-(MH).
+%Ceci montre que si la méthode (HG)-(MH) semble la plus appropriée pour le groupement automatique pour des signaux composés d'harmoniques modulées, les autres méthodes peuvent donner des résultats intéressants pour des signaux avec des périodogrammes moins compacts.
 %5/ Par composantes
-\begin{sloppypar}sloppypar
 Cette analyse est étayée par l'étude des résultats pour chaque type de composantes.
 Le coefficient de détermination $r^2$ moyen obtenu pour la composante $c_0$ dans les classes 2 et 3 est en probabilité plus grand avec la méthode (KM) que pour les dix autres méthodes (cette méthode ne varie pas avec le choix de la stratégie de formation des groupes). 
 Cette méthode observe l'intégralité du contenu fréquentiel pour effectuer le groupement ce qui est un avantage pour retrouver la composante de tendance qui peut avoir un périodogramme plus étalée. 
-Pour les composantes harmoniques dans les classes 1 et 2, la méthode (HG)-(MH) donne statistiquement un meilleur score $r^2$. 
-Ces composantes sont particulièrement adaptées à la similarité (HG) car elles ont un périodogramme ne comportant qu'un pic.
-Pour les composantes exponentiellement modulées, (HG)-(MH) et (HGS)-(MU) donnent des résultats statistiquement équivalents. Ce rapprochement s'explique car sur les cas difficiles, (HGS)-(MU) donne une plus grand stabilité au support spectral des composantes et permet un meilleur regroupement. Les harmoniques faiblement modulées sont tout de même mieux récupérées par la première technique.
+Pour les composantes harmoniques dans les classes 1 et 2, la méthode (HGS)-(MH) donne statistiquement un meilleur score $r^2$ sauf pour (HG)-(MH). 
+Ces composantes sont particulièrement adaptées à la similarité basée sur leurs périodogrammes car ils ne sont composés que d'un pic.
+Pour les composantes exponentiellement modulées, toutes les méthodes donnent des résultats statistiquement équivalents.
 \end{sloppypar}
 
 %4/ Méthode par méthode
@@ -393,11 +396,15 @@ Pour les composantes exponentiellement modulées, (HG)-(MH) et (HGS)-(MU) donnen
 \begin{tabular}{|c|c|c|c|c|c|c|}
 	\hline
 	Méthodes & GG1 & GG2 & GG3 & HG & KM & HGS\\\hline 
-	$R_r$ & 0.158& 0.134& 0.161& \textbf{0.179}& 0.128& 0.168\\\hline 
-	$P_r$ & 0.146& 0.154& 0.154& 0.422& \textbf{0.506}& 0.2\\\hline 
-	$S_r$ & 0.236& 0.256& 0.244& 0.42& \textbf{0.462}& 0.278\\\hline 
+	$R_r$ - MU & 0.426 & 0.33 & 0.436 & 0.402 & 0.395 & 0.475\\\hline
+$R_r$ - MH & 0.427 & 0.367 & 0.437 & \textbf{0.484} & 0.396 & 0.459\\\hline
+$P_r$ - MU & 0.338 & 0.329 & 0.351 & 0.693 & 0.804 & 0.409\\\hline
+$P_r$ - MH & 0.339 & 0.347 & 0.351 & 0.705 & \textbf{0.804} & 0.439\\\hline
+$S_r$ - MU & 0.361 & 0.373 & 0.373 & 0.567 & 0.639 & 0.422\\\hline
+$S_r$ - MH & 0.361 & 0.389 & 0.373 & 0.592 & \textbf{0.639} & 0.437\\\hline
+
 \end{tabular}
-\caption{Résultat des différentes méthodes }
+\caption{\'Evaluation des différentes méthodes de groupement moyennée sur les 1000 signaux de chacune des classes de la base de test. Les 3 premières ligne présentent la stratégie de formation (MU) et les 3 suivantes la stratégie (MH).}
 \label{tab:res}
 \end{table}
 
@@ -405,7 +412,7 @@ Pour les composantes exponentiellement modulées, (HG)-(MH) et (HGS)-(MU) donnen
 \section{Conclusion}
 \label{sec:ccl}
 
-Le cadre général introduit pour la comparaison des stratégie de regroupement permet de voir que la stratégie (HG)-(MH) est la plus adaptée à l'extraction de signaux harmoniques. Une étude plus poussé montre cependant que cette technique ne permet pas de retrouver aisément la tendance qui est plus facilement récupérer par (KM). Ces résultats prometteurs sont en cours d'adaptation pour l'étude de signaux physiologiques d'oculométrie.
+Le cadre général introduit pour la comparaison des stratégies de regroupement permet de voir que la méthode (HG)-(MH) est la plus adaptée à l'extraction de signaux harmoniques. Une étude plus poussé montre cependant que cette technique ne permet pas de retrouver aisément la tendance qui est plus facilement récupérer par (KM). Ces résultats prometteurs sont en cours d'adaptation pour l'étude de signaux physiologiques d'oculométrie.
 
 
 \bibliographystyle{plain} 
