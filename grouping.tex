@@ -30,8 +30,8 @@
 \makeatother
 \def\HH{\mathcal H}
 
-\resumefrancais{Cet article introduit différentes stratégies de groupement automatique pour les composantes issues d'une analyse du spectre singulier (SSA). Cette étape, cruciale à la reconstruction de composantes haut niveau, permet de séparer les différentes dynamiques présentes dans un signal. De nouvelles stratégies sont comparées aux méthodes de la litterature dans un cadre d'évaluation unifié afin de mettre en lumière les spécificités de chacune.}
-\resumeanglais{This paper introduce several automatic grouping strategies for Singular Spectrum Analysis (SSA) components. This step is useful to retrieve meaningful insight about the temporal dynamics of the series. A unifying framework is proposed to evaluate and compare the efficiency of different methods.}
+\resumefrancais{Cet article introduit différentes stratégies de groupement automatique pour les composantes issues d'une analyse du spectre singulier (SSA). Cette étape, cruciale à la reconstruction de composantes haut niveau, permet de séparer les différentes dynamiques présentes dans un signal. De nouvelles stratégies sont comparées aux méthodes de la littérature dans un cadre d'évaluation unifié afin de mettre en lumière les spécificités de chacune.}
+\resumeanglais{This paper introduce several automatic grouping strategies for Singular Spectrum Analysis (SSA) components. This step is useful to retrieve meaningful insight about the temporal dynamics of the series. A unifying framework is proposed to evaluate and compare the efficiency of different original methods compared to the existing one.}
 
 
 \newcommand{\R}{\mathbb R}
@@ -54,8 +54,8 @@
 L'analyse du spectre singulier (en anglais SSA : Singular Spectral Analysis) est une technique introduite par Vautard et al \cite{vautard_89_SSA} permettant d'obtenir de manière simple une décomposition du signal en composantes de tendance, de saisonnalité (harmoniques) et de bruit.
 Elle est principalement utilisée en finance ou en météorologie où les séries étudiées sont souvent courtes et bruitées.
 De nombreuses publications ont montré la pertinence de la SSA dans ces contextes, où cette décomposition permet d'apporter de l'information sur les mécanismes produisant ces séries mais aussi de formuler des modèles de prédiction.
-%Cette approche peut aussi s'interpréter comme une technique de décomposition en dictionnaires empiriques.
-%Les propriétés particulières de chaque élément du dicitonnaire peuvent données d'intéressantes informations sur la série de base.
+%Cette approche peut être utiliser pour produire une décomposition en dictionnaire empirique d'un signal.
+%Les propriétés particulières de chaque élément du dictionnaire peuvent données d'intéressantes informations sur la série de base.
 Néanmoins, cette technique a été rarement utilisée sur d'autres signaux, principalement à cause de son manque d'automatisation.
 La pertinence des décompositions obtenues dépend en effet énormément du regroupement des composantes extraites, et résoudre cette tâche de façon manuelle peut s'avérer laborieux.
 Dans cet article, nous proposons un cadre permettant l'évaluation et la comparaison de différentes stratégies de regroupement automatique (existantes et originales).
@@ -262,14 +262,14 @@ On notera dans la suite $\Pi_x(k)$ le périodogramme d'une série $x$ de longueu
 
 \begin{sloppypar}
 \noindent\textbf{Méthode hiérarchique (MH).}
-    Une autre possibilité est de considérer que les composantes ont une importance relative.
+    Nous proposons une autre méthode de formation des groupe donnant une importance relative au différentes composantes.
     L'importance de chaque composante peut être mesurée par la part de variance expliquée par cette composante.
     On peut donc considérer qu'on ajoute une composante dans un groupe si elle est adjacente à la composante dominante du groupe (au sens de la variance).
     Cela permet de donner un poids plus important lors du groupement aux composantes les plus intéressantes.
 \end{sloppypar}
 % subsection clust (end)
 % section met (end)
-\vspace{-.2cm}
+\vspace{-.3cm}
 \section{Méthode d'évaluation}
 \label{sec:eval}
 \subsection{Génération de signaux}
@@ -338,8 +338,8 @@ On notera dans la suite $\Pi_x(k)$ le périodogramme d'une série $x$ de longueu
 
 
 Pour toutes les expériences, les composantes de la SSA sont calculées avec une valeur de fenêtre $K=T/2$.
-Les regroupements sont ensuite réalisés avec les paramètres $\rho_0=0.8$, $\rho_1=0.8$, $\rho_2=0.05$, $\rho_c=0.8$ et $\rho_p=0.8$ fixés comme ceux utilisés dans les publications originales \cite{abalov_14_auto, alvarez_13_auto}. 
-Pour nos similarités (HGS, GG3), les paramètres $\rho_r=0.4$, $\rho_f=0.001$ et $\rho_s=0.6$ ont été fixés empiriquement sur quelques exemples.
+Les regroupements sont ensuite réalisés avec les paramètres $\rho_0=0.8$, $\rho_1=0.8$, $\rho_2=0.05$, $\rho_c=0.8$, $\rho_p=0.8$ et $\rho_r=0.4$ fixés comme ceux utilisés dans les publications originales \cite{abalov_14_auto, alvarez_13_auto}. 
+Pour nos similarités (HGS, GG3), les paramètres $\rho_f=0.001$ et $\rho_s=0.6$ ont été fixés empiriquement sur quelques exemples.
 
 
 %1/ un exemple
@@ -364,10 +364,10 @@ Il est en effet difficile de retrouver les composantes avec une amplitude faible
 %P_r 50.57%
 %S_r 46.16%
 Les méthodes ont été testées sur 1000 signaux pour chacune des 3 classes, et les résultats moyennés sont reportés dans le Tableau \ref{tab:res}.
-Pour la métrique $R_r$ calculées sur l'ensemble de la base de signaux tests (3 classes), l'utilisation de la méthode (HG)-(MH) donne un résultat statistiquement meilleur (au sens du test de Friedman) que les autres méthodes avec une amélioration moyenne de 48.4\%.
+Pour la métrique $R_r$ calculée sur l'ensemble de la base de signaux tests (3 classes), l'utilisation de la méthode (HG)-(MH) donne un résultat statistiquement meilleur (au sens du test de Friedman) que les autres méthodes avec une amélioration moyenne de 48.4\%.
 Pour $P_r$ et $S_r$, la méthode (KM) est statistiquement meilleure que les autres.
 Elle permet d'obtenir une amélioration moyenne de $P_r$ de 80.4\% et de 63.9\% pour $S_r$.
-L'estimation du nombre de composantes précise dans (KM) explique la précision largement meilleure que les autres, ce qui se traduit aussi dans $S_r$.
+L'estimation précise du nombre de composantes dans (KM) explique la précision largement meilleure que les autres, ce qui se traduit aussi dans $S_r$.
 
 %4/ Méthode par méthode
 
@@ -389,16 +389,16 @@ $S_r$ - MH & 0.361 & 0.389 & 0.373 & 0.592 & \textbf{0.639} & 0.437\\\hline
 
 Un autre effet mis en évidence par cette comparaison est l'apport de (MH) par rapport à (MU).
 On voit que le choix n'a que très peu d'impact sur les performances des méthodes basées sur la corrélation et pour (KM).
-Pour les méthodes basées sur l'étude du périodogramme autre que (KM), l'utilisation de (MH) améliore les résultat sauf pour le rappel de (HGS). 
-Cependant, dans ce cas, les résultats des deux méthodes sont statistiquement équivalant.
+Pour les méthodes basées sur l'étude du périodogramme autre que (KM), l'utilisation de (MH) améliore les résultats sauf pour le rappel de (HGS). 
+Cependant, dans ce cas, les résultats des deux méthodes sont statistiquement équivalents.
 Il est donc intéressant d'utiliser cette stratégie pour le groupement automatique.
 
 %3/ Classes par classes
 \begin{sloppypar}
 On observe pour la classe 1 que (HG)-(MH) est statistiquement équivalente en rappel à (HGS)-(MU) et (HGS)-(MH). 
 Pour les deux autres métriques, (HG)-(MH) et (HGS)-(MH) sont équivalentes et donnent un meilleur score que (KM).
-Ces deux similarité sont particulièrement adaptées à la reconstruction d'harmonique pure ce qui explique leurs performances sur la classe 1. 
-Pour les spectres très concentrés, elles donnent des résultats similaires ce qui explique leur proximité.
+Ces deux similarités sont particulièrement adaptées à la reconstruction d'harmoniques pures ce qui explique leurs performances sur la classe 1. 
+Pour des composantes au spectres très concentrés, elles donnent des résultats similaires ce qui explique leur proximité.
 Pour les classes 2 et 3, (KM) est équivalente à (HGS)-(MH) pour $R_r$ et statistiquement meilleure que les autres méthodes pour les deux autres métriques.
 %Lorsqu'on regarde les résultats classe par classe, on voit cependant que lorsque la complexité de la classe augmente, les différences sont de moins en moins significatives entre (HG)-(MH) et les autres méthodes.
 %Pour $R_r$, (HG)-(MH) est statistiquement meilleure que (HGS)-(MU) pour les classes 1 et 2 mais pas pour la classe 3.
@@ -407,12 +407,13 @@ Pour les classes 2 et 3, (KM) est équivalente à (HGS)-(MH) pour $R_r$ et stati
 
 %5/ Par composantes
 %Cette analyse est étayée par l'étude des résultats pour chaque type de composantes.
-L'analyse de résultats sur chaque type de composante explique en parti ces observations.
+L'analyse des résultats sur chaque type de composante explique en parti ces observations.
 Le coefficient de détermination $r^2$ moyen obtenu pour la composante $c_0$ dans les classes 2 et 3 est en probabilité plus grand avec la méthode (KM) que pour les autres méthodes. 
-Cette méthode observe l'intégralité du contenu fréquentiel pour effectuer le groupement ce qui est un avantage pour retrouver la composante de tendance qui peut avoir un périodogramme plus étalée. 
+Cette méthode observe l'intégralité du contenu fréquentiel pour effectuer le groupement ce qui est un avantage pour retrouver la composante de tendance qui peut avoir un périodogramme étalé. 
 Pour les composantes harmoniques dans les classes 1 et 2, la méthode (HGS)-(MH) donne statistiquement un meilleur score $r^2$ sauf pour (HG)-(MH). 
-Ces composantes sont particulièrement adaptées à la similarité basée sur leurs périodogrammes car ils ne sont composés que d'un pic.
-Pour les composantes exponentiellement modulées, toutes les méthodes donnent des résultats statistiquement équivalents.
+Ces composantes sont particulièrement adaptées à une similarité basée sur leurs périodogrammes car ils ne comporte qu'un pic.
+Pour les composantes exponentiellement modulées, toutes les méthodes donnent des résultats statistiquement équivalents et en dessous des ceux produit pour les composantes harmoniques.
+Les différentes méthodes ont donc du mal à distinguer ce genre de composantes.
 \end{sloppypar}
 
 Le cadre général introduit pour la comparaison des stratégies de regroupement permet de voir que la stratégie de regroupement à choisir est dépendante de l'importance donnée à l'extraction de chaque type de composantes.
