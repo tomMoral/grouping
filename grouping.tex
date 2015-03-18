@@ -19,8 +19,8 @@
         \coord{Laurent}{Oudre}{3, 2},
     \coord{Nicolas}{Vayatis}{1, 2}}
 
-\adresse{\affil{1}{CMLA - ENS Cachan - 64 Avenue du Président Wilson, 94230 Cachan}
-         \affil{2}{COGNAC-G - Université Paris Descartes - 45, rue des Saints-Pères, 75006 Paris}
+\adresse{\affil{1}{CMLA - ENS Cachan, CNRS - 61 Avenue du Président Wilson, 94230 Cachan}
+         \affil{2}{COGNAC-G - Université Paris Descartes, CNRS - 45, rue des Saints-Pères, 75006 Paris}
          \affil{3}{L2TI - Université Paris 13 - 99 Avenue Jean Baptiste Clément, 93430 Villetaneuse}}
          
 \email{\footnotesize thomas.moreau@cmla.ens-cachan.fr, laurent.oudre@univ-paris13.fr, nicolas.vayatis@cmla.ens-cachan.fr}
@@ -50,7 +50,7 @@
 \section{Introduction}
 \label{sec:intro}
 
-\begin{sloppypar}
+\begin{sloppypar}\noindent
 L'analyse du spectre singulier (en anglais SSA : Singular Spectral Analysis) est une technique introduite par Vautard et al \cite{vautard_89_SSA} permettant d'obtenir de manière simple une décomposition du signal en composantes de tendance, de saisonnalité (harmoniques) et de bruit.
 Elle est principalement utilisée en finance ou en météorologie où les séries étudiées sont souvent courtes et bruitées.
 De nombreuses publications ont montré la pertinence de la SSA dans ces contextes, où cette décomposition permet d'apporter de l'information sur les mécanismes produisant ces séries mais aussi de formuler des modèles de prédiction.
@@ -64,7 +64,7 @@ Dans cet article, nous proposons un cadre permettant l'évaluation et la compara
 
 \noindent\textbf{Rappels sur la SSA.}\label{sub:rap}
 On considère un signal fini échantillonné $x = \val{x}{T}{,}$ et un entier $K \in \left \{ 1, \dots, T/2 \right \}$.
-La matrice de K-trajectoire $X^{(K)} \in \R^{K\times L}$ de la série $x$ est défini par:
+La matrice de K-trajectoire $X^{(K)} \in \R^{K\times L}$ de la série $x$ est définie par:
 \begin{sloppypar}
 \begin{equation} 
     X^{(K)} =
@@ -78,10 +78,9 @@ La matrice de K-trajectoire $X^{(K)} \in \R^{K\times L}$ de la série $x$ est d�
 avec $L = T-K+1$.
 Cette matrice contient toutes les sous séries de longueur $K$ de $x$.
 % Le signal peut être reconstruit naturellement à partir de cette matrice du fait de sa structure de Hankel, avec toutes les composantes sur les anti-diagonales égales. Si l'on considère une matrice $M$ n'ayant pas cette structure, le signal ayant la matrice de trajectoire la plus proche de $M$ peut être construit en moyennant le long des anti-diagonales. Cette opération permet de  passer de l'espace des matrices à celui des signaux. On notera par la suite $\HH: \R^{K\times L} \to \R^T$ l'opération d'hankelisation, qui effectue la moyenne le long des anti-diagonales. Cette opération est linéaire.
-
 Une décomposition en valeur singulière (en anglais SVD pour Singular Value Decomposition) de la matrice de K-trajectoire $X^{(K)}$ de $x$ permet d'obtenir une décomposition de la matrice de trajectoire sous la forme d'une somme de matrices de rang 1:
 \end{sloppypar}
-\vspace{-.55cm}
+\vspace{-.2cm}
 \begin{equation}
 	X^{(K)} = \sum_{i=1}^K \lambda_i U_iV_i^T
 \end{equation} 
@@ -98,7 +97,7 @@ où les $U_i$ sont des motifs maximisant récursivement la covariance avec les s
 %\noindent\textbf{Reconstruction de composantes}
 %L'étape d'extraction de motifs permet d'obtenir une décomposition de la matrice de trajectoire sous la forme d'une somme de matrices de rang 1 $X^{(K)} = \sum_{i=1}^K \lambda_i U_iV_i^T$ où  $U_i, V_i$ sont les colonnes des matrices $U, V$.
 En faisant la moyenne le long des anti-diagonales, on peut transformer chaque matrice de trajectoire $\lambda_iU_iV_i^T$  en un signal temporel $x^{(i)}$, et une décomposition de $x$ sous la forme:
-\vspace{-.15cm}
+\vspace{-.1cm}
 \begin{equation}
     x = \sum_{i=1}^K x^{(i)}
 \end{equation}
@@ -124,13 +123,14 @@ La section \ref{sec:res} présentera les résultats numériques de cette compara
 % section intro (end)
 
 \section{Méthodes}\label{sec:met}
+\noindent
 Dans cette section, nous allons présenter plusieurs méthodes de groupement automatique pour la SSA.
 Une description unifiée de celles-ci permet de les comparer dans un cadre simple, comme paramètres d'une stratégie globale.
 
-\vspace{-.4cm}
+\vspace{-.3cm}
 \subsection{Formulation générale}
 \label{sub:form}
-
+\noindent
 Les stratégies de regroupement peuvent être décrites en trois phases:
 \begin{enumerate}
 	\item Sélectionner des composantes intéressantes de la SSA
@@ -141,22 +141,20 @@ Les composantes finales sont obtenues en sommant les composantes regroupées $y_
 La première étape est effectuée en supprimant les composantes de la SVD ayant une valeur singulière $\lambda_i$ plus faible qu'un certain seuil (que l'on choisira ici adaptatif et de la forme  $\tau_l.\lambda_2$ avec $\tau_l = 0.01$).
 %Ceci permet de filtrer les composantes de bruit en considérant qu'elles ont une part négligeable dans la variance de la série.
 On utilise la seconde valeur propre car la première, liée à la variance de la série, peut rejeter la plupart des composantes.
-
 La seconde étape utilise une mesure de similarité entre les composantes afin d'obtenir une matrice d'adjacence.% Intuitivement, le choix de cette mesure influence fortement les résultats du regroupement.
 %Il est par exemple parfois pertinent de se  baser sur le contenu fréquentiel des composantes afin d'obtenir un bon regroupement des composantes harmoniques.
-
 Enfin, la troisième étape concerne la stratégie de formation des groupes à partir de la matrice d'adjacence. Cette stratégie permet de gérer la prévalence des composantes entre elles.
 %Il est souvent intéressant de donner plus d'importance à la composante associée de plus forte valeur singulière car elle a un poids important dans la variance de la série initiale.
 
 % subsection form (end)
 
-\vspace{-.4cm}
+\vspace{-.3cm}
 \subsection{Mesures de similarité}
 \label{sub:sim}
 
 \subsubsection{Mesures basées sur la corrélation}\label{ssub:cor}
 \vspace{-.1cm}
-
+\noindent
 Les composantes à regrouper sont celles qui sont produites par les mêmes phénomènes.
 Elles ne sont donc pas indépendantes.
 Il est donc intéressant d'observer la corrélation entre les composantes comme indicateur de similarité.
@@ -187,7 +185,7 @@ Il est donc intéressant d'observer la corrélation entre les composantes comme 
     On peut alors prendre une fonction de similarité identique à la précédente en remplaçant la corrélation par la w-corrélation.
     %Ceci permet de filtrer les effets de bord qui peuvent apparaître dans la corrélation et ainsi d'obtenir un meilleur regroupement.
 % textbf GG3 (end)
-
+\vspace{-.2cm}
 \subsubsection{Mesures basées sur le périodogramme}\label{ssub:per}
 Le profil spectral des composantes obtenues peut aussi être utilisé comme un indicateur de similarité des séries \cite{Golyandina_10_ssa}.
 En effet, les composantes contenant une même phase oscillante partagent des structures communes dans leur périodogramme qui peuvent permettre leur identification.
@@ -230,8 +228,7 @@ On notera dans la suite $\Pi_x(k)$ le périodogramme d'une série $x$ de longueu
 
 \noindent\textbf{Regroupement support harmonique (HGS).}\label{par:HGS}
     L'une des faiblesses de la similarité (HG) est qu'elle se concentre sur des composantes harmoniques. 
-    Ainsi, si les composantes extraites par la SSA ont une plage de fréquence plus large, cela peut nuire au groupement car la normalisation du spectre fera passer la métrique de similarité sous le seuil de regroupement.
-
+    Ainsi, si les composantes extraites par la SSA ont une plage de fréquence plus large, cela peut nuire au groupement car la normalisation du spectre fera passer la métrique de similarité sous le seuil de regroupement.\\
     Nous proposons pour pallier ce problème de considérer le support fréquentiel $F_{U_i}$ des motifs associées au composantes en définissant leur fréquence fondamentale comme le centre de ce support.
 %    On note alors $\omega_i = \frac{\displaystyle\max \mathcal F_{U_i} + \min \mathcal F_{U_i} }{2 T}$ et $s_i = \frac{\displaystyle\max \mathcal F_{U_i} - \min \mathcal F_{U_i} }{2}$. 
     On sélectionne alors les composantes ayant un support de largeur inférieure à un seuil $\rho_s \in \inter$ et on considère que les composantes $i, j$ sont adjacentes si l'écart entre leurs fréquences fondamentales est inférieur à $\rho_f \in \inter$.
@@ -256,12 +253,8 @@ On notera dans la suite $\Pi_x(k)$ le périodogramme d'une série $x$ de longueu
 \noindent\textbf{Méthode uniforme (MU).}
     La stratégie de formation des groupes à partir de la matrice d'adjacence la plus simple est de considérer que toutes les composantes ont le même intérêt.
     On peut alors considérer que deux composantes sont dans le même groupe dès lors qu'elles sont adjacentes.
-    C'est la méthode qui est utilisé dans la plupart des algorithmes qui ont été proposés jusque là \cite{abalov_14_auto, alvarez_13_auto}.
-\end{sloppypar}
-
-
-\begin{sloppypar}
-\noindent\textbf{Méthode hiérarchique (MH).}
+    Cette méthode est utilisée dans la plupart des stratégies qui ont été proposés jusque là \cite{abalov_14_auto, alvarez_13_auto}.\\
+\textbf{Méthode hiérarchique (MH).}
     Nous proposons une autre méthode de formation des groupe donnant une importance relative au différentes composantes.
     L'importance de chaque composante peut être mesurée par la part de variance expliquée par cette composante.
     On peut donc considérer qu'on ajoute une composante dans un groupe si elle est adjacente à la composante dominante du groupe (au sens de la variance).
@@ -274,14 +267,13 @@ On notera dans la suite $\Pi_x(k)$ le périodogramme d'une série $x$ de longueu
 \label{sec:eval}
 \subsection{Génération de signaux}
 \label{sub:artsig}
-    Les stratégies de regroupement ont été évaluées sur des signaux artificiels générés aléatoirement.
+    \noindent Les stratégies de regroupement ont été évaluées sur des signaux artificiels générés aléatoirement.
     L'objectif du regroupement est de séparer la tendance des différentes composantes périodiques et du bruit. Les signaux tests sont échantillonnés à $100$Hz selon le modèle:
     \begin{equation}\label{eq:artsig}
     f(t) = \underbrace{b_0 t^p}_{c_0} + \sum_{i=1}^K \underbrace{b_i e^{-\alpha_i t} \sin\left(2\pi f_i t + \phi_i\right)}_{c_i} + \epsilon_t
     \end{equation}
     où $\epsilon_t$  est une composante de bruit blanc gaussien d'écart type $\sigma = s.\sigma_f$.
-    Les différents paramètres sont choisis de manière aléatoire avec $b_i \in \inter$, $p \in \left[0, 5\right]$, $\displaystyle \phi_i \in\left[\frac{-\pi}{2}, \frac{\pi}{2}\right]$, $\alpha_i \in \left[0, \frac{1}{2}\right]$, $f_i \in \left[0, 50\right]$Hz et $s \in \left[0, 40\right]$dB.
-   
+    Les différents paramètres sont choisis de manière aléatoire avec $b_i \in \inter$, $p \in \left[0, 5\right]$, $\displaystyle \phi_i \in\left[\frac{-\pi}{2}, \frac{\pi}{2}\right]$, $\alpha_i \in \left[0, \frac{1}{2}\right]$, $f_i \in \left[0, 50\right]$Hz et $s \in \left[0, 40\right]$dB.\\
     Trois classes de signaux sont définies.
     La première classe fixe $b_0 = \alpha_i = 0$ (harmoniques + bruit) , la seconde $\alpha_i = 0$ (tendance + harmoniques + bruit) et la troisième correspond au modèle général \eqref{eq:artsig}.
 % subsection artsig  (end)
@@ -289,19 +281,17 @@ On notera dans la suite $\Pi_x(k)$ le périodogramme d'une série $x$ de longueu
 \vspace{-.2cm}
 \subsection{Métriques d'évaluation}
 \label{sub:met}
-
+    \noindent
     L'une des métriques utilisée pour évaluer la qualité du groupement est le coefficient de détermination $r^2$ \cite{abalov_14_auto}.
     Ce coefficient rend compte de l'erreur commise par rapport à la variance de la composante.
     Pour une série $x$ de moyenne $\overline x$ et pour un estimateur $\widehat x$, le coefficient de détermination est calculé suivant $r^2(x, \widehat x) = 1 - \frac{\|x-\widehat x\|^2}{\|x-\overline x\|^2}$.
-    Cette quantité correspond au rapport entre l'erreur d'estimation et la variance d'un signal.
-
+    Cette quantité correspond au rapport entre l'erreur d'estimation et la variance d'un signal.\\
     On calcule alors le rappel et la précision du regroupement pour $r^2$
     \begin{equation}
         R = \frac{1}{N} \sum_{i=1}^N \min_{1\le j\le M} r^2(c_i, y_j) \hspace{0.4cm} P = \frac{1}{M}\sum_{j=1}^M \min_{1\le i\le N} r^2(c_i, y_j)
     \end{equation}
-    où les $( y_j)_{1\le j \le M}$ sont les différentes composantes obtenues lors du groupement et les $(c_i)_{1\le i\le N}$ sont les composantes initiales formant le signal artificiel.
-    
-    Une manière de fusionner ces deux concepts est de considérer le score obtenu pour une allocation optimale entre les composantes recherchées et celles formées par le regroupement:
+    où les $( y_j)_{1\le j \le M}$ sont les différentes composantes obtenues lors du groupement et les $(c_i)_{1\le i\le N}$ sont les composantes initiales formant le signal artificiel.\\    
+    Nous proposons de fusionner ces deux concepts est de considérer le score obtenu pour une allocation optimale entre les composantes recherchées et celles formées par le regroupement:
     \begin{equation}
         S =  \frac{1}{N} \min_{\sigma \in \mathfrak S(M)} \sum_{i=1}^N r^2(c_i, y_{\sigma(i)})
     \end{equation}
@@ -310,7 +300,7 @@ On notera dans la suite $\Pi_x(k)$ le périodogramme d'une série $x$ de longueu
     Il est donc important de considérer non pas les valeurs brutes de ces scores mais l'amélioration apportée par le groupement.
     Pour cela, on calcule les métriques $R, P$ et $S$ pour le groupement évalué et pour les composantes avant groupement $R_0, P_0, S_0$.
     Le taux d'augmentation entre ces deux scores $\frac{R-R_0}{1-R_0}$ permet de mesurer l'apport d'un groupement par rapport aux composantes de départ.
-    Ces métriques sont moins sensibles aux variations produites par une mauvaise décomposition de départ. On les notera respectivement $R_r, P_r$ et $S_r$
+    Ces métriques sont moins sensibles aux variations produites par une mauvaise décomposition de départ. On les notera respectivement $R_r, P_r$ et $S_r$.
     
 % subsection met (end)
 
@@ -335,30 +325,24 @@ On notera dans la suite $\Pi_x(k)$ le périodogramme d'une série $x$ de longueu
 \section{Résultats}
 \label{sec:res}
 \vspace{-.2cm}
-
-
+\begin{sloppypar}\noindent
 Pour toutes les expériences, les composantes de la SSA sont calculées avec une valeur de fenêtre $K=T/2$.
 Les regroupements sont ensuite réalisés avec les paramètres $\rho_0=0.8$, $\rho_1=0.8$, $\rho_2=0.05$, $\rho_c=0.8$, $\rho_p=0.8$ et $\rho_r=0.4$ fixés comme ceux utilisés dans les publications originales \cite{abalov_14_auto, alvarez_13_auto}. 
-Pour nos similarités (HGS, GG3), les paramètres $\rho_f=0.001$ et $\rho_s=0.6$ ont été fixés empiriquement sur quelques exemples.
-
-
+Pour nos similarités (HGS, GG3), les paramètres $\rho_f=0.001$ et $\rho_s=0.6$ ont été fixés empiriquement sur quelques exemples.\\
 %1/ un exemple
 La Figure~\ref{fig:dec} présente un résultat de décomposition par la SSA d'un signal de la classe 3 composé d'une tendance, de quatre harmoniques exponentiellement modulées et d'un bruit blanc gaussien (SNR de 9.7dB).
 On observe que la décomposition  avec un groupement (HG)-(MH) permet de mettre en évidence 4 des 5 composantes, qui sont retrouvées avec une faible déformation. 
 Le coefficient de détermination $r^2$ moyen est de 0.96 pour ces 4 composantes alors que sans le groupement, le coefficient moyen est de 0.21.
-La 5e composante harmonique est rejetée comme du bruit par le filtrage des composantes initiales car son amplitude est faible par rapport aux autres composantes.
-Il est en effet difficile de retrouver les composantes avec une amplitude faible devant le bruit.
-
-
-    \begin{figure}[tp]
+La cinquième composante harmonique est rejetée comme du bruit par le filtrage des composantes initiales car son amplitude est faible par rapport aux autres composantes.
+Il est en effet difficile de retrouver les composantes avec une amplitude faible devant le bruit.\\
+    \begin{figure}[t]
         \centering
         %\hspace{-.5cm}
-        \includegraphics[width=.5\textwidth]{img/artsig3.eps}
+        \includegraphics[width=.45\textwidth]{img/artsig4.eps}
         %\vspace{-.4cm}
         \caption{Décomposition d'un signal artificiel (\emph{haut}). Les quatre composantes du milieu correspondent aux groupes formés après la SSA par (HG)-(MH). Le signal du bas correspond au résiduel de la décomposition. On notera que les échelles des quatre signaux du bas ont été adaptées pour ne pas écraser les signaux.} %Le regroupement retrouve correctement plusieurs composantes harmoniques. Le bruits est largement filtré du signal de départ. Il n'est pas totalement gaussien car il intègre une composante harmonique du signal de départ qui n'est pas séparée par la décomposition du fait de sa trop faible amplitude.}
         \label{fig:dec}
     \end{figure}
-
 %2/ Toutes les classes
 %R_r 17.91%
 %P_r 50.57%
@@ -368,10 +352,10 @@ Pour la métrique $R_r$ calculée sur l'ensemble de la base de signaux tests (3 
 Pour $P_r$ et $S_r$, la méthode (KM) est statistiquement meilleure que les autres.
 Elle permet d'obtenir une amélioration moyenne de $P_r$ de 80.4\% et de 63.9\% pour $S_r$.
 L'estimation précise du nombre de composantes dans (KM) explique la précision largement meilleure que les autres, ce qui se traduit aussi dans $S_r$.
-
 %4/ Méthode par méthode
-
-\begin{table}[h]
+\begin{table}[t]
+    \small
+    \centering
 \begin{tabular}{|c|c|c|c|c|c|c|}
 	\hline
 	Méthodes & GG1 & GG2 & GG3 & HG & KM & HGS\\\hline 
@@ -381,45 +365,39 @@ $P_r$ - MU & 0.338 & 0.329 & 0.351 & 0.693 & 0.804 & 0.409\\\hline
 $P_r$ - MH & 0.339 & 0.347 & 0.351 & 0.705 & \textbf{0.804} & 0.439\\\hline
 $S_r$ - MU & 0.361 & 0.373 & 0.373 & 0.567 & 0.639 & 0.422\\\hline
 $S_r$ - MH & 0.361 & 0.389 & 0.373 & 0.592 & \textbf{0.639} & 0.437\\\hline
-
 \end{tabular}
-\caption{\'Evaluation des différentes méthodes de groupement moyennée sur les 1000 signaux de chacune des classes de la base de test. Les 3 premières ligne présentent la stratégie de formation (MU) et les 3 suivantes la stratégie (MH).}
+\caption{\'Evaluation des différentes méthodes de groupement moyennée sur l'ensemble des signaux de la base de test. Les 3 premières lignes présentent la stratégie de formation (MU) et les 3 suivantes la stratégie (MH).}
 \label{tab:res}
 \end{table}
-
-Un autre effet mis en évidence par cette comparaison est l'apport de (MH) par rapport à (MU).
-On voit que le choix n'a que très peu d'impact sur les performances des méthodes basées sur la corrélation et pour (KM).
+Pour toutes les similarités, l'utilisation de la stratégie (MH) introduite dans cet article permet une amélioration des résultats.
+Cet effet est assez faible pour les performances des méthodes basées sur la corrélation et pour (KM).
 Pour les méthodes basées sur l'étude du périodogramme autre que (KM), l'utilisation de (MH) améliore les résultats sauf pour le rappel de (HGS). 
 Cependant, dans ce cas, les résultats des deux méthodes sont statistiquement équivalents.
-Il est donc intéressant d'utiliser cette stratégie pour le groupement automatique.
-
+Il est donc intéressant d'utiliser cette stratégie pour le groupement automatique.\\
 %3/ Classes par classes
-\begin{sloppypar}
 On observe pour la classe 1 que (HG)-(MH) est statistiquement équivalente en rappel à (HGS)-(MU) et (HGS)-(MH). 
 Pour les deux autres métriques, (HG)-(MH) et (HGS)-(MH) sont équivalentes et donnent un meilleur score que (KM).
 Ces deux similarités sont particulièrement adaptées à la reconstruction d'harmoniques pures ce qui explique leurs performances sur la classe 1. 
 Pour des composantes au spectres très concentrés, elles donnent des résultats similaires ce qui explique leur proximité.
-Pour les classes 2 et 3, (KM) est équivalente à (HGS)-(MH) pour $R_r$ et statistiquement meilleure que les autres méthodes pour les deux autres métriques.
+Pour les classes 2 et 3, (KM) est équivalente à (HGS)-(MH) pour $R_r$ et statistiquement meilleure que les autres méthodes pour les deux autres métriques.\\
 %Lorsqu'on regarde les résultats classe par classe, on voit cependant que lorsque la complexité de la classe augmente, les différences sont de moins en moins significatives entre (HG)-(MH) et les autres méthodes.
 %Pour $R_r$, (HG)-(MH) est statistiquement meilleure que (HGS)-(MU) pour les classes 1 et 2 mais pas pour la classe 3.
 %Pour $P_r$, sur chaque classe séparément, cinq méthodes ont des performances comparables bien que (HG)-(MH) donne une meilleure performance moyenne et pour la classe 3, (HGS)-(MU) a une meilleure précision que (HG)-(MH).
 %Ceci montre que si la méthode (HG)-(MH) semble la plus appropriée pour le groupement automatique pour des signaux composés d'harmoniques modulées, les autres méthodes peuvent donner des résultats intéressants pour des signaux avec des périodogrammes moins compacts.
-
 %5/ Par composantes
 %Cette analyse est étayée par l'étude des résultats pour chaque type de composantes.
 L'analyse des résultats sur chaque type de composante explique en parti ces observations.
-Le coefficient de détermination $r^2$ moyen obtenu pour la composante $c_0$ dans les classes 2 et 3 est en probabilité plus grand avec la méthode (KM) que pour les autres méthodes. 
+Le coefficient de détermination $r^2$ moyen obtenu pour la composante $c_0$ de tendance dans les classes 2 et 3 est en probabilité plus grand avec la méthode (KM) que pour les autres méthodes. 
 Cette méthode observe l'intégralité du contenu fréquentiel pour effectuer le groupement ce qui est un avantage pour retrouver la composante de tendance qui peut avoir un périodogramme étalé. 
-Pour les composantes harmoniques dans les classes 1 et 2, la méthode (HGS)-(MH) donne statistiquement un meilleur score $r^2$ sauf pour (HG)-(MH). 
+Pour les composantes harmoniques $(c_i)_{i > 0}$ dans les classes 1 et 2, l'alliance de nos deux stratégies (HGS)-(MH) donne statistiquement un meilleur score $r^2$ que les autres méthodes exceptée (HG)-(MH) qui lui est équivalente. 
 Ces composantes sont particulièrement adaptées à une similarité basée sur leurs périodogrammes car ils ne comporte qu'un pic.
 Pour les composantes exponentiellement modulées, toutes les méthodes donnent des résultats statistiquement équivalents et en dessous des ceux produit pour les composantes harmoniques.
-Les différentes méthodes ont donc du mal à distinguer ce genre de composantes.
-\end{sloppypar}
-
+Les différentes méthodes ont donc du mal à distinguer ce genre de composantes.\\
 Le cadre général introduit pour la comparaison des stratégies de regroupement permet de voir que la stratégie de regroupement à choisir est dépendante de l'importance donnée à l'extraction de chaque type de composantes.
 La méthode (KM) apparaît comme la plus adaptative et permet une estimation précise du nombre de composantes.
 L'utilisation de la stratégie (MH) proposée pour la formation des groupes permet une légère amélioration des performances.
 Ces résultats prometteurs sont en cours d'adaptation pour l'extraction de phases oscillantes dans des signaux physiologiques d'oculométrie.
+\end{sloppypar}
 
 
 \bibliographystyle{plain} 
