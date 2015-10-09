@@ -7,4 +7,8 @@
 *fig*
 *npy
 *txt
-*.py
+.ipynb*
+
+__pycache__
+*pyc
+*pyxbld
